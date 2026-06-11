@@ -1,0 +1,41 @@
+---
+interface Props {
+  title: string;
+  prompt: string;
+  tag?: string;
+}
+
+const { title, prompt, tag } = Astro.props;
+---
+
+<div class="bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg overflow-hidden mb-6">
+  <div class="flex items-center justify-between px-4 py-3 border-b border-[#1a1a1a] bg-[#0d0d0d]">
+    <div class="flex items-center gap-3 min-w-0">
+      {tag && <span class="label shrink-0">{tag}</span>}
+      <span class="text-[#a3a3a3] text-xs font-medium truncate">{title}</span>
+    </div>
+    <button
+      class="copy-btn shrink-0 ml-4 text-[#404040] hover:text-[#86efac] font-mono text-xs transition-colors px-2 py-1 border border-[#1f1f1f] rounded hover:border-[#86efac]/40 cursor-pointer"
+      data-prompt={prompt}
+    >
+      copiar
+    </button>
+  </div>
+  <pre class="p-4 text-[#737373] text-xs leading-relaxed whitespace-pre-wrap font-mono overflow-auto">{prompt}</pre>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.copy-btn').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const text = btn.dataset.prompt ?? '';
+      await navigator.clipboard.writeText(text);
+      const original = btn.textContent;
+      btn.textContent = 'copiado ✓';
+      btn.classList.add('text-[#86efac]');
+      setTimeout(() => {
+        btn.textContent = original;
+        btn.classList.remove('text-[#86efac]');
+      }, 1500);
+    });
+  });
+</script>

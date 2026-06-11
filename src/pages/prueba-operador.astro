@@ -1,0 +1,165 @@
+---
+import Layout from '../components/Layout.astro';
+
+const entregables = [
+  'Descripción del problema que elegiste resolver.',
+  'Prompt exacto que usaste con Claude.',
+  'Resultado generado (texto, archivo, proceso documentado).',
+  'Checklist del proceso que seguiste paso a paso.',
+  'Qué cambiarías o mejorarías en una segunda versión.',
+];
+
+const criterios = [
+  { label: 'Claridad', desc: 'Lo que entregas se entiende sin explicación adicional.' },
+  { label: 'Autonomía', desc: 'Tomaste decisiones sin esperar que te dijeran cómo hacerlo.' },
+  { label: 'Orden', desc: 'El entregable tiene estructura lógica, no es un volcado de texto.' },
+  { label: 'Documentación', desc: 'Dejaste registro de lo que hiciste y cómo, no solo del resultado.' },
+  { label: 'Uso inteligente de IA', desc: 'Usaste la IA como herramienta, no como muleta. Revisaste el output.' },
+  { label: 'No inventar', desc: 'No rellenas con texto vacío cuando no sabes algo. Dices que no sabes.' },
+  { label: 'No depender', desc: 'Intentaste resolver antes de preguntar. Preguntaste una vez, bien.' },
+];
+
+const senalesPositivas = [
+  'Resume el problema en una línea sin que se lo pidas.',
+  'Entrega un documento limpio, sin ruido.',
+  'Hace pocas preguntas, pero las que hace son precisas.',
+  'Detecta por sí mismo si el output de la IA es incorrecto o incompleto.',
+  'Propone una mejora al final sin que se la pidan.',
+  'Estructura el trabajo antes de ejecutarlo.',
+];
+
+const senalesNegativas = [
+  'No lee las instrucciones completas antes de empezar.',
+  'Entrega un caos de notas sin estructura.',
+  'Pega el output de la IA sin revisarlo ni adaptarlo.',
+  'No documenta lo que hizo, solo el resultado.',
+  'Se bloquea ante la primera ambigüedad en lugar de decidir.',
+  'Pide que le hagan parte del trabajo.',
+  'Usa el tiempo en preguntar en lugar de en ejecutar.',
+];
+---
+
+<Layout title="Prueba de Operador IA" description="Evaluación práctica de 60 minutos para detectar operadores IA dentro del ecosistema XN.">
+
+  <!-- Header -->
+  <div class="pt-4 pb-12 border-b border-[#141414]">
+    <span class="label block mb-6">EVALUACIÓN</span>
+    <h1 class="text-2xl sm:text-3xl font-semibold text-[#f5f5f5] mb-4">Prueba de Operador IA</h1>
+    <p class="text-[#737373] text-sm leading-relaxed max-w-lg">
+      Esta prueba sirve para detectar si una persona puede aprender, ejecutar y trabajar dentro del ecosistema XN. No mide conocimiento previo. Mide criterio, autonomía y capacidad de entregar algo real en tiempo limitado.
+    </p>
+  </div>
+
+  <!-- Reto -->
+  <section class="py-12 border-b border-[#141414]">
+    <span class="label block mb-6">EL RETO — 60 MINUTOS</span>
+    <div class="bg-[#0d0d0d] border border-[#1f1f1f] rounded-lg p-6 mb-6">
+      <p class="text-[#e5e5e5] text-sm leading-relaxed mb-4">
+        Elige una tarea repetitiva que hagas en tu trabajo o en tu vida y conviértela en un mini sistema documentado usando Claude.
+      </p>
+      <p class="text-[#737373] text-xs leading-relaxed mb-4">
+        Puede ser cualquier cosa: responder un tipo de email siempre igual, organizar archivos, resumir reuniones, generar informes, clasificar tareas, escribir descripciones de producto. Lo que sea que repitas y que quieras dejar de hacer manualmente.
+      </p>
+      <p class="text-[#525252] text-xs leading-relaxed font-mono">
+        Tiempo límite: 60 minutos desde que empiezas hasta que entregas.
+      </p>
+    </div>
+    <p class="text-[#525252] text-xs leading-relaxed">
+      No hace falta que el sistema sea perfecto. Hace falta que funcione, que esté documentado y que otra persona pueda usarlo sin preguntarte cómo.
+    </p>
+  </section>
+
+  <!-- Entregables -->
+  <section class="py-12 border-b border-[#141414]">
+    <span class="label block mb-6">ENTREGABLES</span>
+    <p class="text-[#525252] text-xs leading-relaxed mb-6">
+      Al terminar los 60 minutos, entrega un documento Markdown (o texto plano) con estas cinco partes:
+    </p>
+    <ol class="space-y-4">
+      {entregables.map((e, i) => (
+        <li class="flex items-start gap-4">
+          <span class="font-mono text-xs text-[#303030] shrink-0 pt-0.5">{String(i + 1).padStart(2, '0')}</span>
+          <span class="text-[#737373] text-xs leading-relaxed">{e}</span>
+        </li>
+      ))}
+    </ol>
+
+    <div class="mt-8 bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg p-4">
+      <span class="label block mb-3">FORMATO DE ENTREGA</span>
+      <pre class="text-[#525252] text-xs leading-relaxed font-mono whitespace-pre-wrap"># Prueba Operador IA — [Tu nombre]
+
+## 1. Problema
+[Una descripción breve de la tarea repetitiva elegida]
+
+## 2. Prompt usado
+[El prompt exacto que le diste a Claude]
+
+## 3. Resultado
+[El output generado o el proceso documentado]
+
+## 4. Proceso
+- [ ] Paso 1
+- [ ] Paso 2
+- [ ] ...
+
+## 5. Segunda versión
+[Qué cambiarías si lo hicieras de nuevo]</pre>
+    </div>
+  </section>
+
+  <!-- Criterios -->
+  <section class="py-12 border-b border-[#141414]">
+    <span class="label block mb-6">CRITERIOS DE EVALUACIÓN</span>
+    <p class="text-[#525252] text-xs leading-relaxed mb-6">
+      No hay puntuación numérica. Se evalúa el patrón completo del entregable.
+    </p>
+    <div class="space-y-0">
+      {criterios.map((c) => (
+        <div class="flex gap-4 py-4 border-b border-[#0f0f0f]">
+          <span class="font-mono text-xs text-[#86efac] w-36 shrink-0 pt-0.5">{c.label}</span>
+          <span class="text-[#525252] text-xs leading-relaxed">{c.desc}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Señales positivas / negativas -->
+  <section class="py-12 border-b border-[#141414]">
+    <span class="label block mb-8">SEÑALES QUE SE OBSERVAN</span>
+    <div class="grid sm:grid-cols-2 gap-6">
+
+      <div>
+        <p class="font-mono text-xs text-[#86efac] mb-4 tracking-widest">POSITIVAS</p>
+        <ul class="space-y-3">
+          {senalesPositivas.map(s => (
+            <li class="flex items-start gap-3 text-xs text-[#737373]">
+              <span class="text-[#86efac]/50 font-mono shrink-0 mt-0.5">+</span>
+              {s}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <p class="font-mono text-xs text-[#737373] mb-4 tracking-widest">NEGATIVAS</p>
+        <ul class="space-y-3">
+          {senalesNegativas.map(s => (
+            <li class="flex items-start gap-3 text-xs text-[#525252]">
+              <span class="text-[#404040] font-mono shrink-0 mt-0.5">×</span>
+              {s}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Cierre -->
+  <section class="py-12">
+    <p class="text-[#525252] text-xs leading-relaxed max-w-lg font-mono">
+      Esta prueba no requiere conocimiento técnico previo. Requiere actitud, capacidad de aprender rápido y disposición a entregar algo real. Si no tienes seguridad en algún punto, di qué hiciste y por qué tomaste esa decisión. Eso también es parte del criterio.
+    </p>
+  </section>
+
+</Layout>

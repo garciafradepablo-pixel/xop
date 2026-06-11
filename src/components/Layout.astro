@@ -1,0 +1,31 @@
+---
+import '../styles/global.css';
+import Header from './Header.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'Escuela práctica para operadores IA. Sin teoría infinita.' } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title} — XN AI OPERATOR PORTAL</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body class="min-h-screen antialiased">
+    <Header />
+    <main class="max-w-3xl mx-auto px-6 py-12">
+      <slot />
+    </main>
+    <footer class="border-t border-[#141414] mt-24 py-8 text-center text-[#404040] text-xs font-mono tracking-widest">
+      XN AI OPERATOR PORTAL — MMXXVI
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,99 @@
+---
+import Layout from '../components/Layout.astro';
+import Card from '../components/Card.astro';
+---
+
+<Layout title="Inicio">
+
+  <!-- Hero -->
+  <section class="pt-4 pb-16 border-b border-[#141414]">
+    <span class="label block mb-6">PORTAL DE ENTRENAMIENTO · FASE 1</span>
+    <h1 class="text-3xl sm:text-4xl font-semibold text-[#f5f5f5] leading-tight mb-6">
+      No aprendas IA<br/>como teoría.<br/>Aprende a operar.
+    </h1>
+    <p class="text-[#737373] text-sm leading-relaxed max-w-xl mb-4">
+      Este portal es una escuela práctica para personas que quieren usar la inteligencia artificial como herramienta real de trabajo. Sin teoría infinita. Sin cursos interminables. Solo tareas, herramientas, ejercicios y contexto aplicable.
+    </p>
+    <p class="text-[#525252] text-sm leading-relaxed max-w-xl mb-10">
+      Lo usamos nosotros. Lo pueden usar futuros colaboradores. Está en construcción permanente.
+    </p>
+    <a
+      href="/ruta-7-dias"
+      class="inline-block font-mono text-xs text-[#080808] bg-[#86efac] px-5 py-2.5 rounded hover:bg-[#a7f3d0] transition-colors"
+    >
+      Comenzar Ruta 7 días →
+    </a>
+  </section>
+
+  <!-- Módulos -->
+  <section class="py-16 border-b border-[#141414]">
+    <span class="label block mb-8">MÓDULOS DISPONIBLES</span>
+    <div class="grid sm:grid-cols-2 gap-4">
+      <Card
+        tag="01"
+        title="Ruta 7 días"
+        description="De cero a primer deploy. Un recorrido diario que convierte a cualquier persona en operador IA funcional."
+        href="/ruta-7-dias"
+      />
+      <Card
+        tag="02"
+        title="Prompts"
+        description="Plantillas de trabajo listas para usar. Audita ideas, crea automatizaciones, documenta procesos."
+        href="/prompts"
+      />
+      <Card
+        tag="03"
+        title="Glosario"
+        description="Los 15 términos que necesitas entender antes de empezar. Sin jerga académica."
+        href="/glosario"
+      />
+      <Card
+        tag="04"
+        title="Onboarding"
+        description="Para futuros colaboradores. Qué actitud busco, qué habilidades se entrenan y cómo demostrar progreso."
+        href="/onboarding"
+      />
+      <Card
+        tag="05"
+        title="Prueba de Operador IA"
+        description="60 minutos. Una tarea real. Un entregable concreto. Para detectar si alguien puede operar dentro de este ecosistema."
+        href="/prueba-operador"
+      />
+    </div>
+  </section>
+
+  <!-- Para quién -->
+  <section class="py-16 border-b border-[#141414]">
+    <span class="label block mb-8">¿PARA QUIÉN ES ESTO?</span>
+    <ul class="space-y-4">
+      {[
+        'Personas sin experiencia técnica que quieren operar sistemas digitales.',
+        'Creativos que quieren automatizar su proceso de producción.',
+        'Futuros colaboradores que quieren entender cómo opera este ecosistema.',
+        'Cualquiera que prefiera construir cosas sobre teorizar sobre ellas.',
+        'Personas que no saben programar pero quieren aprender a delegar trabajo a máquinas.',
+      ].map(item => (
+        <li class="flex items-start gap-3 text-sm text-[#737373]">
+          <span class="text-[#86efac] font-mono text-xs mt-0.5 shrink-0">—</span>
+          {item}
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- Frase guía + estado -->
+  <section class="py-16">
+    <blockquote class="border-l-2 border-[#86efac]/30 pl-6 mb-12">
+      <p class="text-[#a3a3a3] text-sm italic leading-relaxed">
+        "No aprendas IA como teoría. Aprende a operar sistemas, construir activos y convertir tareas repetitivas en máquinas de trabajo."
+      </p>
+    </blockquote>
+
+    <div class="flex items-center gap-4">
+      <span class="label">ESTADO</span>
+      <span class="text-[#525252] font-mono text-xs">Fase 1 activa · Junio 2026</span>
+      <span class="w-1.5 h-1.5 rounded-full bg-[#86efac] animate-pulse"></span>
+    </div>
+  </section>
+
+</Layout>

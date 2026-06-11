@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #080808;
+    color: #e5e5e5;
+  }
+
+  ::selection {
+    background-color: #86efac;
+    color: #080808;
+  }
+}
+
+@layer components {
+  .label {
+    @apply font-mono text-xs tracking-widest uppercase text-[#86efac];
+  }
+
+  .section-divider {
+    @apply border-t border-[#1a1a1a] my-16;
+  }
+}

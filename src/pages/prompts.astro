@@ -1,0 +1,112 @@
+---
+import Layout from '../components/Layout.astro';
+import PromptBlock from '../components/PromptBlock.astro';
+
+const prompts = [
+  {
+    tag: 'PROMPT 01',
+    title: 'Crear un CLAUDE.md',
+    prompt: `Actúa como arquitecto de proyectos digitales.
+
+Crea un archivo CLAUDE.md para este proyecto. El archivo debe incluir:
+- Descripción del proyecto y su objetivo principal
+- Stack técnico utilizado
+- Convenciones de código y estilo
+- Lo que NO debe hacer Claude en este proyecto
+- Cómo añadir nuevos módulos o secciones
+- Tono y voz del proyecto si aplica
+
+Sé conciso. No más de 40 líneas. Sin decoración innecesaria.`,
+  },
+  {
+    tag: 'PROMPT 02',
+    title: 'Auditar una idea de negocio',
+    prompt: `Actúa como un analista de negocio directo y sin complacencia.
+
+Tengo esta idea: [describe la idea en 2-3 líneas]
+
+Quiero que la audites con esta estructura:
+1. Problema real que resuelve (¿existe demanda verificable?)
+2. Modelo de monetización viable
+3. Competidores directos e indirectos relevantes
+4. Riesgos principales
+5. Lo que falta para validarla en 30 días con el mínimo coste posible
+
+No me digas lo que quiero oír. Dime lo que necesito saber.`,
+  },
+  {
+    tag: 'PROMPT 03',
+    title: 'Diseñar una automatización',
+    prompt: `Actúa como un ingeniero de automatización.
+
+Quiero automatizar este proceso: [describe el proceso paso a paso]
+
+Lo que hago actualmente de forma manual: [describe la tarea]
+Herramientas disponibles: [lista las que tienes: Claude Code, GitHub, APIs, scripts, etc.]
+
+Diseña:
+1. El flujo automatizado completo
+2. Qué herramientas o scripts necesito
+3. Los pasos de implementación en orden
+4. Qué puede salir mal y cómo prevenirlo
+5. Cómo lo probaría antes de confiar en él`,
+  },
+  {
+    tag: 'PROMPT 04',
+    title: 'Documentar un proceso',
+    prompt: `Actúa como redactor técnico especializado en documentación operativa.
+
+Tengo este proceso que quiero documentar: [describe el proceso]
+
+Crea una documentación en Markdown que incluya:
+- Objetivo del proceso y para qué sirve
+- Quién lo ejecuta y cuándo
+- Pasos detallados y numerados
+- Qué hacer si algo falla en cada paso crítico
+- Cómo saber si el proceso fue ejecutado correctamente
+
+Formato: Markdown claro. Sin jerga innecesaria. Que lo pueda seguir alguien que nunca lo ha hecho.`,
+  },
+  {
+    tag: 'PROMPT 05',
+    title: 'Convertir tarea repetitiva en sistema',
+    prompt: `Actúa como diseñador de sistemas de trabajo.
+
+Esta tarea la hago de forma manual y repetitiva: [describe la tarea en detalle]
+
+Frecuencia: [diaria / semanal / mensual]
+Tiempo actual por ejecución: [X minutos / horas]
+Herramientas que uso ahora: [lista]
+
+Ayúdame a convertirla en un sistema replicable:
+1. Qué partes puedo automatizar hoy sin infraestructura compleja
+2. Qué necesito construir para que funcione de forma autónoma
+3. Qué partes requieren supervisión humana y por qué
+4. Cómo lo documentaría para que otro lo pueda ejecutar sin preguntarme nada`,
+  },
+];
+---
+
+<Layout title="Prompts" description="Plantillas de trabajo listas para usar con Claude.">
+
+  <div class="pt-4 pb-12 border-b border-[#141414]">
+    <span class="label block mb-6">MÓDULO 02</span>
+    <h1 class="text-2xl sm:text-3xl font-semibold text-[#f5f5f5] mb-4">Prompts</h1>
+    <p class="text-[#737373] text-sm leading-relaxed max-w-lg">
+      Plantillas estructuradas para tareas reales. No son prompts genéricos: cada uno tiene un rol, una estructura y una intención concreta. Cópialos, adapta las partes entre corchetes y úsalos directamente con Claude.
+    </p>
+  </div>
+
+  <div class="py-12">
+    {prompts.map(p => (
+      <PromptBlock tag={p.tag} title={p.title} prompt={p.prompt} />
+    ))}
+  </div>
+
+  <div class="pb-16 border-t border-[#141414] pt-8">
+    <p class="text-[#404040] text-xs font-mono">
+      Los textos entre [corchetes] son variables que debes reemplazar con tu contexto real.
+    </p>
+  </div>
+
+</Layout>

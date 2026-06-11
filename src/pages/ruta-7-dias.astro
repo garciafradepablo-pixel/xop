@@ -1,0 +1,90 @@
+---
+import Layout from '../components/Layout.astro';
+
+const dias = [
+  {
+    numero: 'DÍA 0',
+    titulo: 'Mentalidad de operador',
+    descripcion: 'No eres un estudiante de IA. Eres un operador. Tu trabajo es usar herramientas para producir resultados reales. Antes de instalar nada o escribir una sola línea, necesitas reemplazar la mentalidad de "aprender para saber" por la de "aprender para hacer".',
+    ejercicio: 'Escribe en un documento qué quieres construir o automatizar en las próximas 4 semanas. Sé específico. No "quiero aprender IA". Quiero [resultado concreto y medible]. Guárdalo. Volverás a él en el Día 7.',
+  },
+  {
+    numero: 'DÍA 1',
+    titulo: 'Terminal, carpetas y VS Code',
+    descripcion: 'La terminal es el cockpit del operador. Desde aquí ejecutas herramientas, navegas por proyectos y controlas tu sistema sin depender de interfaces gráficas. VS Code es donde editas, lees y estructuras tu trabajo.',
+    ejercicio: 'Abre la terminal. Crea una carpeta llamada operador-test con el comando mkdir. Entra con cd. Crea un archivo notas.md con touch. Ábrelo en VS Code con code .',
+  },
+  {
+    numero: 'DÍA 2',
+    titulo: 'Claude Code y trabajo asistido',
+    descripcion: 'Claude Code no es un chatbot. Es un asistente que trabaja dentro de tu proyecto: lee archivos, escribe código, ejecuta comandos y propone soluciones en contexto. La diferencia entre usarlo bien o mal es el contexto que le das.',
+    ejercicio: 'Instala Claude Code. Navega a operador-test. Escríbele: "Crea un archivo README.md que explique qué es este proyecto de práctica y cómo está organizado." Revisa el resultado. Corrígelo si hace falta.',
+  },
+  {
+    numero: 'DÍA 3',
+    titulo: 'GitHub, commits y control de versiones',
+    descripcion: 'Git no es opcional. Es la diferencia entre trabajo real y trabajo que se pierde. Cada commit es una foto de tu proyecto en un momento concreto. GitHub es donde viven esas fotos, accesibles desde cualquier lugar.',
+    ejercicio: 'Inicializa un repositorio en operador-test con git init. Haz tu primer commit con git add . y git commit -m "inicio". Crea un repo en GitHub y súbelo con git push.',
+  },
+  {
+    numero: 'DÍA 4',
+    titulo: 'Prompts, contexto y CLAUDE.md',
+    descripcion: 'La calidad de tu trabajo con IA depende casi completamente de cómo describes el contexto. Un CLAUDE.md es el documento que le dice a Claude cómo trabajar en tu proyecto: qué es, cómo opera, qué debe evitar.',
+    ejercicio: 'Crea un CLAUDE.md en operador-test. Define el objetivo del proyecto, el tono, lo que Claude no debe hacer. Usa el prompt "Crear un CLAUDE.md" de la sección Prompts de este portal como base.',
+  },
+  {
+    numero: 'DÍA 5',
+    titulo: 'Automatizaciones, APIs y MCPs',
+    descripcion: 'Una API es una puerta de acceso a una herramienta externa. Un MCP es una extensión que da a Claude acceso a esas puertas. Juntos, permiten que Claude opere sistemas reales: GitHub, sistemas de archivos, bases de datos, servicios web.',
+    ejercicio: 'Configura el MCP de GitHub o de Filesystem en Claude Code. Pídele a Claude que haga algo que antes hacías manualmente: listar commits, leer un archivo de otro proyecto, buscar en el sistema de archivos.',
+  },
+  {
+    numero: 'DÍA 6',
+    titulo: 'Primer sistema útil',
+    descripcion: 'Un sistema útil es cualquier cosa que produce valor repetible sin que tengas que rehacerlo desde cero cada vez. Puede ser una plantilla de documentos, un script que ejecutas con un comando, un proceso documentado que otro puede seguir.',
+    ejercicio: 'Construye algo que puedas reutilizar la semana que viene. No tiene que ser perfecto. Tiene que funcionar y estar documentado. Si no sabes qué construir, documenta un proceso que ya haces de forma manual.',
+  },
+  {
+    numero: 'DÍA 7',
+    titulo: 'Deploy, revisión y mejora',
+    descripcion: 'Publicar algo cierra el ciclo. Convierte trabajo privado en trabajo real. Aprende a desplegar un proyecto estático en Cloudflare Pages o Vercel en menos de 10 minutos. Después revisa qué aprendiste esta semana.',
+    ejercicio: 'Despliega algo de lo que construiste esta semana. Obtén una URL pública. Escribe 3 cosas que harías diferente si empezaras de nuevo. Vuelve al documento del Día 0 y evalúa cuánto avanzaste.',
+  },
+];
+---
+
+<Layout title="Ruta 7 días" description="De cero a primer deploy. Un recorrido diario para convertirte en operador IA.">
+
+  <div class="pt-4 pb-12 border-b border-[#141414]">
+    <span class="label block mb-6">MÓDULO 01</span>
+    <h1 class="text-2xl sm:text-3xl font-semibold text-[#f5f5f5] mb-4">Ruta 7 días</h1>
+    <p class="text-[#737373] text-sm leading-relaxed max-w-lg">
+      Un recorrido estructurado de cero a primer deploy. Cada día tiene un foco claro, una explicación breve y un ejercicio concreto que produce algo real.
+    </p>
+  </div>
+
+  <div class="py-12 space-y-1">
+    {dias.map((dia) => (
+      <div class="border border-[#141414] rounded-lg overflow-hidden">
+        <div class="flex items-center gap-4 px-5 py-4 bg-[#0d0d0d] border-b border-[#141414]">
+          <span class="label">{dia.numero}</span>
+          <h2 class="text-[#e5e5e5] text-sm font-medium">{dia.titulo}</h2>
+        </div>
+        <div class="px-5 py-5 bg-[#0a0a0a]">
+          <p class="text-[#737373] text-xs leading-relaxed mb-5">{dia.descripcion}</p>
+          <div class="border-l-2 border-[#86efac]/25 pl-4">
+            <span class="label block mb-2">EJERCICIO</span>
+            <p class="text-[#525252] text-xs leading-relaxed">{dia.ejercicio}</p>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <div class="pt-4 pb-16 border-t border-[#141414]">
+    <p class="text-[#525252] text-xs font-mono leading-relaxed">
+      Completa un día antes de pasar al siguiente. El ritmo importa menos que la continuidad.
+    </p>
+  </div>
+
+</Layout>
