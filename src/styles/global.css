@@ -4,22 +4,22 @@
 
 @layer base {
   body {
-    background-color: #080808;
-    color: #e5e5e5;
+    background-color: #f8fafc;
+    color: #0f172a;
   }
 
   ::selection {
-    background-color: #86efac;
-    color: #080808;
+    background-color: #10b981;
+    color: #ffffff;
   }
 }
 
 @layer components {
   .label {
-    @apply font-mono text-xs tracking-widest uppercase text-[#86efac];
+    @apply font-mono text-xs tracking-widest uppercase text-emerald-600;
   }
 
   .section-divider {
-    @apply border-t border-[#1a1a1a] my-16;
+    @apply border-t border-slate-200 my-20;
   }
 }

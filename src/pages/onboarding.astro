@@ -1,8 +1,50 @@
 ---
 import Layout from '../components/Layout.astro';
 
+const actitudes = [
+  {
+    titulo: 'Autonomía',
+    desc: 'No esperas instrucciones para cada micro-tarea. Cuando tienes el objetivo claro, te mueves.',
+    bg: 'bg-emerald-50',
+    border: 'border-emerald-200',
+    text: 'text-emerald-700',
+  },
+  {
+    titulo: 'Contexto',
+    desc: 'Lees lo que existe antes de preguntar lo que ya está escrito. El contexto reduce el ruido.',
+    bg: 'bg-sky-50',
+    border: 'border-sky-200',
+    text: 'text-sky-700',
+  },
+  {
+    titulo: 'Entrega',
+    desc: 'Cuando algo se asigna, aparece terminado, no a medias. La entrega es la unidad de confianza.',
+    bg: 'bg-violet-50',
+    border: 'border-violet-200',
+    text: 'text-violet-700',
+  },
+  {
+    titulo: 'Criterio',
+    desc: 'Sabes cuándo preguntar y cuándo decidir. La parálisis ante la ambigüedad es un coste real.',
+    bg: 'bg-amber-50',
+    border: 'border-amber-200',
+    text: 'text-amber-700',
+  },
+];
+
+const habilidades = [
+  { text: 'Terminal y sistema de archivos',                  dot: 'bg-emerald-500' },
+  { text: 'Control de versiones con Git y GitHub',          dot: 'bg-sky-500'     },
+  { text: 'Trabajo asistido con Claude Code',               dot: 'bg-violet-500'  },
+  { text: 'Creación y uso de prompts estructurados',        dot: 'bg-amber-500'   },
+  { text: 'Documentación de procesos en Markdown',          dot: 'bg-rose-500'    },
+  { text: 'Deploy de proyectos estáticos',                  dot: 'bg-emerald-500' },
+  { text: 'Automatizaciones básicas con APIs y MCPs',       dot: 'bg-sky-500'     },
+  { text: 'Pensamiento sistémico aplicado a tareas reales', dot: 'bg-violet-500'  },
+];
+
 const ejercicios = [
-  'Completar la Ruta 7 días de este portal.',
+  'Completar la Ruta Modular de este portal.',
   'Crear tu propio CLAUDE.md para un proyecto personal.',
   'Subir un repositorio a GitHub con al menos 3 commits significativos.',
   'Desplegar un proyecto estático en Cloudflare Pages o Vercel.',
@@ -22,85 +64,71 @@ const errores = [
 
 <Layout title="Onboarding" description="Cómo prepararte para colaborar en el ecosistema XN.">
 
-  <div class="pt-4 pb-12 border-b border-[#141414]">
+  <div class="pb-16 border-b border-slate-200">
     <span class="label block mb-6">MÓDULO 04</span>
-    <h1 class="text-2xl sm:text-3xl font-semibold text-[#f5f5f5] mb-4">Onboarding</h1>
-    <p class="text-[#737373] text-sm leading-relaxed max-w-lg">
+    <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-4">Onboarding</h1>
+    <p class="text-slate-600 text-base leading-relaxed max-w-lg">
       Este módulo es para personas que quieren prepararse para colaborar con este ecosistema. No busco personas que ya lo sepan todo. Busco personas que aprendan rápido, ejecuten sin parálisis y comuniquen sin ruido.
     </p>
   </div>
 
   <!-- Qué actitud busco -->
-  <section class="py-12 border-b border-[#141414]">
-    <span class="label block mb-6">QUÉ ACTITUD BUSCO</span>
-    <p class="text-[#737373] text-xs leading-relaxed mb-6">
+  <section class="py-16 border-b border-slate-200">
+    <span class="label block mb-2">QUÉ ACTITUD BUSCO</span>
+    <p class="text-slate-500 text-sm mb-10">
       El conocimiento técnico se entrena. La actitud no la puedo enseñar. Estas son las cuatro cosas que importan:
     </p>
     <div class="grid sm:grid-cols-2 gap-4">
-      {[
-        { titulo: 'Autonomía', desc: 'No esperas instrucciones para cada micro-tarea. Cuando tienes el objetivo claro, te mueves.' },
-        { titulo: 'Contexto', desc: 'Lees lo que existe antes de preguntar lo que ya está escrito. El contexto reduce el ruido.' },
-        { titulo: 'Entrega', desc: 'Cuando algo se asigna, aparece terminado, no a medias. La entrega es la unidad de confianza.' },
-        { titulo: 'Criterio', desc: 'Sabes cuándo preguntar y cuándo decidir. La parálisis ante la ambigüedad es un coste real.' },
-      ].map(item => (
-        <div class="p-4 bg-[#0d0d0d] border border-[#1a1a1a] rounded-lg">
-          <h3 class="text-[#e5e5e5] text-sm font-medium mb-2">{item.titulo}</h3>
-          <p class="text-[#525252] text-xs leading-relaxed">{item.desc}</p>
+      {actitudes.map(item => (
+        <div class={`${item.bg} border ${item.border} rounded-xl p-6`}>
+          <h3 class={`text-sm font-bold mb-2 ${item.text}`}>{item.titulo}</h3>
+          <p class="text-slate-600 text-sm leading-relaxed">{item.desc}</p>
         </div>
       ))}
     </div>
   </section>
 
   <!-- Habilidades que se entrenan -->
-  <section class="py-12 border-b border-[#141414]">
-    <span class="label block mb-6">HABILIDADES QUE SE ENTRENAN AQUÍ</span>
-    <ul class="space-y-3">
-      {[
-        'Terminal y sistema de archivos',
-        'Control de versiones con Git y GitHub',
-        'Trabajo asistido con Claude Code',
-        'Creación y uso de prompts estructurados',
-        'Documentación de procesos en Markdown',
-        'Deploy de proyectos estáticos',
-        'Automatizaciones básicas con APIs y MCPs',
-        'Pensamiento sistémico aplicado a tareas reales',
-      ].map(skill => (
-        <li class="flex items-center gap-3 text-xs text-[#737373]">
-          <span class="w-1 h-1 rounded-full bg-[#86efac]/50 shrink-0"></span>
-          {skill}
+  <section class="py-16 border-b border-slate-200">
+    <span class="label block mb-10">HABILIDADES QUE SE ENTRENAN AQUÍ</span>
+    <ul class="space-y-4">
+      {habilidades.map(h => (
+        <li class="flex items-center gap-3">
+          <span class={`w-1.5 h-1.5 rounded-full shrink-0 ${h.dot}`}></span>
+          <span class="text-slate-700 text-sm">{h.text}</span>
         </li>
       ))}
     </ul>
   </section>
 
   <!-- Ejercicios a completar -->
-  <section class="py-12 border-b border-[#141414]">
+  <section class="py-16 border-b border-slate-200">
     <span class="label block mb-6">EJERCICIOS A COMPLETAR</span>
-    <p class="text-[#525252] text-xs leading-relaxed mb-6">
+    <p class="text-slate-500 text-sm mb-8">
       Estos son los entregables mínimos para demostrar que has completado el proceso de onboarding:
     </p>
-    <ol class="space-y-4">
+    <ol class="space-y-3">
       {ejercicios.map((e, i) => (
-        <li class="flex items-start gap-4">
-          <span class="font-mono text-xs text-[#303030] shrink-0 pt-0.5">{String(i + 1).padStart(2, '0')}</span>
-          <span class="text-[#737373] text-xs leading-relaxed">{e}</span>
+        <li class="flex items-start gap-4 bg-white border border-slate-200 rounded-xl px-5 py-4 shadow-sm">
+          <span class="font-mono text-xs text-emerald-600 font-bold shrink-0 pt-0.5">{String(i + 1).padStart(2, '0')}</span>
+          <span class="text-slate-700 text-sm leading-relaxed">{e}</span>
         </li>
       ))}
     </ol>
   </section>
 
   <!-- Cómo demostrar progreso -->
-  <section class="py-12 border-b border-[#141414]">
+  <section class="py-16 border-b border-slate-200">
     <span class="label block mb-6">CÓMO DEMOSTRAR PROGRESO</span>
-    <p class="text-[#737373] text-xs leading-relaxed mb-4">
+    <p class="text-slate-600 text-sm leading-relaxed mb-4">
       El progreso se demuestra con entregables, no con promesas ni con "estoy en ello".
     </p>
-    <p class="text-[#525252] text-xs leading-relaxed mb-6">
+    <p class="text-slate-500 text-sm leading-relaxed mb-8">
       Cuando completes un ejercicio, documenta tres cosas: qué construiste, qué problema resolvía y una evidencia concreta (enlace, screenshot o archivo). No tiene que ser perfecto. Tiene que existir.
     </p>
-    <div class="bg-[#0d0d0d] border border-[#1a1a1a] rounded-lg p-4">
-      <p class="font-mono text-xs text-[#86efac] mb-3">FORMATO DE ENTREGA</p>
-      <pre class="text-[#525252] text-xs leading-relaxed font-mono whitespace-pre-wrap">Ejercicio: [nombre del ejercicio]
+    <div class="bg-slate-900 rounded-2xl p-6">
+      <p class="font-mono text-xs text-emerald-400 tracking-widest uppercase mb-4">FORMATO DE ENTREGA</p>
+      <pre class="text-slate-300 text-sm leading-relaxed font-mono whitespace-pre-wrap">Ejercicio: [nombre del ejercicio]
 Qué construí: [descripción breve]
 Problema que resuelve: [una línea]
 Evidencia: [URL / ruta de archivo / screenshot]</pre>
@@ -108,28 +136,28 @@ Evidencia: [URL / ruta de archivo / screenshot]</pre>
   </section>
 
   <!-- Errores a evitar -->
-  <section class="py-12 border-b border-[#141414]">
-    <span class="label block mb-6">ERRORES A EVITAR</span>
-    <ul class="space-y-4">
+  <section class="py-16 border-b border-slate-200">
+    <span class="label block mb-8">ERRORES A EVITAR</span>
+    <ul class="space-y-3">
       {errores.map(e => (
-        <li class="flex items-start gap-3 text-xs text-[#737373]">
-          <span class="text-[#404040] font-mono shrink-0 mt-0.5">×</span>
-          {e}
+        <li class="flex items-start gap-3 bg-white border border-slate-200 rounded-xl px-5 py-4 shadow-sm">
+          <span class="text-rose-500 font-mono text-sm font-bold shrink-0 mt-0.5">×</span>
+          <span class="text-slate-600 text-sm leading-relaxed">{e}</span>
         </li>
       ))}
     </ul>
   </section>
 
   <!-- Qué significa ser operador IA -->
-  <section class="py-12">
+  <section class="py-16">
     <span class="label block mb-6">QUÉ SIGNIFICA SER OPERADOR IA</span>
-    <p class="text-[#737373] text-xs leading-relaxed mb-4">
+    <p class="text-slate-600 text-sm leading-relaxed mb-4">
       Un operador IA no es un programador. No es un prompt engineer. No es alguien que usa bien ChatGPT.
     </p>
-    <p class="text-[#737373] text-xs leading-relaxed mb-4">
+    <p class="text-slate-600 text-sm leading-relaxed mb-4">
       Un operador IA entiende cómo funcionan los sistemas, sabe qué herramienta usar para qué tarea, documenta lo que construye para que otros puedan operar sin preguntar y entrega resultados, no reportes de esfuerzo.
     </p>
-    <p class="text-[#525252] text-xs leading-relaxed">
+    <p class="text-slate-500 text-sm leading-relaxed">
       Si terminas este portal y completas los ejercicios, ya tienes la base. Lo demás se aprende haciendo, dentro de proyectos reales.
     </p>
   </section>

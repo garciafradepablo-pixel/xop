@@ -1,98 +1,234 @@
 ---
 import Layout from '../components/Layout.astro';
-import Card from '../components/Card.astro';
+
+const modulos = [
+  {
+    num: '01',
+    title: 'Ruta Modular',
+    desc: 'De cero a primer deploy. 8 módulos prácticos que convierten a cualquier persona en operador IA funcional.',
+    href: '/ruta-7-dias',
+    bg: 'bg-emerald-50',
+    text: 'text-emerald-700',
+    border: 'border-emerald-200',
+  },
+  {
+    num: '02',
+    title: 'Prompts',
+    desc: 'Plantillas de trabajo listas para usar. Audita ideas, crea automatizaciones, documenta procesos.',
+    href: '/prompts',
+    bg: 'bg-sky-50',
+    text: 'text-sky-700',
+    border: 'border-sky-200',
+  },
+  {
+    num: '03',
+    title: 'Glosario',
+    desc: 'Los 15 términos que necesitas entender antes de empezar. Sin jerga académica.',
+    href: '/glosario',
+    bg: 'bg-violet-50',
+    text: 'text-violet-700',
+    border: 'border-violet-200',
+  },
+  {
+    num: '04',
+    title: 'Onboarding',
+    desc: 'Para futuros colaboradores. Qué actitud busco, qué habilidades se entrenan y cómo demostrar progreso.',
+    href: '/onboarding',
+    bg: 'bg-amber-50',
+    text: 'text-amber-700',
+    border: 'border-amber-200',
+  },
+  {
+    num: '05',
+    title: 'Prueba de Operador',
+    desc: '60 minutos. Una tarea real. Un entregable concreto. Para detectar si alguien puede operar dentro de este ecosistema.',
+    href: '/prueba-operador',
+    bg: 'bg-rose-50',
+    text: 'text-rose-700',
+    border: 'border-rose-200',
+  },
+];
+
+const servicios = [
+  {
+    num: '01',
+    label: 'Automatización de procesos',
+    desc: 'Identifica tareas repetitivas en tu flujo y construye sistemas que las ejecuten sin supervisión constante.',
+    color: 'text-emerald-600',
+  },
+  {
+    num: '02',
+    label: 'Documentación técnica',
+    desc: 'Convierte procesos implícitos en sistemas documentados que otros pueden seguir sin preguntar.',
+    color: 'text-sky-600',
+  },
+  {
+    num: '03',
+    label: 'Sistemas de trabajo con IA',
+    desc: 'Diseña flujos que integran Claude, APIs y MCPs para operar activos digitales a escala.',
+    color: 'text-violet-600',
+  },
+  {
+    num: '04',
+    label: 'Formación de equipos',
+    desc: 'Onboarding estructurado para que nuevos colaboradores operen con autonomía desde el primer día.',
+    color: 'text-amber-600',
+  },
+  {
+    num: '05',
+    label: 'Auditoría de procesos digitales',
+    desc: 'Detecta dónde pierdes tiempo, qué se puede sistematizar y qué requiere criterio humano irreemplazable.',
+    color: 'text-rose-600',
+  },
+];
+
+const outcomes = [
+  { dot: 'bg-emerald-500', text: 'Automatizar tareas repetitivas que hacías manualmente.' },
+  { dot: 'bg-sky-500',     text: 'Documentar y delegar procesos a colaboradores o agentes IA.' },
+  { dot: 'bg-violet-500',  text: 'Construir y publicar proyectos digitales sin depender de terceros.' },
+  { dot: 'bg-amber-500',   text: 'Usar Claude Code como colaborador técnico real en cualquier proyecto.' },
+  { dot: 'bg-rose-500',    text: 'Operar sistemas digitales con criterio, autonomía y velocidad.' },
+];
 ---
 
 <Layout title="Inicio">
 
   <!-- Hero -->
-  <section class="pt-4 pb-16 border-b border-[#141414]">
-    <span class="label block mb-6">PORTAL DE ENTRENAMIENTO · FASE 1</span>
-    <h1 class="text-3xl sm:text-4xl font-semibold text-[#f5f5f5] leading-tight mb-6">
-      No aprendas IA<br/>como teoría.<br/>Aprende a operar.
+  <section class="pb-20 border-b border-slate-200">
+    <span class="label block mb-6">PORTAL DE FORMACIÓN · MMXXVI</span>
+    <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 leading-tight tracking-tight mb-6">
+      No aprendas IA<br/>como teoría.<br/>
+      <span class="text-emerald-600">Aprende a operar.</span>
     </h1>
-    <p class="text-[#737373] text-sm leading-relaxed max-w-xl mb-4">
-      Este portal es una escuela práctica para personas que quieren usar la inteligencia artificial como herramienta real de trabajo. Sin teoría infinita. Sin cursos interminables. Solo tareas, herramientas, ejercicios y contexto aplicable.
+    <p class="text-slate-600 text-base leading-relaxed max-w-xl mb-10">
+      Escuela práctica para personas que quieren usar la inteligencia artificial como herramienta real de trabajo. Sin teoría infinita. Sin cursos interminables. Tareas, herramientas, ejercicios y contexto aplicable.
     </p>
-    <p class="text-[#525252] text-sm leading-relaxed max-w-xl mb-10">
-      Lo usamos nosotros. Lo pueden usar futuros colaboradores. Está en construcción permanente.
-    </p>
-    <a
-      href="/ruta-7-dias"
-      class="inline-block font-mono text-xs text-[#080808] bg-[#86efac] px-5 py-2.5 rounded hover:bg-[#a7f3d0] transition-colors"
-    >
-      Comenzar Ruta 7 días →
-    </a>
+    <div class="flex flex-wrap gap-3">
+      <a
+        href="/ruta-7-dias"
+        class="inline-block font-mono text-sm font-medium text-white bg-emerald-500 px-6 py-3 rounded-lg hover:bg-emerald-600 transition-colors shadow-sm"
+      >
+        Iniciar módulos →
+      </a>
+      <a
+        href="#servicios"
+        class="inline-block font-mono text-sm text-slate-600 border border-slate-300 px-6 py-3 rounded-lg hover:bg-slate-50 hover:border-slate-400 transition-colors"
+      >
+        Ver servicios
+      </a>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="py-12 border-b border-slate-200">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      {[
+        { value: '8',    label: 'módulos',            cls: 'text-emerald-600' },
+        { value: '~3h',  label: 'duración total',     cls: 'text-sky-600'     },
+        { value: '0',    label: 'requisitos previos', cls: 'text-violet-600'  },
+        { value: '100%', label: 'gratuito',           cls: 'text-amber-600'   },
+      ].map(s => (
+        <div class="bg-white border border-slate-200 rounded-xl p-5 text-center shadow-sm">
+          <div class={`text-3xl font-bold mb-1.5 ${s.cls}`}>{s.value}</div>
+          <div class="text-slate-400 text-xs font-mono tracking-widest uppercase">{s.label}</div>
+        </div>
+      ))}
+    </div>
   </section>
 
   <!-- Módulos -->
-  <section class="py-16 border-b border-[#141414]">
-    <span class="label block mb-8">MÓDULOS DISPONIBLES</span>
+  <section class="py-16 border-b border-slate-200">
+    <span class="label block mb-10">MÓDULOS DISPONIBLES</span>
     <div class="grid sm:grid-cols-2 gap-4">
-      <Card
-        tag="01"
-        title="Ruta 7 días"
-        description="De cero a primer deploy. Un recorrido diario que convierte a cualquier persona en operador IA funcional."
-        href="/ruta-7-dias"
-      />
-      <Card
-        tag="02"
-        title="Prompts"
-        description="Plantillas de trabajo listas para usar. Audita ideas, crea automatizaciones, documenta procesos."
-        href="/prompts"
-      />
-      <Card
-        tag="03"
-        title="Glosario"
-        description="Los 15 términos que necesitas entender antes de empezar. Sin jerga académica."
-        href="/glosario"
-      />
-      <Card
-        tag="04"
-        title="Onboarding"
-        description="Para futuros colaboradores. Qué actitud busco, qué habilidades se entrenan y cómo demostrar progreso."
-        href="/onboarding"
-      />
-      <Card
-        tag="05"
-        title="Prueba de Operador IA"
-        description="60 minutos. Una tarea real. Un entregable concreto. Para detectar si alguien puede operar dentro de este ecosistema."
-        href="/prueba-operador"
-      />
+      {modulos.map(m => (
+        <a
+          href={m.href}
+          class={`group flex flex-col gap-3 bg-white border ${m.border} rounded-xl p-5 shadow-sm hover:shadow-md transition-all`}
+        >
+          <div class="flex items-center justify-between">
+            <span class={`${m.bg} ${m.text} font-mono text-xs font-bold px-2.5 py-1 rounded-lg`}>{m.num}</span>
+            <span class={`${m.text} text-sm opacity-0 group-hover:opacity-100 transition-opacity`}>→</span>
+          </div>
+          <div>
+            <h3 class="text-slate-900 font-semibold text-sm mb-1.5">{m.title}</h3>
+            <p class="text-slate-500 text-xs leading-relaxed">{m.desc}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- Servicios -->
+  <section id="servicios" class="py-16 border-b border-slate-200">
+    <span class="label block mb-2">SERVICIOS</span>
+    <p class="text-slate-500 text-sm mb-10">Lo que puedes construir aplicando este sistema</p>
+    <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm divide-y divide-slate-100">
+      {servicios.map(s => (
+        <div class="flex gap-5 items-start px-6 py-5">
+          <span class={`font-mono text-xs font-bold shrink-0 mt-0.5 tabular-nums ${s.color}`}>{s.num}</span>
+          <div>
+            <p class="text-slate-900 text-sm font-semibold mb-1">{s.label}</p>
+            <p class="text-slate-500 text-xs leading-relaxed">{s.desc}</p>
+          </div>
+        </div>
+      ))}
     </div>
   </section>
 
   <!-- Para quién -->
-  <section class="py-16 border-b border-[#141414]">
-    <span class="label block mb-8">¿PARA QUIÉN ES ESTO?</span>
+  <section class="py-16 border-b border-slate-200">
+    <span class="label block mb-10">¿PARA QUIÉN ES ESTO?</span>
     <ul class="space-y-4">
       {[
-        'Personas sin experiencia técnica que quieren operar sistemas digitales.',
-        'Creativos que quieren automatizar su proceso de producción.',
-        'Futuros colaboradores que quieren entender cómo opera este ecosistema.',
-        'Cualquiera que prefiera construir cosas sobre teorizar sobre ellas.',
-        'Personas que no saben programar pero quieren aprender a delegar trabajo a máquinas.',
+        { color: 'text-emerald-500', text: 'Personas sin experiencia técnica que quieren operar sistemas digitales.' },
+        { color: 'text-sky-500',     text: 'Creativos que quieren automatizar su proceso de producción.' },
+        { color: 'text-violet-500',  text: 'Futuros colaboradores que quieren entender cómo opera este ecosistema.' },
+        { color: 'text-amber-500',   text: 'Cualquiera que prefiera construir cosas sobre teorizar sobre ellas.' },
+        { color: 'text-rose-500',    text: 'Personas que no saben programar pero quieren delegar trabajo a máquinas.' },
       ].map(item => (
-        <li class="flex items-start gap-3 text-sm text-[#737373]">
-          <span class="text-[#86efac] font-mono text-xs mt-0.5 shrink-0">—</span>
-          {item}
+        <li class="flex items-start gap-3">
+          <span class={`${item.color} font-mono text-xs mt-0.5 shrink-0 font-bold`}>—</span>
+          <span class="text-slate-700 text-sm leading-relaxed">{item.text}</span>
         </li>
       ))}
     </ul>
   </section>
 
-  <!-- Frase guía + estado -->
-  <section class="py-16">
-    <blockquote class="border-l-2 border-[#86efac]/30 pl-6 mb-12">
-      <p class="text-[#a3a3a3] text-sm italic leading-relaxed">
-        "No aprendas IA como teoría. Aprende a operar sistemas, construir activos y convertir tareas repetitivas en máquinas de trabajo."
-      </p>
-    </blockquote>
+  <!-- Qué puedes hacer después -->
+  <section class="py-16 border-b border-slate-200">
+    <span class="label block mb-10">QUÉ PUEDES HACER DESPUÉS</span>
+    <div class="space-y-3">
+      {outcomes.map(o => (
+        <div class="flex items-center gap-4 bg-white border border-slate-200 rounded-xl px-5 py-4 shadow-sm">
+          <span class={`w-2 h-2 rounded-full shrink-0 ${o.dot}`}></span>
+          <p class="text-slate-700 text-sm leading-relaxed">{o.text}</p>
+        </div>
+      ))}
+    </div>
+  </section>
 
-    <div class="flex items-center gap-4">
+  <!-- CTA (dark block para contraste) -->
+  <section class="py-16">
+    <div class="bg-slate-900 rounded-2xl px-8 sm:px-10 py-12">
+      <span class="font-mono text-xs tracking-widest uppercase text-emerald-400 block mb-4">EMPIEZA AHORA</span>
+      <h2 class="text-2xl sm:text-3xl font-bold text-white mb-4 leading-snug">
+        La teoría no convierte.<br/>La práctica, sí.
+      </h2>
+      <p class="text-slate-400 text-sm leading-relaxed mb-8 max-w-lg">
+        El primer módulo tarda menos de 15 minutos. Al final de la ruta tienes un proyecto real publicado, un flujo de trabajo con Claude y las bases para operar cualquier sistema digital.
+      </p>
+      <a
+        href="/ruta-7-dias"
+        class="inline-block font-mono text-sm font-medium text-slate-900 bg-emerald-400 px-6 py-3 rounded-lg hover:bg-emerald-300 transition-colors"
+      >
+        Comenzar ruta modular →
+      </a>
+    </div>
+
+    <div class="flex items-center gap-4 mt-10">
       <span class="label">ESTADO</span>
-      <span class="text-[#525252] font-mono text-xs">Fase 1 activa · Junio 2026</span>
-      <span class="w-1.5 h-1.5 rounded-full bg-[#86efac] animate-pulse"></span>
+      <span class="text-slate-500 font-mono text-xs">Activo · Junio 2026</span>
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
     </div>
   </section>
 
