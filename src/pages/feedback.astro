@@ -1,0 +1,195 @@
+---
+import Layout from '../components/Layout.astro';
+
+const configured = !!(
+  import.meta.env.PUBLIC_SUPABASE_URL &&
+  import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+);
+---
+
+<Layout
+  title="Feedback — Nivel 1"
+  description="Comparte tu experiencia completando el Nivel 1 de MOONKEY LAB."
+>
+  <section class="pb-10 border-b border-slate-200">
+    <span class="label block mb-3">FEEDBACK — NIVEL 1</span>
+    <h1 class="text-2xl font-bold text-slate-900 mb-3">Completaste el Nivel 1.</h1>
+    <p class="text-slate-500 text-sm leading-relaxed max-w-md">
+      Tu opinión ayuda a mejorar el sistema para los siguientes Monkeys. Es breve y honesta — no hay respuestas correctas.
+    </p>
+  </section>
+
+  <section class="py-12">
+    <div id="feedback-form-wrapper" class="max-w-lg">
+      {!configured && (
+        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 mb-6">
+          <p class="font-mono text-[10px] tracking-widest text-amber-700 uppercase mb-2">SISTEMA EN NUBE PENDIENTE</p>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            El formulario de feedback aún no está conectado. Por ahora, usa el formulario de soporte para enviar tu opinión.
+          </p>
+          <a href="/soporte" class="inline-block mt-3 font-mono text-xs font-medium text-amber-700 border border-amber-300 px-3 py-1.5 rounded-lg hover:bg-amber-100 transition-colors">
+            Ir a Soporte →
+          </a>
+        </div>
+      )}
+
+      <form id="feedback-form" class={!configured ? 'opacity-50 pointer-events-none' : ''} novalidate>
+        <!-- Email -->
+        <div class="mb-6">
+          <label for="fb-email" class="block text-sm font-medium text-slate-700 mb-2">
+            Email <span class="text-slate-400 font-normal text-xs">(opcional)</span>
+          </label>
+          <input
+            id="fb-email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            placeholder="tu@email.com"
+            class="w-full font-mono text-sm border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent"
+          />
+          <p class="text-[11px] text-slate-400 mt-1.5 font-mono">Solo si quieres que te avisemos del Nivel 2.</p>
+        </div>
+
+        <!-- Most useful -->
+        <div class="mb-6">
+          <label for="fb-useful" class="block text-sm font-medium text-slate-700 mb-2">
+            ¿Qué parte te ayudó más? <span class="text-rose-400">*</span>
+          </label>
+          <textarea
+            id="fb-useful"
+            name="most_useful"
+            required
+            rows="3"
+            placeholder="Ej: el ejercicio de CLAUDE.md, entender los prompts con estructura…"
+            class="w-full font-mono text-sm border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent resize-none"
+          ></textarea>
+        </div>
+
+        <!-- Most confusing -->
+        <div class="mb-6">
+          <label for="fb-confusing" class="block text-sm font-medium text-slate-700 mb-2">
+            ¿Qué parte fue más confusa?
+          </label>
+          <textarea
+            id="fb-confusing"
+            name="most_confusing"
+            rows="3"
+            placeholder="Ej: el módulo de GitHub, los conceptos de MCP..."
+            class="w-full font-mono text-sm border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent resize-none"
+          ></textarea>
+        </div>
+
+        <!-- Checkboxes -->
+        <div class="mb-6 space-y-3">
+          <label class="flex items-start gap-3 cursor-pointer">
+            <input id="fb-advanced" name="wants_advanced" type="checkbox" class="mt-0.5 h-4 w-4 rounded border-slate-300 text-emerald-500 focus:ring-emerald-400" />
+            <div>
+              <span class="text-sm font-medium text-slate-700">Quiero acceso anticipado al Nivel 2</span>
+              <p class="text-xs text-slate-400 mt-0.5">Te avisaremos cuando se abra el acceso piloto.</p>
+            </div>
+          </label>
+          <label class="flex items-start gap-3 cursor-pointer">
+            <input id="fb-collab" name="wants_collaboration" type="checkbox" class="mt-0.5 h-4 w-4 rounded border-slate-300 text-emerald-500 focus:ring-emerald-400" />
+            <div>
+              <span class="text-sm font-medium text-slate-700">Me interesa colaborar con el ecosistema MOONKEY</span>
+              <p class="text-xs text-slate-400 mt-0.5">Proyectos, implementaciones o conectar con el equipo XN.</p>
+            </div>
+          </label>
+        </div>
+
+        <!-- Free message -->
+        <div class="mb-8">
+          <label for="fb-message" class="block text-sm font-medium text-slate-700 mb-2">
+            Mensaje libre <span class="text-slate-400 font-normal text-xs">(opcional)</span>
+          </label>
+          <textarea
+            id="fb-message"
+            name="message"
+            rows="4"
+            placeholder="Cualquier cosa que quieras decir: ideas, errores detectados, lo que sea."
+            class="w-full font-mono text-sm border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent resize-none"
+          ></textarea>
+        </div>
+
+        <p id="fb-error" class="hidden text-xs text-rose-600 font-mono mb-3 border border-rose-200 bg-rose-50 rounded-lg px-3 py-2"></p>
+
+        <button
+          type="submit"
+          id="fb-submit"
+          class="font-mono text-sm font-medium text-white bg-emerald-500 px-6 py-3 rounded-xl hover:bg-emerald-600 transition-colors disabled:opacity-50"
+          disabled={!configured}
+        >
+          Enviar feedback →
+        </button>
+      </form>
+
+      <div id="feedback-success" class="hidden bg-emerald-50 border border-emerald-200 rounded-2xl p-8">
+        <p class="font-mono text-[10px] tracking-widest text-emerald-700 uppercase mb-3">RECIBIDO</p>
+        <h2 class="text-lg font-bold text-slate-900 mb-2">Gracias por el feedback.</h2>
+        <p class="text-slate-600 text-sm leading-relaxed mb-5">
+          Tu opinión es parte del proceso de mejora. Si marcaste interés en el Nivel 2, te avisaremos cuando se abra.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <a href="/advanced" class="font-mono text-sm font-medium text-white bg-violet-500 px-5 py-2.5 rounded-xl hover:bg-violet-600 transition-colors">
+            Ver Nivel 2 →
+          </a>
+          <a href="/" class="font-mono text-sm text-slate-600 border border-slate-200 px-5 py-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+            Volver al inicio
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+{configured && (
+  <script>
+    import { supabase } from '../lib/supabase';
+
+    const form = document.getElementById('feedback-form') as HTMLFormElement | null;
+    const errorEl = document.getElementById('fb-error') as HTMLElement | null;
+    const successEl = document.getElementById('feedback-success') as HTMLElement | null;
+    const wrapperEl = document.getElementById('feedback-form-wrapper') as HTMLElement | null;
+    const submitBtn = document.getElementById('fb-submit') as HTMLButtonElement | null;
+
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!supabase || !form) return;
+
+      const useful = (form.querySelector('[name="most_useful"]') as HTMLTextAreaElement)?.value?.trim();
+      if (!useful) {
+        if (errorEl) {
+          errorEl.textContent = 'Por favor indica qué parte te ayudó más.';
+          errorEl.classList.remove('hidden');
+        }
+        return;
+      }
+
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Enviando…'; }
+      if (errorEl) errorEl.classList.add('hidden');
+
+      const session = (await supabase.auth.getSession()).data.session;
+
+      const payload = {
+        user_id: session?.user?.id ?? null,
+        email: (form.querySelector('[name="email"]') as HTMLInputElement)?.value?.trim() || null,
+        level: '1',
+        most_useful: useful,
+        most_confusing: (form.querySelector('[name="most_confusing"]') as HTMLTextAreaElement)?.value?.trim() || null,
+        wants_advanced_access: (form.querySelector('[name="wants_advanced"]') as HTMLInputElement)?.checked ?? false,
+        wants_collaboration: (form.querySelector('[name="wants_collaboration"]') as HTMLInputElement)?.checked ?? false,
+        message: (form.querySelector('[name="message"]') as HTMLTextAreaElement)?.value?.trim() || null,
+      };
+
+      const { error } = await supabase.from('feedback').insert(payload);
+
+      if (error) {
+        if (errorEl) { errorEl.textContent = `Error: ${error.message}`; errorEl.classList.remove('hidden'); }
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Enviar feedback →'; }
+      } else {
+        form.classList.add('hidden');
+        successEl?.classList.remove('hidden');
+      }
+    });
+  </script>
+)}

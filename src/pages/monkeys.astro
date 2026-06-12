@@ -2,6 +2,11 @@
 import Layout from '../components/Layout.astro';
 import MoonkeyLogo from '../components/MoonkeyLogo.astro';
 
+const supabaseConfigured = !!(
+  import.meta.env.PUBLIC_SUPABASE_URL &&
+  import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+);
+
 const keys = [
   {
     tag: 'Key 1',
@@ -87,6 +92,20 @@ const stats = [
           <p class="text-xs text-slate-500">{s.label}</p>
         </div>
       ))}
+    </div>
+  </section>
+
+  <!-- Monkeys en formación — honest counter -->
+  <section class="py-10 border-b border-slate-200">
+    <span class="label block mb-4">MONKEYS EN FORMACIÓN</span>
+    <div class="bg-slate-50 border border-slate-200 rounded-2xl px-6 py-5 flex items-center gap-5 max-w-md">
+      <div class="shrink-0 w-10 h-10 rounded-full bg-emerald-100 border border-emerald-200 flex items-center justify-center">
+        <span class="font-mono text-xs font-bold text-emerald-700" id="monkey-count">—</span>
+      </div>
+      <div>
+        <p class="text-sm font-semibold text-slate-900 mb-0.5" id="monkey-count-label">Monkeys activos</p>
+        <p class="text-xs text-slate-500 leading-relaxed" id="monkey-count-desc">Contador real pendiente de conexión. El programa piloto se abrirá por invitación.</p>
+      </div>
     </div>
   </section>
 
@@ -273,3 +292,19 @@ const stats = [
   </section>
 
 </Layout>
+
+{supabaseConfigured && (
+  <script>
+    import { supabase } from '../lib/supabase';
+    (async () => {
+      if (!supabase) return;
+      const { count } = await supabase.from('profiles').select('id', { count: 'exact', head: true });
+      const countEl = document.getElementById('monkey-count');
+      const labelEl = document.getElementById('monkey-count-label');
+      const descEl = document.getElementById('monkey-count-desc');
+      if (countEl) countEl.textContent = String(count ?? 0);
+      if (labelEl) labelEl.textContent = `${count ?? 0} Monkey${(count ?? 0) !== 1 ? 's' : ''} registrados`;
+      if (descEl) descEl.textContent = 'Monkeys que han creado cuenta en el programa piloto.';
+    })();
+  </script>
+)}
