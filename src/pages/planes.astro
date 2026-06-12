@@ -7,12 +7,14 @@ const planes = [
     para: 'Para aprender a tu ritmo',
     estado: 'Programa piloto',
     estadoColor: 'text-emerald-700',
-    estadoBg: 'bg-emerald-50',
-    border: 'border-emerald-200',
+    estadoBg: 'bg-emerald-100',
+    border: 'border-emerald-300',
+    accentBar: 'bg-emerald-500',
     dash: 'text-emerald-500',
     cta: 'Empezar gratis →',
     ctaHref: '/modulos',
     ctaStyle: 'bg-emerald-500 text-white hover:bg-emerald-600',
+    nota: 'Sin tarjeta. Sin registro.',
     incluye: [
       'Nivel 1 — Operator Foundations completo',
       'Arsenal de Prompts operativos',
@@ -26,12 +28,14 @@ const planes = [
     para: 'Para completar la escuela',
     estado: 'Próximamente',
     estadoColor: 'text-violet-700',
-    estadoBg: 'bg-violet-50',
-    border: 'border-violet-200',
+    estadoBg: 'bg-violet-100',
+    border: 'border-violet-300',
+    accentBar: 'bg-violet-500',
     dash: 'text-violet-500',
-    cta: 'Solicitar acceso →',
+    cta: 'Solicitar acceso anticipado →',
     ctaHref: '/soporte',
     ctaStyle: 'bg-violet-500 text-white hover:bg-violet-600',
+    nota: 'El acceso avanzado se abrirá primero a Monkeys piloto que completen el Operator Path.',
     incluye: [
       'Niveles 1, 2 y 3 completos',
       'Advanced Operator Playbook',
@@ -45,12 +49,14 @@ const planes = [
     para: 'Para equipos y negocios',
     estado: 'Bajo solicitud',
     estadoColor: 'text-amber-700',
-    estadoBg: 'bg-amber-50',
-    border: 'border-amber-200',
+    estadoBg: 'bg-amber-100',
+    border: 'border-amber-300',
+    accentBar: 'bg-amber-500',
     dash: 'text-amber-500',
-    cta: 'Ver servicios →',
-    ctaHref: '/onboarding',
+    cta: 'Solicitar implementación para equipo →',
+    ctaHref: '/soporte',
     ctaStyle: 'bg-slate-900 text-white hover:bg-slate-800',
+    nota: 'Contacto directo. Propuesta a medida.',
     incluye: [
       'Escuela interna personalizada para el equipo',
       'Sistema de prompts y SOPs a medida',
@@ -60,75 +66,136 @@ const planes = [
     ],
   },
 ];
+
+const diferencias = [
+  { label: 'Metodología propia', desc: 'No es un curso genérico de IA. Es el Operator Path — un sistema de 3 Keys con entregables reales por módulo.' },
+  { label: 'Sin código requerido', desc: 'El nivel de entrada no requiere programación. Solo disposición a construir con herramientas modernas.' },
+  { label: 'Basado en entregables', desc: 'No mides el progreso por videos vistos. Lo mides por archivos creados y sistemas que funcionan.' },
+  { label: 'Orientado a sistemas', desc: 'No enseñamos a usar el chat. Enseñamos a construir workflows, documentarlos y hacerlos autónomos.' },
+];
 ---
 
-<Layout title="Planes de Acceso" description="Planes de MOONKEY XN SCHOOL. Desde acceso gratuito hasta implementación para equipos.">
+<Layout title="Planes de Acceso" description="Planes de MOONKEY LAB. Desde acceso gratuito hasta implementación para equipos.">
 
+  <!-- Hero -->
   <section class="pb-12 border-b border-slate-200">
     <span class="label block mb-2">PLANES DE ACCESO</span>
     <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-4">
       Elige tu camino<br/>como Operator.
     </h1>
     <p class="text-slate-600 text-base leading-relaxed max-w-xl">
-      MOONKEY XN SCHOOL está en fase piloto. El acceso a Nivel 1 es libre. Los niveles avanzados y el acceso privado se activarán progresivamente. Los primeros Monkeys entran por participación directa.
+      MOONKEY LAB está en fase piloto. El acceso a Nivel 1 es libre. Los niveles avanzados y el acceso privado se activan progresivamente. Los primeros Monkeys entran por participación directa.
     </p>
   </section>
 
-  <!-- Cards de planes -->
   <section class="py-12 border-b border-slate-200">
-    <div class="grid sm:grid-cols-3 gap-5">
-      {planes.map(p => (
-        <div class={`bg-white border-2 ${p.border} rounded-2xl p-6 flex flex-col shadow-sm`}>
-          <div class="mb-5">
-            <span class={`inline-block font-mono text-xs font-bold px-2.5 py-1 rounded-lg mb-3 ${p.estadoBg} ${p.estadoColor}`}>
-              {p.estado}
-            </span>
-            <h2 class="text-lg font-bold text-slate-900 mb-1">{p.nombre}</h2>
-            <p class="text-sm text-slate-500">{p.para}</p>
-          </div>
-          <ul class="space-y-2.5 flex-1 mb-6">
-            {p.incluye.map(item => (
-              <li class="flex items-start gap-2.5 text-xs text-slate-600 leading-relaxed">
-                <span class={`${p.dash} font-mono shrink-0 mt-0.5`}>—</span>
-                {item}
-              </li>
-            ))}
-          </ul>
-          <a href={p.ctaHref} class={`block w-full text-center font-mono text-sm font-medium px-5 py-3 rounded-xl transition-colors ${p.ctaStyle}`}>
-            {p.cta}
-          </a>
+    <span class="label block mb-6">POR QUÉ ES DIFERENTE</span>
+    <div class="grid sm:grid-cols-2 gap-4">
+      {diferencias.map(d => (
+        <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+          <p class="font-semibold text-slate-900 text-sm mb-1.5">{d.label}</p>
+          <p class="text-slate-500 text-xs leading-relaxed">{d.desc}</p>
         </div>
       ))}
     </div>
   </section>
 
-  <!-- Aviso acceso de pago -->
+  <!-- Cards de planes -->
   <section class="py-12 border-b border-slate-200">
-    <span class="label block mb-6">ACCESO PRIVADO Y PAGOS</span>
-    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-8">
-      <h2 class="text-xl font-bold text-slate-900 mb-3">Próximamente.</h2>
-      <p class="text-slate-600 text-sm leading-relaxed mb-6 max-w-lg">
-        MOONKEY XN SCHOOL está preparada para evolucionar a acceso privado. Los pagos reales se implementarán en una fase posterior. Los participantes del programa piloto tendrán condiciones especiales.
-      </p>
-      <p class="text-slate-400 text-xs font-mono leading-relaxed max-w-lg">
-        Sistema propio de formación modular. Metodología MOONKEY XN. Todos los contenidos, estructura y materiales son propiedad del ecosistema MOONKEY XN. Una metodología en construcción.
-      </p>
+    <span class="label block mb-8">OPCIONES DE ACCESO</span>
+    <div class="grid sm:grid-cols-3 gap-5">
+      {planes.map(p => (
+        <div class={`bg-white border-2 ${p.border} rounded-2xl overflow-hidden flex flex-col shadow-sm`}>
+          <div class={`${p.accentBar} h-1 w-full`}></div>
+          <div class="p-6 flex flex-col flex-1">
+            <div class="mb-5">
+              <span class={`inline-block font-mono text-xs font-bold px-2.5 py-1 rounded-lg mb-3 ${p.estadoBg} ${p.estadoColor}`}>
+                {p.estado}
+              </span>
+              <h2 class="text-lg font-bold text-slate-900 mb-1">{p.nombre}</h2>
+              <p class="text-sm text-slate-500">{p.para}</p>
+            </div>
+            <ul class="space-y-2.5 flex-1 mb-5">
+              {p.incluye.map(item => (
+                <li class="flex items-start gap-2.5 text-xs text-slate-600 leading-relaxed">
+                  <span class={`${p.dash} font-mono shrink-0 mt-0.5`}>—</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <div class="border-t border-slate-100 pt-4">
+              <a href={p.ctaHref} class={`block w-full text-center font-mono text-sm font-medium px-5 py-3 rounded-xl transition-colors mb-2 ${p.ctaStyle}`}>
+                {p.cta}
+              </a>
+              {p.nota && <p class="text-center text-[11px] text-slate-400 font-mono">{p.nota}</p>}
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   </section>
 
-  <!-- CTA -->
+  <!-- Metodología -->
+  <section class="py-12 border-b border-slate-200">
+    <div class="bg-slate-900 rounded-2xl overflow-hidden">
+      <div class="px-8 py-10">
+        <span class="font-mono text-[10px] tracking-widest uppercase text-emerald-400 block mb-4">METODOLOGÍA MOONKEY XN</span>
+        <h2 class="text-xl font-bold text-white mb-3">Sistema propio de formación modular.</h2>
+        <p class="text-slate-400 text-sm leading-relaxed mb-6 max-w-lg">
+          El Operator Path es un sistema de 3 Keys diseñado para llevar a cualquier profesional desde cero hasta operador IA autónomo. Cada nivel tiene módulos con entregables reales: no hay progreso sin construcción.
+        </p>
+        <div class="grid sm:grid-cols-3 gap-px bg-white/[0.06] rounded-xl overflow-hidden mb-6">
+          {[
+            { key: 'KEY 1', label: '8 módulos', note: 'Foundations', color: 'text-emerald-400' },
+            { key: 'KEY 2', label: '10 módulos', note: 'Advanced', color: 'text-violet-400' },
+            { key: 'KEY 3', label: '8 módulos', note: 'Migration', color: 'text-amber-400' },
+          ].map(k => (
+            <div class="bg-slate-800/60 px-4 py-4 text-center">
+              <p class={`font-mono text-[10px] tracking-widest font-bold mb-1 ${k.color}`}>{k.key}</p>
+              <p class="text-white text-sm font-bold">{k.label}</p>
+              <p class="text-slate-500 text-[11px]">{k.note}</p>
+            </div>
+          ))}
+        </div>
+        <p class="text-slate-500 text-xs font-mono max-w-lg">
+          Todos los contenidos, estructura y materiales son parte de la metodología MOONKEY XN. Un sistema en construcción activa.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Acceso privado próximamente -->
+  <section class="py-12 border-b border-slate-200">
+    <span class="label block mb-6">ACCESO PRIVADO Y PAGOS</span>
+    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-8">
+      <div class="flex items-start justify-between mb-3">
+        <h2 class="text-xl font-bold text-slate-900">Próximamente.</h2>
+        <span class="font-mono text-[10px] bg-slate-200 text-slate-500 px-2.5 py-1 rounded-lg uppercase tracking-widest">Fase 2</span>
+      </div>
+      <p class="text-slate-600 text-sm leading-relaxed mb-4 max-w-lg">
+        MOONKEY LAB está preparada para evolucionar a acceso privado. Los pagos reales se implementarán en una fase posterior. Los participantes del programa piloto tendrán condiciones especiales.
+      </p>
+      <div class="border-l-4 border-slate-300 pl-4">
+        <p class="text-slate-400 text-xs leading-relaxed max-w-lg font-mono">
+          Playbooks avanzados, recursos de implementación y acceso directo al ecosistema estarán disponibles para suscriptores privados en la siguiente fase del programa.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA final -->
   <section class="py-12">
     <div class="grid sm:grid-cols-3 gap-4">
-      <a href="/modulos" class="bg-emerald-50 border border-emerald-200 rounded-xl p-5 hover:bg-emerald-100 transition-colors text-center">
-        <p class="font-semibold text-emerald-700 text-sm mb-1">Empezar gratis</p>
+      <a href="/modulos" class="bg-emerald-50 border border-emerald-200 rounded-xl p-5 hover:bg-emerald-100 transition-colors text-center group">
+        <p class="font-semibold text-emerald-700 text-sm mb-1 group-hover:underline">Empezar gratis</p>
         <p class="text-xs text-slate-500">Nivel 1 siempre disponible</p>
       </a>
-      <a href="/soporte" class="bg-violet-50 border border-violet-200 rounded-xl p-5 hover:bg-violet-100 transition-colors text-center">
-        <p class="font-semibold text-violet-700 text-sm mb-1">Solicitar acceso piloto</p>
+      <a href="/soporte" class="bg-violet-50 border border-violet-200 rounded-xl p-5 hover:bg-violet-100 transition-colors text-center group">
+        <p class="font-semibold text-violet-700 text-sm mb-1 group-hover:underline">Solicitar acceso piloto</p>
         <p class="text-xs text-slate-500">Contacto directo</p>
       </a>
-      <a href="/onboarding" class="bg-amber-50 border border-amber-200 rounded-xl p-5 hover:bg-amber-100 transition-colors text-center">
-        <p class="font-semibold text-amber-700 text-sm mb-1">Ver servicios de equipo</p>
+      <a href="/onboarding" class="bg-amber-50 border border-amber-200 rounded-xl p-5 hover:bg-amber-100 transition-colors text-center group">
+        <p class="font-semibold text-amber-700 text-sm mb-1 group-hover:underline">Ver servicios de equipo</p>
         <p class="text-xs text-slate-500">Implementación a medida</p>
       </a>
     </div>
