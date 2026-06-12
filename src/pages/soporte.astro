@@ -49,14 +49,14 @@ const faqs = [
   <!-- FAQ -->
   <section class="py-12 border-b border-slate-200">
     <span class="label block mb-8">PREGUNTAS FRECUENTES</span>
-    <div class="space-y-4">
+    <dl class="space-y-4">
       {faqs.map(item => (
         <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-          <p class="font-semibold text-slate-900 text-sm mb-2">{item.q}</p>
-          <p class="text-slate-500 text-sm leading-relaxed">{item.a}</p>
+          <dt class="font-semibold text-slate-900 text-sm mb-2">{item.q}</dt>
+          <dd class="text-slate-500 text-sm leading-relaxed">{item.a}</dd>
         </div>
       ))}
-    </div>
+    </dl>
   </section>
 
   <!-- Reiniciar progreso -->

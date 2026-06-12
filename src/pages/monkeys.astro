@@ -83,7 +83,7 @@ const rasgos = [
             <p class={`font-semibold text-sm mb-1 ${k.color}`}>{k.title}</p>
             <p class="text-slate-500 text-xs leading-relaxed">{k.desc}</p>
           </div>
-          <span class={`font-mono text-xs shrink-0 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity ${k.color}`}>→</span>
+          <span aria-hidden="true" class={`font-mono text-xs shrink-0 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity ${k.color}`}>→</span>
         </a>
       ))}
     </div>
