@@ -70,7 +70,6 @@ src/
 ├── components/
 │   ├── Layout.astro      — Wrapper HTML global
 │   ├── Header.astro      — Navegación sticky
-│   ├── Card.astro        — Card reutilizable con/sin enlace
 │   └── PromptBlock.astro — Bloque de prompt con botón copiar
 ├── pages/
 │   ├── index.astro       — Home

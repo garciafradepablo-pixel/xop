@@ -14,7 +14,7 @@ Filosofía: menos teoría, más ejercicios que producen entregables reales.
 ## Estructura
 ```
 src/
-  components/   — Layout, Header, Card, PromptBlock
+  components/   — Layout, Header, PromptBlock
   pages/        — index, ruta-7-dias, prompts, glosario, onboarding
   styles/       — global.css (imports Tailwind + custom base)
 public/         — favicon.svg
@@ -51,8 +51,11 @@ public/         — favicon.svg
 4. Seguir la misma estructura visual: label → h1 → descripción → contenido
 
 ## Cómo añadir términos al glosario
-Editar el array `terminos` en `src/pages/glosario.astro`.
+Editar el array `terminos` en `src/data/glosario.ts` (fuente única).
 Cada término tiene `term` (string) y `def` (string).
+La página `glosario.astro` muestra todos; `MiniGlossary.astro` muestra el
+subconjunto definido por `MINI_GLOSARIO_KEYS`. Para que un término aparezca
+también en el "Glosario rápido" inline, añade su `term` a ese array.
 
 ## Cómo añadir prompts
 Editar el array `prompts` en `src/pages/prompts.astro`.

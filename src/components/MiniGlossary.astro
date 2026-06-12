@@ -1,18 +1,7 @@
 ---
-const terms = [
-  { term: 'CLI', def: 'Command Line Interface. La pantalla de texto donde escribes comandos directamente al sistema, sin botones ni menús.' },
-  { term: 'Terminal', def: 'El programa que da acceso a la CLI. En Mac: Terminal o iTerm2. En Windows: PowerShell o Windows Terminal.' },
-  { term: 'VS Code', def: 'Visual Studio Code. El editor de código más usado. Gratuito. Desde aquí editarás casi todos tus proyectos.' },
-  { term: 'Git', def: 'Sistema de control de versiones. Registra cada cambio en tus archivos con un mensaje. Si algo se rompe, puedes volver atrás.' },
-  { term: 'GitHub', def: 'Plataforma donde subes tus repositorios Git. La nube de tu código. También conecta con Cloudflare Pages para publicar.' },
-  { term: 'Repo', def: 'Repositorio. La carpeta de tu proyecto con todo su historial de cambios. Puede ser local o estar en GitHub.' },
-  { term: 'Commit', def: 'Un punto de guardado con mensaje. "Añadí README." "Arreglé bug." Cada commit es una foto de tu proyecto en ese momento.' },
-  { term: 'API', def: 'Puerta de acceso a una herramienta externa. Le envías una solicitud y recibes una respuesta. Así se comunican los servicios.' },
-  { term: 'MCP', def: 'Model Context Protocol. Extensión que conecta a Claude con sistemas reales: archivos locales, GitHub, bases de datos.' },
-  { term: 'CLAUDE.md', def: 'Archivo de instrucciones persistentes para Claude. Le dice qué es el proyecto, cómo trabajar y qué evitar hacer.' },
-  { term: 'Deploy', def: 'Publicar un proyecto en internet. Convierte código local en una URL accesible desde cualquier navegador.' },
-  { term: 'Cloudflare Pages', def: 'Plataforma de hosting gratuito para proyectos estáticos. Conectas tu repo y el sitio se actualiza en cada push.' },
-];
+// Curated subset of the canonical glossary (single source of truth in
+// src/data/glosario.ts) so the inline list can never drift from the full page.
+import { miniTerminos as terms } from '../data/glosario';
 ---
 
 <section class="my-10">
