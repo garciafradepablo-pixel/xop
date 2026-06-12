@@ -50,11 +50,17 @@ const rasgos = [
   { icon: '⬡', title: 'Ecosistema', desc: 'Los Monkeys que completan la escuela pueden colaborar con el ecosistema MOONKEY XN.' },
 ];
 
-const stats = [
+const moduleStats = [
   { value: '3', label: 'Keys de progreso' },
   { value: '26', label: 'Módulos prácticos' },
   { value: '0', label: 'Código requerido' },
   { value: '100%', label: 'Basado en entregables' },
+];
+
+const rankDefs = [
+  { rank: 'Monkey',  desc: 'en formación',        textCls: 'text-slate-700',  bg: 'bg-white',      border: 'border-slate-200'  },
+  { rank: 'Gorilla', desc: 'ejecuta con fuerza',  textCls: 'text-violet-700', bg: 'bg-violet-50',  border: 'border-violet-200' },
+  { rank: 'Eagle',   desc: 'puede volar solo',    textCls: 'text-emerald-700',bg: 'bg-emerald-50', border: 'border-emerald-200'},
 ];
 ---
 
@@ -67,8 +73,12 @@ const stats = [
       Bienvenido al Lab.<br/>
       <span class="text-emerald-600">Monkeys en formación.</span>
     </h1>
-    <p class="text-slate-600 text-base leading-relaxed max-w-xl mb-6">
+    <p class="text-slate-600 text-base leading-relaxed max-w-xl mb-5">
       MOONKEY LAB forma operadores que aprenden a construir con IA de forma sistemática. Los llamamos Monkeys: aprendices ágiles, curiosos y constructores de sistemas reales.
+    </p>
+    <p class="text-slate-900 text-xl font-bold leading-snug max-w-xl mb-6">
+      No completas módulos.<br/>
+      <span class="text-emerald-600">Evolucionas dentro de la jungla.</span>
     </p>
     <div class="bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 inline-flex items-center gap-3">
       <span class="font-mono text-xs text-slate-400">ETIMOLOGÍA</span>
@@ -83,10 +93,31 @@ const stats = [
     </div>
   </section>
 
-  <!-- Stats -->
+  <!-- La jungla está creciendo -->
+  <section class="py-10 border-b border-slate-200">
+    <div class="border-l-4 border-emerald-400 bg-emerald-50 rounded-r-2xl pl-6 pr-6 py-6 max-w-2xl">
+      <p class="font-mono text-[10px] tracking-widest text-emerald-700 uppercase mb-3">LA JUNGLA ESTÁ CRECIENDO</p>
+      <p class="text-slate-800 text-base leading-relaxed font-medium mb-2">
+        Cada operador que completa el camino deja una señal para el siguiente.
+      </p>
+      <p class="text-slate-500 text-sm leading-relaxed">
+        MOONKEY LAB no es una lista de módulos: es una jungla de agentes aprendiendo a operar sistemas reales.
+      </p>
+      <div class="flex flex-wrap gap-x-2 gap-y-1 mt-4 items-center text-xs font-mono text-slate-400">
+        <span>Aprendes</span><span class="text-emerald-500">→</span>
+        <span>desbloqueas rango</span><span class="text-emerald-500">→</span>
+        <span>recibes badge</span><span class="text-emerald-500">→</span>
+        <span>compartes avance</span><span class="text-emerald-500">→</span>
+        <span>entra otro</span><span class="text-emerald-500">→</span>
+        <span class="text-emerald-700 font-semibold">crece la jungla</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Module stats strip -->
   <section class="py-10 border-b border-slate-200">
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-      {stats.map(s => (
+      {moduleStats.map(s => (
         <div class="stat-pill">
           <p class="text-2xl font-bold text-slate-900 font-mono mb-1">{s.value}</p>
           <p class="text-xs text-slate-500">{s.label}</p>
@@ -95,18 +126,101 @@ const stats = [
     </div>
   </section>
 
-  <!-- Monkeys en formación — honest counter -->
+  <!-- Piloto actual — rank stats + XNLAB copy -->
   <section class="py-10 border-b border-slate-200">
-    <span class="label block mb-4">MONKEYS EN FORMACIÓN</span>
-    <div class="bg-slate-50 border border-slate-200 rounded-2xl px-6 py-5 flex items-center gap-5 max-w-md">
-      <div class="shrink-0 w-10 h-10 rounded-full bg-emerald-100 border border-emerald-200 flex items-center justify-center">
-        <span class="font-mono text-xs font-bold text-emerald-700" id="monkey-count">—</span>
+    <span class="label block mb-2">PILOTO ACTUAL</span>
+    <p class="text-slate-600 text-sm leading-relaxed max-w-xl mb-1">
+      MOONKEY LAB es el laboratorio de operadores IA de XNLAB.
+    </p>
+    <p class="text-slate-400 text-xs font-mono mb-6">Los rangos no se autodeclaran: se validan desde XNLAB.</p>
+
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 max-w-2xl">
+      <div class="bg-white border border-slate-200 rounded-xl p-4 text-center shadow-sm">
+        <p id="stat-total" class="text-2xl font-bold font-mono text-slate-900 mb-1">—</p>
+        <p class="text-[10px] font-mono text-slate-400 uppercase tracking-wide">Operadores</p>
       </div>
-      <div>
-        <p class="text-sm font-semibold text-slate-900 mb-0.5" id="monkey-count-label">Monkeys activos</p>
-        <p class="text-xs text-slate-500 leading-relaxed" id="monkey-count-desc">Contador real pendiente de conexión. El programa piloto se abrirá por invitación.</p>
+      <div class="bg-white border border-slate-200 rounded-xl p-4 text-center shadow-sm">
+        <p id="stat-monkey" class="text-2xl font-bold font-mono text-slate-600 mb-1">—</p>
+        <p class="text-[10px] font-mono text-slate-400 uppercase tracking-wide">Monkey</p>
+      </div>
+      <div class="bg-white border border-violet-200 rounded-xl p-4 text-center shadow-sm">
+        <p id="stat-gorilla" class="text-2xl font-bold font-mono text-violet-600 mb-1">—</p>
+        <p class="text-[10px] font-mono text-slate-400 uppercase tracking-wide">Gorilla</p>
+      </div>
+      <div class="bg-white border border-emerald-200 rounded-xl p-4 text-center shadow-sm">
+        <p id="stat-eagle" class="text-2xl font-bold font-mono text-emerald-600 mb-1">—</p>
+        <p class="text-[10px] font-mono text-slate-400 uppercase tracking-wide">Eagle</p>
+      </div>
+      <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center shadow-sm">
+        <p id="stat-founder" class="text-2xl font-bold font-mono text-amber-700 mb-1">—</p>
+        <p class="text-[10px] font-mono text-amber-600 uppercase tracking-wide">Founder</p>
       </div>
     </div>
+  </section>
+
+  <!-- Rangos oficiales -->
+  <section class="py-10 border-b border-slate-200">
+    <span class="label block mb-2">RANGOS OFICIALES</span>
+    <p class="text-xs text-slate-400 font-mono mb-6">Los rangos son asignados por XNLAB según progreso real en el Operator Path. No se autodeclaran.</p>
+    <div class="grid sm:grid-cols-3 gap-4 max-w-2xl">
+      <div class="bg-white border-2 border-slate-200 rounded-xl p-5 shadow-sm">
+        <p class="font-mono text-xs font-bold text-slate-700 mb-1">Monkey</p>
+        <p class="text-sm font-semibold text-slate-900 mb-2">En formación</p>
+        <p class="text-xs text-slate-500 leading-relaxed">Construye los cimientos. Cada módulo completado deja rastro en la jungla.</p>
+      </div>
+      <div class="bg-violet-50 border-2 border-violet-200 rounded-xl p-5 shadow-sm">
+        <p class="font-mono text-xs font-bold text-violet-700 mb-1">Gorilla</p>
+        <p class="text-sm font-semibold text-slate-900 mb-2">Ejecuta con fuerza</p>
+        <p class="text-xs text-slate-500 leading-relaxed">Opera sistemas complejos. Arquitectura, debugging, deploy sin supervisión.</p>
+      </div>
+      <div class="bg-emerald-50 border-2 border-emerald-200 rounded-xl p-5 shadow-sm">
+        <p class="font-mono text-xs font-bold text-emerald-700 mb-1">Eagle</p>
+        <p class="text-sm font-semibold text-slate-900 mb-2">Puede volar solo</p>
+        <p class="text-xs text-slate-500 leading-relaxed">Autonomía total. Sistema de prompts propio, workflows delegables.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Badges de jungla -->
+  <section class="py-10 border-b border-slate-200">
+    <span class="label block mb-2">BADGES DE JUNGLA</span>
+    <p class="text-xs text-slate-400 font-mono mb-6">Sistema de reconocimiento visual — próxima fase de gamificación.</p>
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-w-2xl">
+      {[
+        { symbol: '🦉', name: 'Owl',    trait: 'Estrategia',      desc: 'Pensamiento sistémico. Ve el bosque, no solo el árbol.' },
+        { symbol: '🦊', name: 'Fox',    trait: 'Caminos ocultos', desc: 'Encuentra rutas que otros no ven.' },
+        { symbol: '🐆', name: 'Jaguar', trait: 'Velocidad',       desc: 'Ejecución rápida. De prompt a sistema en tiempo récord.' },
+        { symbol: '🐝', name: 'Bee',    trait: 'Colaboración',    desc: 'Poliniza ideas. Comparte lo que funciona.' },
+        { symbol: '🌱', name: 'Spore',  trait: 'Expansión',       desc: 'Propaga el conocimiento. Cada salida es semilla.' },
+        { symbol: '🔑', name: 'Key',    trait: 'Desbloqueo',      desc: 'Abre nuevos caminos al completar un nivel.' },
+      ].map(b => (
+        <div class="bg-white border border-slate-200 rounded-xl px-4 py-3.5 shadow-sm flex items-start gap-3">
+          <span class="text-xl shrink-0 mt-0.5">{b.symbol}</span>
+          <div>
+            <p class="font-mono text-xs font-bold text-slate-700 mb-0.5">{b.name} <span class="text-slate-400 font-normal">— {b.trait}</span></p>
+            <p class="text-[11px] text-slate-400 leading-relaxed">{b.desc}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Efecto espora -->
+  <section class="py-10 border-b border-slate-200">
+    <div class="bg-slate-900 rounded-2xl px-7 py-6 max-w-2xl">
+      <p class="font-mono text-[10px] tracking-widest text-emerald-400 uppercase mb-3">EFECTO ESPORA</p>
+      <p class="text-white text-sm leading-relaxed max-w-lg">
+        Cuando un operador avanza, no solo desbloquea contenido: deja una ruta más clara para que otro entre, aprenda y suba de rango.
+      </p>
+    </div>
+  </section>
+
+  <!-- Operadores registrados — filled by script -->
+  <section id="operators-section" class="py-10 border-b border-slate-200 hidden">
+    <span class="label block mb-2">OPERADORES</span>
+    <p class="text-xs text-slate-400 font-mono mb-5">Registrados en el programa piloto.</p>
+    <div id="operators-list" class="space-y-2 max-w-2xl"></div>
+    <p id="operators-error" class="hidden text-sm text-slate-400 font-mono mt-4">No se pudieron cargar los operadores todavía.</p>
   </section>
 
   <!-- Qué es un Monkey -->
@@ -296,14 +410,115 @@ const stats = [
 <!-- Script unconditional — Astro/Vite bundles it. Runtime guard handles unconfigured case. -->
 <script>
   import { supabase } from '../lib/supabase';
+
+  const RANK: Record<string, { label: string; textCls: string; borderCls: string }> = {
+    monkey:  { label: 'Monkey · en formación',        textCls: 'text-slate-600',   borderCls: 'border-slate-200'  },
+    gorilla: { label: 'Gorilla · ejecuta con fuerza', textCls: 'text-violet-600',  borderCls: 'border-violet-200' },
+    eagle:   { label: 'Eagle · puede volar solo',     textCls: 'text-emerald-600', borderCls: 'border-emerald-300' },
+  };
+
+  function esc(s: string | null | undefined): string {
+    if (s == null) return '';
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function maskedEmail(email: string): string {
+    const at = email.indexOf('@');
+    if (at < 1) return '***';
+    return email[0] + '***' + email.slice(at);
+  }
+
   (async () => {
     if (!supabase) return;
-    const { count } = await supabase.from('profiles').select('id', { count: 'exact', head: true });
-    const countEl = document.getElementById('monkey-count');
-    const labelEl = document.getElementById('monkey-count-label');
-    const descEl = document.getElementById('monkey-count-desc');
-    if (countEl) countEl.textContent = String(count ?? 0);
-    if (labelEl) labelEl.textContent = `${count ?? 0} Monkey${(count ?? 0) !== 1 ? 's' : ''} registrados`;
-    if (descEl) descEl.textContent = 'Monkeys que han creado cuenta en el programa piloto.';
+
+    type Profile = {
+      id: string;
+      email: string | null;
+      nickname: string | null;
+      operator_goal: string | null;
+      operator_rank: string | null;
+      founder_badge: boolean | null;
+    };
+
+    const setEl = (id: string, val: string | number) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = String(val);
+    };
+
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, email, nickname, operator_goal, operator_rank, founder_badge')
+        .order('created_at', { ascending: true });
+
+      if (error) throw error;
+
+      const profiles = (data ?? []) as Profile[];
+      const total    = profiles.length;
+      const nMonkey  = profiles.filter(p => !p.operator_rank || p.operator_rank === 'monkey').length;
+      const nGorilla = profiles.filter(p => p.operator_rank === 'gorilla').length;
+      const nEagle   = profiles.filter(p => p.operator_rank === 'eagle').length;
+      const nFounder = profiles.filter(p => p.founder_badge === true).length;
+
+      setEl('stat-total',   total);
+      setEl('stat-monkey',  nMonkey);
+      setEl('stat-gorilla', nGorilla);
+      setEl('stat-eagle',   nEagle);
+      setEl('stat-founder', nFounder);
+
+      // Show operator roster
+      const section = document.getElementById('operators-section');
+      const listEl  = document.getElementById('operators-list');
+      if (section) section.classList.remove('hidden');
+
+      if (!listEl) return;
+
+      if (total === 0) {
+        listEl.innerHTML = '<p class="text-sm text-slate-400 font-mono">Sin operadores registrados aún.</p>';
+        return;
+      }
+
+      // Sort: founders first, then eagle → gorilla → monkey
+      const ORDER: Record<string, number> = { eagle: 0, gorilla: 1, monkey: 2 };
+      const sorted = [...profiles].sort((a, b) => {
+        if (a.founder_badge && !b.founder_badge) return -1;
+        if (!a.founder_badge && b.founder_badge) return  1;
+        const ra = ORDER[a.operator_rank ?? 'monkey'] ?? 2;
+        const rb = ORDER[b.operator_rank ?? 'monkey'] ?? 2;
+        return ra - rb;
+      });
+
+      listEl.innerHTML = sorted.map(p => {
+        const rank    = RANK[p.operator_rank ?? 'monkey'] ?? RANK['monkey'];
+        const display = p.nickname
+          ? esc(p.nickname)
+          : p.email ? esc(maskedEmail(p.email)) : 'Operador';
+
+        const goalHtml = p.operator_goal
+          ? `<p class="text-xs text-slate-400 leading-relaxed mt-1">${esc(p.operator_goal)}</p>`
+          : '';
+
+        const founderBadge = p.founder_badge
+          ? '<span class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700">Founder · XNLAB Studio</span>'
+          : '';
+
+        return `<div class="bg-white border border-slate-200 rounded-xl px-5 py-3.5">
+          <div class="flex flex-wrap items-center gap-2 mb-0.5">
+            <span class="text-sm font-medium text-slate-900">${display}</span>
+            <span class="font-mono text-[10px] px-2 py-0.5 rounded-full border ${rank.borderCls} ${rank.textCls}">${esc(rank.label)}</span>
+            ${founderBadge}
+          </div>
+          ${goalHtml}
+        </div>`;
+      }).join('');
+
+    } catch {
+      const errEl = document.getElementById('operators-error');
+      if (errEl) errEl.classList.remove('hidden');
+    }
   })();
 </script>

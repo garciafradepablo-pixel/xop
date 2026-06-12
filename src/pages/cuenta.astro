@@ -73,6 +73,17 @@ const configured = !!(
         <p id="pf-card-founder" class="font-mono text-[10px] tracking-widest uppercase text-amber-600 hidden mt-1">Founder · XNLAB Studio</p>
       </div>
 
+      <!-- Posición en la jungla — filled by script -->
+      <div id="pf-jungle-card" class="hidden bg-slate-50 border border-slate-200 rounded-xl px-5 py-4 max-w-sm mb-6">
+        <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-3">TU POSICIÓN EN LA JUNGLA</p>
+        <div class="flex flex-wrap items-center gap-2 mb-2">
+          <span id="pf-jungle-rank" class="font-mono text-xs font-bold px-2.5 py-0.5 rounded-full border"></span>
+          <span class="text-slate-300 text-xs">→</span>
+          <span id="pf-jungle-next" class="font-mono text-xs text-slate-400"></span>
+        </div>
+        <p id="pf-jungle-desc" class="text-xs text-slate-500 leading-relaxed"></p>
+      </div>
+
       <form id="profile-form" class="max-w-sm space-y-4" novalidate>
         <div>
           <label for="pf-nickname" class="block text-sm font-medium text-slate-700 mb-1.5">Nickname</label>
@@ -293,6 +304,39 @@ const configured = !!(
         if (nickInput   && prof.nickname)          nickInput.value   = prof.nickname;
         if (goalInput   && prof.operator_goal)     goalInput.value   = prof.operator_goal;
         if (levelSelect && prof.experience_level)  levelSelect.value = prof.experience_level;
+      }
+
+      // Jungle position card
+      {
+        const rank = prof?.operator_rank ?? 'monkey';
+        const JUNGLE_NEXT: Record<string, string> = {
+          monkey:  'próximo: Gorilla',
+          gorilla: 'próximo: Eagle',
+          eagle:   'próximo: Mentor / Network',
+        };
+        const JUNGLE_DESC: Record<string, string> = {
+          monkey:  'Estás en formación. Cada módulo que completas es una señal para el siguiente operador.',
+          gorilla: 'Ejecutas con fuerza. Ya tienes sistemas reales funcionando.',
+          eagle:   'Puedes volar solo. El siguiente paso es transmitir lo aprendido.',
+        };
+        const JUNGLE_CLS: Record<string, string> = {
+          monkey:  'text-slate-700 border-slate-300',
+          gorilla: 'text-violet-700 border-violet-300',
+          eagle:   'text-emerald-700 border-emerald-300',
+        };
+        const jungleCard = document.getElementById('pf-jungle-card');
+        const jungleRank = document.getElementById('pf-jungle-rank');
+        const jungleNext = document.getElementById('pf-jungle-next');
+        const jungleDesc = document.getElementById('pf-jungle-desc');
+        if (jungleCard) {
+          jungleCard.classList.remove('hidden');
+          if (jungleRank) {
+            jungleRank.textContent = RANK_DESC[rank] ?? rank;
+            jungleRank.className = `font-mono text-xs font-bold px-2.5 py-0.5 rounded-full border ${JUNGLE_CLS[rank] ?? ''}`;
+          }
+          if (jungleNext) jungleNext.textContent = JUNGLE_NEXT[rank] ?? '';
+          if (jungleDesc) jungleDesc.textContent = JUNGLE_DESC[rank] ?? '';
+        }
       }
 
       // Sync result
