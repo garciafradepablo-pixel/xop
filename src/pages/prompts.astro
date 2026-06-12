@@ -2,9 +2,38 @@
 import Layout from '../components/Layout.astro';
 import PromptBlock from '../components/PromptBlock.astro';
 
+const categorias = [
+  {
+    id: 'sistema',
+    label: 'SISTEMA',
+    desc: 'Para configurar Claude y estructurar proyectos.',
+    prompts: ['PROMPT 01'],
+  },
+  {
+    id: 'estrategia',
+    label: 'ESTRATEGIA',
+    desc: 'Para tomar decisiones y auditar ideas.',
+    prompts: ['PROMPT 02'],
+  },
+  {
+    id: 'tecnico',
+    label: 'TÉCNICO',
+    desc: 'Para diseñar y construir automatizaciones.',
+    prompts: ['PROMPT 03'],
+  },
+  {
+    id: 'operativo',
+    label: 'OPERATIVO',
+    desc: 'Para documentar y sistematizar procesos.',
+    prompts: ['PROMPT 04', 'PROMPT 05'],
+  },
+];
+
 const prompts = [
   {
     tag: 'PROMPT 01',
+    cat: 'sistema',
+    when: 'Al iniciar un proyecto nuevo o cuando Claude no sabe cómo comportarse en tu repositorio.',
     title: 'Crear un CLAUDE.md',
     prompt: `Actúa como arquitecto de proyectos digitales.
 
@@ -20,6 +49,8 @@ Sé conciso. No más de 40 líneas. Sin decoración innecesaria.`,
   },
   {
     tag: 'PROMPT 02',
+    cat: 'estrategia',
+    when: 'Cuando tienes una idea que quieres ejecutar pero no estás seguro de si merece la pena o cómo estructurarla.',
     title: 'Auditar una idea de negocio',
     prompt: `Actúa como un analista de negocio directo y sin complacencia.
 
@@ -36,6 +67,8 @@ No me digas lo que quiero oír. Dime lo que necesito saber.`,
   },
   {
     tag: 'PROMPT 03',
+    cat: 'tecnico',
+    when: 'Cuando identificas un proceso manual repetitivo y quieres que Claude diseñe la arquitectura de automatización antes de escribir código.',
     title: 'Diseñar una automatización',
     prompt: `Actúa como un ingeniero de automatización.
 
@@ -53,6 +86,8 @@ Diseña:
   },
   {
     tag: 'PROMPT 04',
+    cat: 'operativo',
+    when: 'Cuando terminas un proceso o flujo de trabajo y necesitas dejarlo documentado para que otro —o tú mismo en tres meses— pueda ejecutarlo sin preguntar.',
     title: 'Documentar un proceso',
     prompt: `Actúa como redactor técnico especializado en documentación operativa.
 
@@ -69,6 +104,8 @@ Formato: Markdown claro. Sin jerga innecesaria. Que lo pueda seguir alguien que 
   },
   {
     tag: 'PROMPT 05',
+    cat: 'operativo',
+    when: 'Cuando llevas tiempo repitiendo una tarea y quieres convertirla en un sistema delegable, automatizable o documentado antes de que crezca más.',
     title: 'Convertir tarea repetitiva en sistema',
     prompt: `Actúa como diseñador de sistemas de trabajo.
 
@@ -87,7 +124,7 @@ Ayúdame a convertirla en un sistema replicable:
 ];
 ---
 
-<Layout title="Arsenal de Prompts" description="Plantillas de trabajo listas para usar con Claude. Prompts operativos para MOONKEY XN SCHOOL.">
+<Layout title="Arsenal de Prompts" description="Plantillas de trabajo listas para usar con Claude. Prompts operativos para MOONKEY LAB.">
 
   <div class="pb-12 border-b border-slate-200">
     <span class="label block mb-6">ARSENAL DE PROMPTS</span>
@@ -97,10 +134,31 @@ Ayúdame a convertirla en un sistema replicable:
     </p>
   </div>
 
-  <div class="py-12">
-    {prompts.map(p => (
-      <PromptBlock tag={p.tag} title={p.title} prompt={p.prompt} />
-    ))}
+  <div class="py-12 space-y-14">
+    {categorias.map(cat => {
+      const catPrompts = prompts.filter(p => p.cat === cat.id);
+      return (
+        <div>
+          <div class="flex items-baseline gap-3 mb-2 border-b border-slate-200 pb-3">
+            <span class="font-mono text-[10px] tracking-widest uppercase font-bold text-emerald-600">{cat.label}</span>
+            <span class="text-slate-400 text-xs">{cat.desc}</span>
+          </div>
+          <div class="mt-6 space-y-6">
+            {catPrompts.map(p => (
+              <div>
+                {p.when && (
+                  <div class="flex items-start gap-2 mb-3 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5">
+                    <span class="font-mono text-[10px] tracking-widest uppercase text-slate-400 shrink-0 mt-0.5">CUÁNDO</span>
+                    <p class="text-xs text-slate-500 leading-relaxed">{p.when}</p>
+                  </div>
+                )}
+                <PromptBlock tag={p.tag} title={p.title} prompt={p.prompt} />
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    })}
   </div>
 
   <div class="pb-16 border-t border-slate-200 pt-8">

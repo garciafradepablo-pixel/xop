@@ -4,6 +4,7 @@ import ExerciseAccordion from '../components/ExerciseAccordion.astro';
 import MiniGlossary from '../components/MiniGlossary.astro';
 import PromptBlock from '../components/PromptBlock.astro';
 import FlowDiagram from '../components/FlowDiagram.astro';
+import InsightBox from '../components/InsightBox.astro';
 
 const toc = [
   { id: 'modulo-0', label: 'Preparar contexto',    time: '15 min' },
@@ -142,7 +143,7 @@ Sé específico. No generalices.`;
 
   <!-- HERO -->
   <section class="pb-12 border-b border-slate-200">
-    <span class="text-xs font-mono text-emerald-600 tracking-widest uppercase block mb-2">NIVEL 1 · MOONKEY XN SCHOOL</span>
+    <span class="text-xs font-mono text-emerald-600 tracking-widest uppercase block mb-2">NIVEL 1 · MOONKEY LAB</span>
     <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-4">
       Operator<br/>Foundations
     </h1>
@@ -210,6 +211,7 @@ Sé específico. No generalices.`;
       <p class={`text-xs font-mono ${mc[0].label} uppercase tracking-widest mb-1`}>Por qué importa</p>
       <p class="text-sm text-slate-500 italic leading-relaxed">La mayoría de outputs mediocres de IA no vienen de la herramienta, vienen de la falta de contexto. Un documento bien escrito te ahorra media hora de correcciones en cada sesión.</p>
     </div>
+    <InsightBox type="protip">Escribe el contexto como si le explicaras tu trabajo a un contratista experto pero recién llegado. Denso, preciso, sin tutoriales. Una línea por punto. Si supera 30 líneas, recorta.</InsightBox>
     <PromptBlock tag="PROMPT M0" title="Extraer contexto operativo de conversaciones previas" prompt={promptContexto} />
     <ExerciseAccordion
       objetivo="Crear un documento personal de contexto operativo que puedas darle a Claude al inicio de cualquier proyecto."
@@ -304,6 +306,7 @@ Sé específico. No generalices.`;
       <p class={`text-xs font-mono ${mc[2].label} uppercase tracking-widest mb-1`}>Por qué importa</p>
       <p class="text-sm text-slate-500 italic leading-relaxed">Usar Claude desde un chat web y usarlo desde Claude Code son dos experiencias completamente distintas. Uno responde preguntas. El otro ejecuta trabajo dentro de tu proyecto.</p>
     </div>
+    <InsightBox type="protip">Claude Code lee tu carpeta real. Cuando le pides algo, sabe qué archivos existen, qué hay dentro y qué ha cambiado. Eso cambia completamente lo que puedes pedirle y cómo responde.</InsightBox>
     <PromptBlock tag="PROMPT M2" title="Pedir a Claude que documente tu proyecto" prompt={promptDocumentar} />
     <ExerciseAccordion
       objetivo="Instalar Claude Code y completar tu primera tarea real: generar documentación para tu proyecto."
@@ -352,6 +355,7 @@ Sé específico. No generalices.`;
       <p class={`text-xs font-mono ${mc[3].label} uppercase tracking-widest mb-1`}>Por qué importa</p>
       <p class="text-sm text-slate-500 italic leading-relaxed">Git no es solo para programadores. Es para cualquiera que quiera no perder trabajo, colaborar con otros o publicar proyectos en internet. La seguridad del .gitignore no es opcional: una clave API filtrada en GitHub puede generar facturas de cientos de euros en horas.</p>
     </div>
+    <InsightBox type="error">Revisa siempre <code class="font-mono text-xs bg-rose-100 px-1 rounded">git status</code> antes de hacer <code class="font-mono text-xs bg-rose-100 px-1 rounded">git add .</code> Si aparece un archivo <code class="font-mono text-xs bg-rose-100 px-1 rounded">.env</code> o con credenciales, crea el .gitignore primero. Una clave API en un repo público puede generar deuda en minutos.</InsightBox>
     <ExerciseAccordion
       objetivo="Inicializar Git en tu proyecto, hacer un primer commit seguro y subir el repo a GitHub."
       antesDeEmpezar="Crea una cuenta gratuita en github.com si todavía no tienes una."
@@ -399,6 +403,7 @@ Sé específico. No generalices.`;
       <p class={`text-xs font-mono ${mc[4].label} uppercase tracking-widest mb-1`}>Por qué importa</p>
       <p class="text-sm text-slate-500 italic leading-relaxed">Sin CLAUDE.md, cada sesión empieza de cero. Con CLAUDE.md, cada sesión empieza alineada con tus objetivos, tu estilo y tus reglas. La diferencia se acumula en horas ahorradas.</p>
     </div>
+    <InsightBox type="remember">El primer CLAUDE.md no tiene que ser perfecto. Escríbelo y empieza a usarlo. Claude te dirá (implícitamente, en sus respuestas) qué falta. Se mejora sesión a sesión, no en una tarde.</InsightBox>
     <PromptBlock tag="PROMPT M4" title="Generar un CLAUDE.md para tu proyecto" prompt={promptClaudeMd} />
     <ExerciseAccordion
       objetivo="Crear un CLAUDE.md para operador-practica con objetivo, stack, estilo y restricciones."
@@ -447,6 +452,7 @@ Sé específico. No generalices.`;
       <p class={`text-xs font-mono ${mc[5].label} uppercase tracking-widest mb-1`}>Por qué importa</p>
       <p class="text-sm text-slate-500 italic leading-relaxed">La mayoría de la gente usa la IA como si fuera un buscador. La IA no es un buscador. Es un colaborador que necesita briefing. Sin briefing, produce trabajo genérico. Con briefing, produce trabajo específico.</p>
     </div>
+    <InsightBox type="protip">Estructura mínima de un prompt operativo: <strong>ROL</strong> (quién es Claude para esta tarea) + <strong>TAREA</strong> (qué exactamente) + <strong>FORMATO</strong> (cómo quieres el output) + <strong>LÍMITE</strong> (máximo X líneas, sin Y, etc.). Cuatro elementos. Todo lo demás es optativo.</InsightBox>
     <PromptBlock tag="PROMPT M5" title="Auditar una tarea repetitiva y mapear su automatización" prompt={promptAuditoria} />
     <ExerciseAccordion
       objetivo="Transformar una petición vaga en un prompt operativo y comparar los resultados lado a lado."
@@ -494,6 +500,7 @@ Sé específico. No generalices.`;
       <p class={`text-xs font-mono ${mc[6].label} uppercase tracking-widest mb-1`}>Por qué importa</p>
       <p class="text-sm text-slate-500 italic leading-relaxed">La mayoría de la gente automatiza antes de entender qué está automatizando. El resultado son sistemas frágiles que se rompen cuando algo cambia. Mapear primero ahorra horas después.</p>
     </div>
+    <InsightBox type="insight">Automatizar no elimina trabajo: lo redistribuye. Menos ejecución repetitiva, más diseño y supervisión. El operador que no entiende qué hay detrás no puede supervisarlo ni mejorarlo cuando falla.</InsightBox>
     <ExerciseAccordion
       objetivo="Mapear una tarea repetitiva propia y detectar qué partes son automatizables, cuáles necesitan supervisión y cuáles requieren criterio humano."
       resultado="Un documento con el mapa de la tarea, etiquetado por tipo (automatizable / supervisado / humano) y una propuesta de flujo mejorado."
@@ -540,6 +547,7 @@ Sé específico. No generalices.`;
       <p class={`text-xs font-mono ${mc[7].label} uppercase tracking-widest mb-1`}>Por qué importa</p>
       <p class="text-sm text-slate-500 italic leading-relaxed">Los proyectos que no se publican no reciben feedback, no mejoran y eventualmente se abandonan. Lo imperfecto que funciona y existe siempre vale más que lo perfecto que no llega a salir.</p>
     </div>
+    <InsightBox type="remember">Publica en versión 0.1, no en versión 1.0. La primera URL existe para que exista. El feedback real empieza cuando algo está publicado. La iteración, también.</InsightBox>
     <ExerciseAccordion
       objetivo="Desplegar operador-practica en Cloudflare Pages y documentar mejoras para v2."
       antesDeEmpezar="Asegúrate de que el proyecto tiene al menos un archivo de contenido y está subido a GitHub."

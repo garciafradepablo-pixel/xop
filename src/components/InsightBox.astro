@@ -1,0 +1,27 @@
+---
+interface Props {
+  type?: 'protip' | 'error' | 'remember' | 'insight' | 'warning';
+  title?: string;
+  class?: string;
+}
+
+const { type = 'insight', title, class: cls = '' } = Astro.props;
+
+const configs = {
+  protip:   { label: 'PRO TIP',     bg: 'bg-emerald-50', border: 'border-emerald-400', text: 'text-emerald-700', body: 'text-slate-700' },
+  error:    { label: 'ERROR COMÚN', bg: 'bg-rose-50',    border: 'border-rose-400',    text: 'text-rose-700',    body: 'text-slate-700' },
+  remember: { label: 'RECUERDA',    bg: 'bg-amber-50',   border: 'border-amber-400',   text: 'text-amber-700',   body: 'text-slate-700' },
+  insight:  { label: 'INSIGHT',     bg: 'bg-violet-50',  border: 'border-violet-400',  text: 'text-violet-700',  body: 'text-slate-700' },
+  warning:  { label: 'ATENCIÓN',    bg: 'bg-orange-50',  border: 'border-orange-400',  text: 'text-orange-700',  body: 'text-slate-700' },
+};
+
+const c = configs[type];
+const label = title ?? c.label;
+---
+
+<div class={`border-l-4 ${c.border} ${c.bg} rounded-r-xl pl-4 pr-4 py-3.5 mb-5 ${cls}`}>
+  <p class={`font-mono text-[10px] uppercase tracking-widest font-bold mb-1.5 ${c.text}`}>{label}</p>
+  <div class={`text-sm leading-relaxed ${c.body}`}>
+    <slot />
+  </div>
+</div>

@@ -2,6 +2,7 @@
 import LayoutLevel from '../components/LayoutLevel.astro';
 import PromptBlock from '../components/PromptBlock.astro';
 import FlowDiagram from '../components/FlowDiagram.astro';
+import InsightBox from '../components/InsightBox.astro';
 
 const promptExtraerChatGPT = `Actúa como archivista de conocimiento operativo.
 
@@ -205,7 +206,7 @@ const serviciosComerciales = [
 
   <!-- PREVIEW (always visible) -->
   <section class="pb-12 border-b border-slate-200">
-    <span class="font-mono text-xs text-amber-600 tracking-widest uppercase block mb-2">NIVEL 3 · MOONKEY XN SCHOOL</span>
+    <span class="font-mono text-xs text-amber-600 tracking-widest uppercase block mb-2">NIVEL 3 · MOONKEY LAB</span>
     <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-4">
       ChatGPT → Claude<br/>Migration System
     </h1>
@@ -283,6 +284,8 @@ const serviciosComerciales = [
       </div>
     </section>
 
+    <InsightBox type="error">El error más común: intentar migrar todo. El valor está en migrar lo que vale — los prompts que ya funcionan, los workflows que se repiten, las decisiones que costaron tiempo entender. El ruido acumulado en chats no merece estructura.</InsightBox>
+
     <!-- Inventario -->
     <section id="inventario" class="py-12 border-b border-slate-200 scroll-mt-28">
       <span class="label block mb-2">INVENTARIO DE CONOCIMIENTO</span>
@@ -317,6 +320,8 @@ const serviciosComerciales = [
         ))}
       </div>
     </section>
+
+    <InsightBox type="remember">Cuando clasificas un proyecto como "Descartado", ciérralo con una nota. No basta con moverlo a una carpeta. Una línea con el motivo evita que vuelvas a él en 3 meses preguntándote por qué no siguió adelante.</InsightBox>
 
     <!-- Calculadora manual -->
     <section id="calculadora" class="py-12 border-b border-slate-200 scroll-mt-28">
@@ -452,7 +457,7 @@ const serviciosComerciales = [
       <div id="msg-complete-l3" class="hidden">
         <div class="bg-amber-500 text-white rounded-xl px-6 py-5 text-center mb-4">
           <p class="font-mono text-xs tracking-widest uppercase mb-1.5 opacity-80">NIVEL 3 COMPLETADO</p>
-          <p class="font-semibold text-base">MOONKEY XN SCHOOL completada</p>
+          <p class="font-semibold text-base">MOONKEY LAB completado</p>
         </div>
         <a
           href="/"

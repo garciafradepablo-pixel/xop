@@ -52,6 +52,7 @@ const modulos = [
     resultado: 'Repo limpio, README claro, carpetas coherentes y reglas iniciales documentadas.',
     ejercicio: 'Auditar estructura de un proyecto y proponer mejoras en un documento',
     entregable: 'mapa-arquitectura.md',
+    tip: 'Organiza la estructura como si Claude fuera a leer el repo en frío. Si la carpeta es confusa para ti, producirá código desalineado desde el primer mensaje.',
   },
   {
     num: 'M02', title: 'CLAUDE.md avanzado',
@@ -59,6 +60,7 @@ const modulos = [
     resultado: 'Claude entiende estilo, límites, stack, comandos, seguridad y forma de trabajar.',
     ejercicio: 'Escribir un CLAUDE.md v2 con las 8 secciones del prompt de arriba',
     entregable: 'CLAUDE.md v2',
+    tip: 'Un CLAUDE.md v2 no es más largo que v1 — es más denso. Una regla específica ("no añadas dependencias sin justificación") vale más que tres genéricas ("sé cuidadoso").',
   },
   {
     num: 'M03', title: 'Control de contexto',
@@ -66,6 +68,7 @@ const modulos = [
     resultado: 'Menos tokens desperdiciados, respuestas más precisas, sesiones más eficientes.',
     ejercicio: 'Resumir contexto largo en un brief de proyecto de máximo 20 líneas',
     entregable: 'brief-proyecto.md',
+    tip: 'Cuando el contexto crece demasiado, no lo borres: resúmelo. Un brief-sesión.md de 20 líneas es más útil que 5000 tokens de historial sin orden.',
   },
   {
     num: 'M04', title: 'Git workflow profesional',
@@ -73,6 +76,7 @@ const modulos = [
     resultado: 'Cambios pequeños, reversibles y revisables. Historial que cuenta una historia.',
     ejercicio: 'Crear rama feature, cambio pequeño, commit semántico y merge limpio',
     entregable: 'git-workflow.md documentado',
+    tip: 'Haz commits pequeños y frecuentes. Un commit que describe "añadir footer" es útil. Un commit con 12 archivos cambiados y mensaje "mejoras" es una bomba de tiempo.',
   },
   {
     num: 'M05', title: 'Debugging asistido',
@@ -80,6 +84,7 @@ const modulos = [
     resultado: 'Bugs aislados con hipótesis claras y fixes pequeños y reversibles.',
     ejercicio: 'Dar a Claude un error real y pedir plan de diagnóstico antes de editar',
     entregable: 'bug-report + solución aplicada',
+    tip: 'Antes de pedir a Claude que "arregle esto", pídele que explique qué cree que está pasando. Si no puede explicarlo, el fix propuesto puede ser plausible pero incorrecto.',
   },
   {
     num: 'M06', title: 'Refactors seguros',
@@ -87,6 +92,7 @@ const modulos = [
     resultado: 'Refactors por fases con build passing después de cada cambio.',
     ejercicio: 'Pedir refactor limitado a 1 componente con plan de validación',
     entregable: 'before/after documentado con diff',
+    tip: 'Refactoriza una cosa a la vez. Verifica el build. Luego la siguiente. La confianza en el refactor viene de los builds en verde, no de la sensación de que "debería funcionar".',
   },
   {
     num: 'M07', title: 'Automatizaciones y MCPs',
@@ -94,6 +100,7 @@ const modulos = [
     resultado: 'Mapa de automatizaciones útiles con justificación para cada una.',
     ejercicio: 'Diseñar workflow con GitHub, archivos o calendario sin implementarlo',
     entregable: 'diagrama-automatizacion.md',
+    tip: 'Conectar un MCP es fácil. Saber qué ejecuta en tu nombre y cuándo no usarlo, no lo es. No añadas herramientas que no entiendes qué hacen en segundo plano.',
   },
   {
     num: 'M08', title: 'Testing y validación',
@@ -101,6 +108,7 @@ const modulos = [
     resultado: 'Checklist de pruebas manuales ejecutado antes de cada deploy.',
     ejercicio: 'Crear QA checklist para un proyecto real con al menos 10 puntos',
     entregable: 'qa-checklist.md',
+    tip: 'El QA checklist no es burocracia: es memoria externalizada. Sin él, siempre hay algo que olvidaste revisar el día del deploy.',
   },
   {
     num: 'M09', title: 'Deploy y mantenimiento',
@@ -108,6 +116,7 @@ const modulos = [
     resultado: 'Flujo deploy → revisar → corregir → versionar documentado y ejecutable.',
     ejercicio: 'Documentar proceso completo de deploy para tu proyecto principal',
     entregable: 'sop-deploy.md',
+    tip: 'Documenta el primer deploy mientras lo ejecutas. La segunda vez tardas la mitad. La décima, minutos. La documentación viva es el activo que más se amortiza.',
   },
   {
     num: 'M10', title: 'Documentación operativa',
@@ -115,6 +124,7 @@ const modulos = [
     resultado: 'Procesos documentados con el nivel de detalle suficiente para delegar.',
     ejercicio: 'Convertir una tarea repetida en SOP de máximo 1 página',
     entregable: 'sop-proceso.md',
+    tip: 'Test del SOP delegable: ¿puede otra persona (o Claude) ejecutarlo sin preguntarte nada? Si la respuesta es "no", el SOP está incompleto.',
   },
 ];
 
@@ -207,7 +217,7 @@ const erroresAvanzados = [
 
   <!-- PREVIEW (always visible) -->
   <section class="pb-12 border-b border-slate-200">
-    <span class="font-mono text-xs text-violet-600 tracking-widest uppercase block mb-2">NIVEL 2 · MOONKEY XN SCHOOL</span>
+    <span class="font-mono text-xs text-violet-600 tracking-widest uppercase block mb-2">NIVEL 2 · MOONKEY LAB</span>
     <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-4">
       Advanced Operator<br/>Playbook
     </h1>
@@ -298,6 +308,12 @@ const erroresAvanzados = [
               <span><span class="text-violet-500 font-mono">Ejercicio:</span> {m.ejercicio}</span>
               <span><span class="text-violet-500 font-mono">Entregable:</span> <code class="bg-slate-100 px-1.5 py-0.5 rounded font-mono text-slate-600">{m.entregable}</code></span>
             </div>
+            {m.tip && (
+              <div class="mt-4 border-l-4 border-violet-300 bg-violet-50 rounded-r-xl pl-4 pr-4 py-3">
+                <p class="font-mono text-[10px] uppercase tracking-widest text-violet-600 font-bold mb-1">INSIGHT AVANZADO</p>
+                <p class="text-xs text-slate-600 leading-relaxed">{m.tip}</p>
+              </div>
+            )}
           </div>
         ))}
       </div>
