@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Header from './Header.astro';
+import LanguageBar from './LanguageBar.astro';
 
 interface Props {
   title: string;
@@ -24,18 +25,46 @@ const { title, description = 'Escuela modular para aprender a operar IA, automat
     <main class="max-w-3xl mx-auto px-6 py-16">
       <slot />
     </main>
-    <footer class="border-t border-slate-200 bg-white mt-24 py-10">
-      <div class="max-w-3xl mx-auto px-6 text-center">
-        <p class="font-mono text-xs tracking-widest text-slate-400 mb-3">MOONKEY XN SCHOOL — MMXXVI</p>
-        <p class="text-xs text-slate-400 mb-5 leading-relaxed">Aprende, desbloquea Keys y convierte IA en sistemas reales de trabajo.</p>
-        <nav class="flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs font-mono">
+    <footer class="border-t border-slate-200 bg-white mt-24 py-12">
+      <div class="max-w-3xl mx-auto px-6">
+
+        <!-- Brand + tagline -->
+        <div class="text-center mb-8">
+          <p class="font-mono text-xs tracking-widest text-slate-400 mb-2">MOONKEY XN SCHOOL — MMXXVI</p>
+          <p class="text-xs text-slate-400 leading-relaxed">Aprende, desbloquea Keys y convierte IA en sistemas reales de trabajo.</p>
+        </div>
+
+        <!-- Nav links -->
+        <nav class="flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs font-mono mb-8">
+          <a href="/manifiesto" class="text-slate-400 hover:text-emerald-600 transition-colors">Manifiesto</a>
+          <a href="/info" class="text-slate-400 hover:text-emerald-600 transition-colors">Info</a>
           <a href="/monkeys" class="text-slate-400 hover:text-emerald-600 transition-colors">Monkeys</a>
           <a href="/planes" class="text-slate-400 hover:text-emerald-600 transition-colors">Planes</a>
           <a href="/soporte" class="text-slate-400 hover:text-emerald-600 transition-colors">Soporte</a>
           <a href="/prueba-operador" class="text-slate-400 hover:text-emerald-600 transition-colors">Test de Operador</a>
           <a href="/glosario" class="text-slate-400 hover:text-emerald-600 transition-colors">Glosario</a>
-          <a href="/onboarding" class="text-slate-400 hover:text-emerald-600 transition-colors">Onboarding</a>
         </nav>
+
+        <!-- Divider -->
+        <div class="border-t border-slate-100 mb-6"></div>
+
+        <!-- Ecosistema impulsor -->
+        <div class="text-center mb-6">
+          <p class="font-mono text-[10px] tracking-widest text-slate-300 uppercase mb-2">Ecosistema impulsor</p>
+          <p class="text-xs text-slate-400 font-mono">
+            <span class="text-slate-500">01 Agency</span>
+            <span class="text-slate-300 mx-2">·</span>
+            <span class="text-slate-500">XNLab</span>
+            <span class="text-slate-300 mx-2">·</span>
+            <span class="text-slate-500">Connect</span>
+          </p>
+        </div>
+
+        <!-- Language bar -->
+        <div class="flex justify-center">
+          <LanguageBar subtle={true} />
+        </div>
+
       </div>
     </footer>
   </body>

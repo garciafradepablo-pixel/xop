@@ -1,0 +1,181 @@
+---
+import Layout from '../components/Layout.astro';
+import LanguageBar from '../components/LanguageBar.astro';
+
+const niveles = [
+  {
+    n: 'N1',
+    nombre: 'Operator Foundations',
+    desc: '8 módulos. Terminal, VS Code, Claude Code, CLAUDE.md, GitHub, prompts operativos, automatizaciones y deploy. La base para operar cualquier sistema IA.',
+    href: '/modulos',
+    color: 'emerald',
+  },
+  {
+    n: 'N2',
+    nombre: 'Advanced Operator Playbook',
+    desc: '10 módulos. Arquitectura de proyectos, control de contexto, Git workflow, debugging, refactors seguros, MCPs, deploy y documentación operativa avanzada.',
+    href: '/advanced',
+    color: 'violet',
+  },
+  {
+    n: 'N3',
+    nombre: 'ChatGPT → Claude Migration System',
+    desc: '8 secciones. Inventario de lo que tienes, clasificación, CLAUDE.md centralizado, carpeta /prompts propia y sistema de trabajo documentado.',
+    href: '/migrador',
+    color: 'amber',
+  },
+];
+
+const glosario = [
+  { term: 'Monkey', def: 'Aprendiz ágil dentro de la escuela. Curioso, constructor, sistemático. Entra para construir, no para consumir.' },
+  { term: 'Moonkey', def: 'Operador que ha completado las 3 Keys. Combina intuición, sistema y ejecución. El nombre: Moon + Monkey + Key.' },
+  { term: 'Key', def: 'Logro desbloqueado. Cada nivel completado es una Key. Hay 3 Keys en el Operator Path.' },
+  { term: 'Operator Path', def: 'El camino de formación completo de la metodología MOONKEY XN. Key 1 → Key 2 → Key 3 → Moonkey.' },
+  { term: 'The Lab', def: 'Espacio de práctica del ecosistema MOONKEY XN. Donde los Monkeys en formación construyen y experimentan.' },
+  { term: 'Arsenal', def: 'Colección de prompts operativos listos para usar. Accesible sin prerequisitos.' },
+];
+---
+
+<Layout title="Info" description="Qué es MOONKEY XN SCHOOL, para quién es, cómo funciona y cómo empezar.">
+
+  <!-- Hero -->
+  <section class="pb-12 border-b border-slate-200">
+    <span class="label block mb-2">INFO</span>
+    <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-4">
+      Todo lo que necesitas saber.
+    </h1>
+    <p class="text-slate-500 text-base leading-relaxed max-w-xl mb-6">
+      Sin visión ni filosofía. Solo la explicación clara de qué es esto, cómo funciona y cómo empezar.
+    </p>
+    <LanguageBar />
+  </section>
+
+  <!-- Qué es -->
+  <section class="py-12 border-b border-slate-200">
+    <span class="label block mb-6">QUÉ ES MOONKEY XN SCHOOL</span>
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-4">
+      <p class="text-slate-700 text-sm leading-relaxed mb-4">
+        MOONKEY XN SCHOOL es una academia modular para aprender a operar herramientas IA, automatizaciones y sistemas de trabajo documentados. Está diseñada para que cualquier persona — desde cualquier país, sin experiencia previa en programación — pueda convertir IA en un sistema real de trabajo.
+      </p>
+      <p class="text-slate-500 text-sm leading-relaxed">
+        No es un curso teórico. No es un tutorial de ChatGPT. Es una escuela estructurada en niveles, con ejercicios reales y entregables concretos. El progreso se mide en lo que construyes.
+      </p>
+    </div>
+  </section>
+
+  <!-- Para quién es -->
+  <section class="py-12 border-b border-slate-200">
+    <span class="label block mb-6">PARA QUIÉN ES</span>
+    <div class="grid sm:grid-cols-2 gap-4">
+      {[
+        { si: true, text: 'Quieres aprender a operar Claude Code y GitHub sin saber programar.' },
+        { si: true, text: 'Ya usas IA pero de forma caótica y quieres un sistema.' },
+        { si: true, text: 'Trabajas solo o en un equipo pequeño y necesitas documentación operativa.' },
+        { si: true, text: 'Estás migrando de ChatGPT a Claude y necesitas trasladar tu contexto.' },
+        { si: false, text: 'Buscas un curso para convertirte en programador profesional.' },
+        { si: false, text: 'Quieres aprender teoría de IA o machine learning.' },
+      ].map(item => (
+        <div class={`flex items-start gap-3 text-sm leading-relaxed p-4 rounded-xl border ${item.si ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-slate-50 border-slate-200 text-slate-400'}`}>
+          <span class={`font-mono text-xs font-bold shrink-0 mt-0.5 ${item.si ? 'text-emerald-500' : 'text-slate-300'}`}>{item.si ? '✓' : '×'}</span>
+          {item.text}
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Cómo funciona -->
+  <section class="py-12 border-b border-slate-200">
+    <span class="label block mb-6">CÓMO FUNCIONA</span>
+    <div class="space-y-3">
+      {[
+        ['Sin registro', 'No necesitas cuenta ni contraseña. Entras y empiezas.'],
+        ['Sin servidor', 'Todo el progreso se guarda en tu navegador (localStorage). Sin datos en servidores externos.'],
+        ['Progreso desbloqueado', 'Completa cada nivel para desbloquear el siguiente. El botón "Marcar completado" está al final de cada página de nivel.'],
+        ['Sin límite de tiempo', 'Avanzas a tu ritmo. No hay plazos ni fechas de caducidad.'],
+        ['Sin código requerido', 'El Nivel 1 no exige experiencia previa. Solo acceso a terminal y ganas de construir.'],
+      ].map(([titulo, desc]) => (
+        <div class="flex gap-4 bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+          <span class="font-mono text-xs font-bold text-emerald-500 shrink-0 mt-0.5 w-28">{titulo}</span>
+          <p class="text-slate-500 text-xs leading-relaxed">{desc}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Niveles -->
+  <section class="py-12 border-b border-slate-200">
+    <span class="label block mb-6">LOS NIVELES</span>
+    <div class="space-y-4">
+      {niveles.map(n => (
+        <a href={n.href} class={`flex items-start gap-4 bg-white border rounded-xl p-5 hover:shadow-sm transition-shadow group ${
+          n.color === 'emerald' ? 'border-emerald-200' :
+          n.color === 'violet'  ? 'border-violet-200'  :
+                                  'border-amber-200'
+        }`}>
+          <span class={`font-mono text-xs font-bold shrink-0 mt-0.5 ${
+            n.color === 'emerald' ? 'text-emerald-600' :
+            n.color === 'violet'  ? 'text-violet-600'  :
+                                    'text-amber-600'
+          }`}>{n.n}</span>
+          <div class="flex-1">
+            <p class="font-semibold text-slate-900 text-sm mb-1">{n.nombre}</p>
+            <p class="text-slate-500 text-xs leading-relaxed">{n.desc}</p>
+          </div>
+          <span class={`font-mono text-xs shrink-0 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity ${
+            n.color === 'emerald' ? 'text-emerald-500' :
+            n.color === 'violet'  ? 'text-violet-500'  :
+                                    'text-amber-500'
+          }`}>→</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- Glosario de marca -->
+  <section class="py-12 border-b border-slate-200">
+    <span class="label block mb-2">LENGUAJE PROPIO</span>
+    <p class="text-slate-500 text-sm mb-6 max-w-xl">Estos términos son específicos de la metodología MOONKEY XN. No se traducen — son parte del sistema.</p>
+    <div class="space-y-3">
+      {glosario.map(g => (
+        <div class="flex gap-4 bg-slate-50 border border-slate-200 rounded-xl px-5 py-4">
+          <span class="font-mono text-xs font-bold text-slate-700 shrink-0 w-28">{g.term}</span>
+          <p class="text-slate-500 text-xs leading-relaxed">{g.def}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Monetización futura -->
+  <section class="py-12 border-b border-slate-200">
+    <span class="label block mb-6">ACCESO FUTURO Y MONETIZACIÓN</span>
+    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-7">
+      <p class="text-slate-600 text-sm leading-relaxed mb-4 max-w-lg">
+        MOONKEY XN SCHOOL está en fase piloto. El acceso a Nivel 1 y recursos básicos es libre. Los niveles avanzados, soporte dedicado y acceso privado se activarán en una fase posterior con el sistema de pagos.
+      </p>
+      <p class="text-slate-500 text-sm leading-relaxed mb-5 max-w-lg">
+        Los primeros Monkeys del programa piloto tendrán condiciones especiales cuando se habilite el acceso de pago.
+      </p>
+      <a href="/planes" class="font-mono text-xs font-medium text-slate-700 border border-slate-300 px-5 py-2.5 rounded-xl hover:bg-white transition-colors inline-block">
+        Ver planes de acceso →
+      </a>
+    </div>
+  </section>
+
+  <!-- Soporte -->
+  <section class="py-12">
+    <span class="label block mb-6">SOPORTE</span>
+    <div class="grid sm:grid-cols-2 gap-4">
+      <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+        <h3 class="font-semibold text-slate-900 text-sm mb-2">Dudas frecuentes</h3>
+        <p class="text-slate-500 text-xs leading-relaxed mb-3">Desbloqueo, progreso, localStorage, reset y acceso piloto explicados.</p>
+        <a href="/soporte" class="font-mono text-xs font-medium text-emerald-600 hover:underline">→ Ver soporte</a>
+      </div>
+      <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+        <h3 class="font-semibold text-slate-900 text-sm mb-2">Manifiesto</h3>
+        <p class="text-slate-500 text-xs leading-relaxed mb-3">Por qué existe la escuela, qué creemos y qué significa ser Monkey.</p>
+        <a href="/manifiesto" class="font-mono text-xs font-medium text-emerald-600 hover:underline">→ Leer manifiesto</a>
+      </div>
+    </div>
+  </section>
+
+</Layout>

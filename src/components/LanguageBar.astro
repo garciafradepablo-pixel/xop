@@ -1,0 +1,31 @@
+---
+// Visual-only language indicator. No active translation — future-ready UI.
+interface Props {
+  subtle?: boolean; // smaller/footer variant
+}
+const { subtle = false } = Astro.props;
+---
+
+{subtle ? (
+  <div class="flex items-center gap-2.5 flex-wrap">
+    <span class="font-mono text-xs font-bold text-emerald-600">ES</span>
+    <span class="font-mono text-xs text-slate-400 opacity-50">EN <span class="text-[10px]">soon</span></span>
+    <span class="font-mono text-xs text-slate-400 opacity-50">CAT <span class="text-[10px]">soon</span></span>
+  </div>
+) : (
+  <div class="flex flex-wrap items-center gap-3">
+    <div class="flex items-center gap-1.5">
+      <span class="font-mono text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-300 px-2.5 py-1 rounded-lg">ES</span>
+      <span class="font-mono text-xs text-slate-400 border border-slate-200 px-2.5 py-1 rounded-lg opacity-50 select-none">EN <span class="text-[10px]">soon</span></span>
+      <span class="font-mono text-xs text-slate-400 border border-slate-200 px-2.5 py-1 rounded-lg opacity-50 select-none">CAT <span class="text-[10px]">soon</span></span>
+    </div>
+    <p class="text-slate-400 text-xs font-mono hidden sm:block">Traducción con sentido, no literal.</p>
+  </div>
+)}
+
+<!-- Brand language note — rendered only in default (non-subtle) mode -->
+{!subtle && (
+  <p class="text-slate-400 text-[11px] font-mono mt-2 leading-relaxed">
+    Los términos <span class="text-slate-500">Moonkey, Monkey, Keys</span> y <span class="text-slate-500">Operator Path</span> son lenguaje propio de la metodología y no se traducen.
+  </p>
+)}

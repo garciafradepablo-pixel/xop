@@ -1,0 +1,178 @@
+---
+import Layout from '../components/Layout.astro';
+
+const creencias = [
+  { num: '01', title: 'Aprender haciendo', body: 'La única formación que funciona es la que produce entregables reales. No videos. No tests de opción múltiple. Archivos creados, sistemas que funcionan, workflows documentados.' },
+  { num: '02', title: 'IA como herramienta, no como sustituto', body: 'Claude Code, los prompts y la automatización son herramientas de libertad operativa. Amplifican el criterio. No lo reemplazan. Quien cede el criterio a la máquina no aprende nada.' },
+  { num: '03', title: 'Documentación como memoria', body: 'Un sistema sin documentación muere con su creador. CLAUDE.md, SOPs, READMEs operativos — la documentación no es burocracia, es la diferencia entre un sistema escalable y uno que depende de recordar.' },
+  { num: '04', title: 'Prompts como interfaz', body: 'Los prompts son la interfaz entre el operador y la máquina. Saber escribirlos bien no es un truco: es el lenguaje de trabajo del siglo XXI. La fluidez en ese lenguaje se entrena, no se improvisa.' },
+  { num: '05', title: 'Automatización como palanca', body: 'Automatizar lo repetible libera tiempo para lo que importa. No toda tarea merece automatización — pero la que sí la merece, y no está automatizada, es tiempo robado.' },
+  { num: '06', title: 'Progreso medible en entregables', body: 'El avance se mide en lo que se construye, no en lo que se consume. Un repositorio en GitHub, un CLAUDE.md configurado, un workflow documentado — esos son los hitos reales.' },
+];
+
+const noSomos = [
+  'Un curso de programación tradicional.',
+  'Un tutorial de ChatGPT.',
+  'Una promesa de empleo garantizado.',
+  'Una certificación oficial reconocida por instituciones externas.',
+  'Un sistema para hacerse rico ni una fórmula mágica.',
+  'Un club cerrado ni una comunidad de pago para acceder a conocimiento básico.',
+];
+
+const keys = [
+  { key: 'Key 1', name: 'Operator Foundations', desc: 'Entorno operativo, CLAUDE.md, GitHub, prompts, primera automatización y proyecto publicado.', href: '/modulos', color: 'emerald' },
+  { key: 'Key 2', name: 'Advanced Operator Playbook', desc: 'Arquitectura profesional, debugging sistemático, refactors, MCPs, deploy y documentación avanzada.', href: '/advanced', color: 'violet' },
+  { key: 'Key 3', name: 'Migration Master', desc: 'CLAUDE.md centralizado, migración de contexto, sistema de prompts propio y workflows operativos.', href: '/migrador', color: 'amber' },
+];
+---
+
+<Layout title="Manifiesto" description="Por qué existe MOONKEY XN SCHOOL. Nuestra visión sobre IA, aprendizaje y operadores digitales.">
+
+  <!-- Hero -->
+  <section class="pb-14 border-b border-slate-200">
+    <span class="label block mb-2">MANIFIESTO MOONKEY</span>
+    <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-5">
+      Por qué existe<br/>MOONKEY XN SCHOOL.
+    </h1>
+    <p class="text-slate-500 text-base leading-relaxed max-w-xl">
+      Las herramientas de IA llegaron antes que la formación para usarlas. Hay millones de personas con acceso a Claude, ChatGPT, GitHub Copilot — y sin ningún sistema para trabajar con ellas de forma sostenible. MOONKEY XN SCHOOL existe para llenar ese espacio.
+    </p>
+  </section>
+
+  <!-- Qué creemos -->
+  <section class="py-14 border-b border-slate-200">
+    <span class="label block mb-8">QUÉ CREEMOS</span>
+    <div class="space-y-5">
+      {creencias.map(c => (
+        <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex gap-5">
+          <span class="font-mono text-xs font-bold text-emerald-400 shrink-0 mt-0.5">{c.num}</span>
+          <div>
+            <h3 class="font-semibold text-slate-900 text-sm mb-1.5">{c.title}</h3>
+            <p class="text-slate-500 text-sm leading-relaxed">{c.body}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Qué entrenamos -->
+  <section class="py-14 border-b border-slate-200">
+    <span class="label block mb-6">QUÉ ENTRENAMOS</span>
+    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-7">
+      <p class="text-slate-600 text-sm leading-relaxed mb-6 max-w-xl">
+        MOONKEY XN SCHOOL no enseña IA en abstracto. Enseña a operar sistemas IA concretos, con herramientas reales, produciendo entregables verificables.
+      </p>
+      <div class="grid sm:grid-cols-2 gap-2.5">
+        {[
+          'Entornos de trabajo: terminal, IDE, control de versiones',
+          'Contexto y control de IA: CLAUDE.md, instrucciones, tokens',
+          'Automatización de workflows reales de trabajo',
+          'Migración de sistemas hacia Claude Code',
+          'Documentación operativa de procesos y decisiones',
+          'Deploy de proyectos con URL real y reproducible',
+          'Diseño de prompts que producen trabajo usable',
+          'Debugging sistemático sin dependencia ciega de IA',
+        ].map(item => (
+          <div class="flex items-start gap-2.5 text-xs text-slate-600 leading-relaxed">
+            <span class="text-emerald-400 font-mono shrink-0">—</span>
+            {item}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Qué no somos -->
+  <section class="py-14 border-b border-slate-200">
+    <span class="label block mb-6">QUÉ NO SOMOS</span>
+    <div class="space-y-2.5">
+      {noSomos.map(item => (
+        <div class="flex items-start gap-3 text-sm text-slate-500 leading-relaxed">
+          <span class="font-mono text-rose-300 shrink-0 text-xs mt-0.5">×</span>
+          {item}
+        </div>
+      ))}
+    </div>
+    <div class="mt-8 bg-white border border-slate-200 rounded-xl p-5">
+      <p class="text-slate-600 text-sm leading-relaxed">
+        Somos una academia modular en construcción, con metodología propia, programa piloto activo y preparada para crecer hacia acceso privado. Nada más, nada menos.
+      </p>
+    </div>
+  </section>
+
+  <!-- Qué significa ser Monkey -->
+  <section class="py-14 border-b border-slate-200">
+    <span class="label block mb-6">QUÉ SIGNIFICA SER MONKEY</span>
+    <div class="bg-slate-900 rounded-2xl px-7 py-9">
+      <p class="text-emerald-400 font-mono text-xs tracking-widest uppercase mb-5">Monkey — aprendiz ágil</p>
+      <p class="text-white text-base font-medium leading-relaxed mb-5 max-w-lg">
+        Un Monkey es una persona que entra a la escuela con la intención de construir, no de consumir.
+      </p>
+      <div class="space-y-3 mb-6">
+        {[
+          ['Sistemático', 'No improvisa. Construye con estructura.'],
+          ['Constructor', 'No memoriza teoría. Hace cosas.'],
+          ['En progresión', 'Avanza por Keys desbloqueadas, no por tiempo.'],
+          ['Parte del ecosistema', 'Lo que aprende conecta con algo mayor.'],
+        ].map(([t, d]) => (
+          <div class="flex items-start gap-3">
+            <span class="font-mono text-emerald-400 text-xs shrink-0 mt-0.5">{t}</span>
+            <span class="text-slate-400 text-sm leading-relaxed">{d}</span>
+          </div>
+        ))}
+      </div>
+      <p class="text-slate-400 text-sm leading-relaxed max-w-lg border-t border-white/10 pt-5">
+        Cuando un Monkey completa las 3 Keys, pasa a ser <span class="text-white font-medium">Moonkey</span>: operador que combina intuición, sistema y ejecución. El nombre lo dice todo — Moon, Monkey, Key.
+      </p>
+    </div>
+  </section>
+
+  <!-- El camino de las Keys -->
+  <section class="py-14 border-b border-slate-200">
+    <span class="label block mb-6">EL CAMINO DE LAS KEYS</span>
+    <p class="text-slate-500 text-sm leading-relaxed max-w-xl mb-8">
+      Cada Key es un nivel completado. No hay atajos. No hay salto de Key 1 a Key 3. El camino es el sistema.
+    </p>
+    <div class="space-y-3">
+      {keys.map((k, i) => (
+        <a href={k.href} class={`flex items-start gap-5 bg-white border rounded-xl p-5 hover:shadow-sm transition-shadow group ${
+          k.color === 'emerald' ? 'border-emerald-200 hover:border-emerald-300' :
+          k.color === 'violet'  ? 'border-violet-200 hover:border-violet-300' :
+                                  'border-amber-200 hover:border-amber-300'
+        }`}>
+          <span class={`font-mono text-xs font-bold shrink-0 mt-0.5 ${
+            k.color === 'emerald' ? 'text-emerald-600' :
+            k.color === 'violet'  ? 'text-violet-600'  :
+                                    'text-amber-600'
+          }`}>{k.key}</span>
+          <div class="flex-1">
+            <p class="font-semibold text-slate-900 text-sm mb-1">{k.name}</p>
+            <p class="text-slate-500 text-xs leading-relaxed">{k.desc}</p>
+          </div>
+          <span class={`font-mono text-xs shrink-0 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity ${
+            k.color === 'emerald' ? 'text-emerald-500' :
+            k.color === 'violet'  ? 'text-violet-500'  :
+                                    'text-amber-500'
+          }`}>→</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-14">
+    <span class="label block mb-6">EMPIEZA</span>
+    <div class="flex flex-wrap gap-3">
+      <a href="/modulos" class="inline-block font-mono text-sm font-medium text-white bg-emerald-500 px-6 py-3 rounded-xl hover:bg-emerald-600 transition-colors shadow-sm">
+        Empezar Nivel 1 →
+      </a>
+      <a href="/monkeys" class="inline-block font-mono text-sm text-slate-700 border border-slate-300 px-6 py-3 rounded-xl hover:bg-slate-50 transition-colors">
+        Entrar al Monkey Lab
+      </a>
+      <a href="/planes" class="inline-block font-mono text-sm text-slate-400 border border-slate-200 px-6 py-3 rounded-xl hover:bg-slate-50 transition-colors">
+        Ver Planes
+      </a>
+    </div>
+  </section>
+
+</Layout>
