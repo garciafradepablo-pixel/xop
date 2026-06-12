@@ -142,17 +142,20 @@ const configured = !!(
   </section>
 </Layout>
 
-{configured && (
-  <script>
-    import { supabase } from '../lib/supabase';
+<!-- Script unconditional — Astro/Vite bundles it. Runtime guard handles unconfigured case. -->
+<script>
+  import { supabase } from '../lib/supabase';
 
+  (async () => {
     const form = document.getElementById('feedback-form') as HTMLFormElement | null;
     const errorEl = document.getElementById('fb-error') as HTMLElement | null;
     const successEl = document.getElementById('feedback-success') as HTMLElement | null;
-    const wrapperEl = document.getElementById('feedback-form-wrapper') as HTMLElement | null;
     const submitBtn = document.getElementById('fb-submit') as HTMLButtonElement | null;
 
-    form?.addEventListener('submit', async (e) => {
+    // No Supabase or form disabled (no-config state) — do nothing
+    if (!supabase || !form || submitBtn?.disabled) return;
+
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!supabase || !form) return;
 
@@ -186,10 +189,11 @@ const configured = !!(
       if (error) {
         if (errorEl) { errorEl.textContent = `Error: ${error.message}`; errorEl.classList.remove('hidden'); }
         if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Enviar feedback →'; }
+        console.error('[feedback] insert error:', error.message);
       } else {
         form.classList.add('hidden');
         successEl?.classList.remove('hidden');
       }
     });
-  </script>
-)}
+  })();
+</script>

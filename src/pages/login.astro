@@ -88,33 +88,34 @@ const configured = !!(
   )}
 </Layout>
 
-{configured && (
-  <script>
-    import { supabase } from '../lib/supabase';
+<!-- Script unconditional so Astro/Vite bundles it correctly.
+     Runtime guard handles the unconfigured case. -->
+<script>
+  import { supabase } from '../lib/supabase';
 
-    const form = document.getElementById('login-form') as HTMLFormElement | null;
-    const errorMsg = document.getElementById('error-msg') as HTMLElement | null;
-    const successMsg = document.getElementById('success-msg') as HTMLElement | null;
-    const formWrapper = document.getElementById('login-form-wrapper') as HTMLElement | null;
+  (async () => {
+    // If Supabase not configured or form not in DOM (pending-state shown), do nothing.
+    const form = document.getElementById('login-form');
+    if (!supabase || !form) return;
+
+    const errorMsg = document.getElementById('error-msg');
+    const successMsg = document.getElementById('success-msg');
+    const formWrapper = document.getElementById('login-form-wrapper');
     const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement | null;
 
-    form?.addEventListener('submit', async (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!supabase) return;
 
-      const input = form.querySelector('[name="email"]') as HTMLInputElement;
-      const email = input.value.trim();
+      const input = (form as HTMLFormElement).querySelector('[name="email"]') as HTMLInputElement;
+      const email = input?.value?.trim();
       if (!email) return;
 
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Enviando…';
-      }
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Enviando…'; }
       if (errorMsg) errorMsg.classList.add('hidden');
 
       const { error } = await supabase.auth.signInWithOtp({
         email,
-        options: { emailRedirectTo: `${location.origin}/cuenta` },
+        options: { emailRedirectTo: `${location.origin}/cuenta/` },
       });
 
       if (error) {
@@ -126,10 +127,11 @@ const configured = !!(
           submitBtn.disabled = false;
           submitBtn.textContent = 'Enviar enlace de acceso →';
         }
+        console.error('[login] signInWithOtp error:', error.message);
       } else {
         formWrapper?.classList.add('hidden');
         successMsg?.classList.remove('hidden');
       }
     });
-  </script>
-)}
+  })();
+</script>

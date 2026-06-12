@@ -293,18 +293,17 @@ const stats = [
 
 </Layout>
 
-{supabaseConfigured && (
-  <script>
-    import { supabase } from '../lib/supabase';
-    (async () => {
-      if (!supabase) return;
-      const { count } = await supabase.from('profiles').select('id', { count: 'exact', head: true });
-      const countEl = document.getElementById('monkey-count');
-      const labelEl = document.getElementById('monkey-count-label');
-      const descEl = document.getElementById('monkey-count-desc');
-      if (countEl) countEl.textContent = String(count ?? 0);
-      if (labelEl) labelEl.textContent = `${count ?? 0} Monkey${(count ?? 0) !== 1 ? 's' : ''} registrados`;
-      if (descEl) descEl.textContent = 'Monkeys que han creado cuenta en el programa piloto.';
-    })();
-  </script>
-)}
+<!-- Script unconditional — Astro/Vite bundles it. Runtime guard handles unconfigured case. -->
+<script>
+  import { supabase } from '../lib/supabase';
+  (async () => {
+    if (!supabase) return;
+    const { count } = await supabase.from('profiles').select('id', { count: 'exact', head: true });
+    const countEl = document.getElementById('monkey-count');
+    const labelEl = document.getElementById('monkey-count-label');
+    const descEl = document.getElementById('monkey-count-desc');
+    if (countEl) countEl.textContent = String(count ?? 0);
+    if (labelEl) labelEl.textContent = `${count ?? 0} Monkey${(count ?? 0) !== 1 ? 's' : ''} registrados`;
+    if (descEl) descEl.textContent = 'Monkeys que han creado cuenta en el programa piloto.';
+  })();
+</script>

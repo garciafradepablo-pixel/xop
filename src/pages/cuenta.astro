@@ -129,59 +129,58 @@ const configured = !!(
   })();
 </script>
 
-{configured && (
-  <script>
-    import { supabase } from '../lib/supabase';
-    import { readLocalProgress, toSupabasePayload } from '../lib/progress';
+<!-- Script unconditional — Astro/Vite bundles it. Runtime guard handles unconfigured case. -->
+<script>
+  import { supabase } from '../lib/supabase';
+  import { readLocalProgress, toSupabasePayload } from '../lib/progress';
 
-    (async () => {
-      if (!supabase) return;
+  (async () => {
+    if (!supabase) return;
 
-      const loadingEl = document.getElementById('loading-state');
-      const loggedOutEl = document.getElementById('logged-out-state');
-      const loggedInEl = document.getElementById('logged-in-state');
-      const emailEl = document.getElementById('user-email');
-      const syncBtn = document.getElementById('sync-btn') as HTMLButtonElement | null;
-      const syncMsg = document.getElementById('sync-message');
-      const syncResult = document.getElementById('sync-result');
-      const logoutBtn = document.getElementById('logout-btn');
+    const loadingEl = document.getElementById('loading-state');
+    const loggedOutEl = document.getElementById('logged-out-state');
+    const loggedInEl = document.getElementById('logged-in-state');
+    const emailEl = document.getElementById('user-email');
+    const syncBtn = document.getElementById('sync-btn') as HTMLButtonElement | null;
+    const syncMsg = document.getElementById('sync-message');
+    const syncResult = document.getElementById('sync-result');
+    const logoutBtn = document.getElementById('logout-btn');
 
-      const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await supabase.auth.getSession();
 
-      loadingEl?.classList.add('hidden');
+    loadingEl?.classList.add('hidden');
 
-      if (session?.user) {
-        loggedInEl?.classList.remove('hidden');
-        if (emailEl) emailEl.textContent = session.user.email ?? '';
-        if (syncMsg) syncMsg.textContent = 'Tu sesión está activa. Puedes sincronizar el progreso local a la nube.';
-        syncBtn?.classList.remove('hidden');
+    if (session?.user) {
+      loggedInEl?.classList.remove('hidden');
+      if (emailEl) emailEl.textContent = session.user.email ?? '';
+      if (syncMsg) syncMsg.textContent = 'Tu sesión está activa. Puedes sincronizar el progreso local a la nube.';
+      syncBtn?.classList.remove('hidden');
 
-        syncBtn?.addEventListener('click', async () => {
-          if (!supabase || !session?.user) return;
-          syncBtn.disabled = true;
-          syncBtn.textContent = 'Sincronizando…';
+      syncBtn?.addEventListener('click', async () => {
+        if (!supabase || !session?.user) return;
+        syncBtn.disabled = true;
+        syncBtn.textContent = 'Sincronizando…';
 
-          const data = readLocalProgress();
-          const payload = toSupabasePayload(data, session.user.id);
-          const { error } = await supabase.from('progress').upsert(payload, { onConflict: 'user_id' });
+        const data = readLocalProgress();
+        const payload = toSupabasePayload(data, session.user.id);
+        const { error } = await supabase.from('progress').upsert(payload, { onConflict: 'user_id' });
 
-          syncBtn.disabled = false;
-          syncBtn.textContent = 'Sincronizar ahora →';
+        syncBtn.disabled = false;
+        syncBtn.textContent = 'Sincronizar ahora →';
 
-          if (syncResult) {
-            syncResult.textContent = error ? `Error: ${error.message}` : '✓ Progreso sincronizado.';
-            syncResult.classList.remove('hidden');
-          }
-        });
-      } else {
-        loggedOutEl?.classList.remove('hidden');
-      }
-
-      logoutBtn?.addEventListener('click', async () => {
-        if (!supabase) return;
-        await supabase.auth.signOut();
-        location.href = '/';
+        if (syncResult) {
+          syncResult.textContent = error ? `Error: ${error.message}` : '✓ Progreso sincronizado.';
+          syncResult.classList.remove('hidden');
+        }
       });
-    })();
-  </script>
-)}
+    } else {
+      loggedOutEl?.classList.remove('hidden');
+    }
+
+    logoutBtn?.addEventListener('click', async () => {
+      if (!supabase) return;
+      await supabase.auth.signOut();
+      location.href = '/';
+    });
+  })();
+</script>

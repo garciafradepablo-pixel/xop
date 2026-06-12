@@ -100,55 +100,56 @@ const configured = !!(
   )}
 </Layout>
 
-{configured && (
-  <script>
-    import { supabase } from '../lib/supabase';
+<!-- Script unconditional — Astro/Vite bundles it. Runtime guard handles unconfigured case.
+     Data is protected by RLS — unauthenticated/non-admin queries return empty sets. -->
+<script>
+  import { supabase } from '../lib/supabase';
 
-    (async () => {
-      if (!supabase) return;
+  (async () => {
+    // No Supabase or stats panel not in DOM (setup-pending state shown)
+    if (!supabase || !document.getElementById('users-table-body')) return;
 
-      const [profilesRes, feedbackRes, leadsRes] = await Promise.all([
-        supabase.from('profiles').select('id, email, created_at, role', { count: 'exact' }),
-        supabase.from('feedback').select('id', { count: 'exact' }),
-        supabase.from('leads').select('id', { count: 'exact' }),
-      ]);
+    const [profilesRes, feedbackRes, leadsRes] = await Promise.all([
+      supabase.from('profiles').select('id, email, created_at, role', { count: 'exact' }),
+      supabase.from('feedback').select('id', { count: 'exact' }),
+      supabase.from('leads').select('id', { count: 'exact' }),
+    ]);
 
-      const progressRes = await supabase
-        .from('progress')
-        .select('user_id, level_1_completed, level_2_completed, level_3_completed');
+    const progressRes = await supabase
+      .from('progress')
+      .select('user_id, level_1_completed, level_2_completed, level_3_completed');
 
-      const setEl = (id: string, val: string | number) => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = String(val);
-      };
+    const setEl = (id: string, val: string | number) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = String(val);
+    };
 
-      setEl('stat-total', profilesRes.count ?? '—');
-      setEl('stat-n1', progressRes.data?.filter((r: any) => r.level_1_completed).length ?? '—');
-      setEl('stat-fb', feedbackRes.count ?? '—');
-      setEl('stat-leads', leadsRes.count ?? '—');
+    setEl('stat-total', profilesRes.count ?? '—');
+    setEl('stat-n1', progressRes.data?.filter((r: any) => r.level_1_completed).length ?? '—');
+    setEl('stat-fb', feedbackRes.count ?? '—');
+    setEl('stat-leads', leadsRes.count ?? '—');
 
-      const tbody = document.getElementById('users-table-body');
-      if (!tbody) return;
+    const tbody = document.getElementById('users-table-body');
+    if (!tbody) return;
 
-      const profiles = profilesRes.data ?? [];
-      if (profiles.length === 0) {
-        tbody.innerHTML = '<div class="px-5 py-4 text-sm text-slate-400 font-mono">Sin registros todavía.</div>';
-        return;
-      }
+    const profiles = profilesRes.data ?? [];
+    if (profiles.length === 0) {
+      tbody.innerHTML = '<div class="px-5 py-4 text-sm text-slate-400 font-mono">Sin registros todavía.</div>';
+      return;
+    }
 
-      const progressMap: Record<string, any> = {};
-      (progressRes.data ?? []).forEach((p: any) => { progressMap[p.user_id] = p; });
+    const progressMap: Record<string, any> = {};
+    (progressRes.data ?? []).forEach((p: any) => { progressMap[p.user_id] = p; });
 
-      tbody.innerHTML = profiles.map((u: any) => {
-        const prog = progressMap[u.id] ?? {};
-        const date = u.created_at ? new Date(u.created_at).toLocaleDateString('es-ES') : '—';
-        return `<div class="border-b border-slate-100 px-5 py-3 grid grid-cols-4 gap-4">
-          <p class="text-xs text-slate-700 font-mono truncate">${u.email ?? '—'}</p>
-          <p class="text-xs text-slate-500">${date}</p>
-          <p class="text-xs font-mono ${prog.level_1_completed ? 'text-emerald-600' : 'text-slate-400'}">${prog.level_1_completed ? '✓' : '—'}</p>
-          <p class="text-xs font-mono ${(prog.level_2_completed || prog.level_3_completed) ? 'text-violet-600' : 'text-slate-400'}">${prog.level_2_completed ? 'N2✓' : ''}${prog.level_3_completed ? ' N3✓' : ''}</p>
-        </div>`;
-      }).join('');
-    })();
-  </script>
-)}
+    tbody.innerHTML = profiles.map((u: any) => {
+      const prog = progressMap[u.id] ?? {};
+      const date = u.created_at ? new Date(u.created_at).toLocaleDateString('es-ES') : '—';
+      return `<div class="border-b border-slate-100 px-5 py-3 grid grid-cols-4 gap-4">
+        <p class="text-xs text-slate-700 font-mono truncate">${u.email ?? '—'}</p>
+        <p class="text-xs text-slate-500">${date}</p>
+        <p class="text-xs font-mono ${prog.level_1_completed ? 'text-emerald-600' : 'text-slate-400'}">${prog.level_1_completed ? '✓' : '—'}</p>
+        <p class="text-xs font-mono ${(prog.level_2_completed || prog.level_3_completed) ? 'text-violet-600' : 'text-slate-400'}">${prog.level_2_completed ? 'N2✓' : ''}${prog.level_3_completed ? ' N3✓' : ''}</p>
+      </div>`;
+    }).join('');
+  })();
+</script>
