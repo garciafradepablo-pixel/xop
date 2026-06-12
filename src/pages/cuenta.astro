@@ -69,6 +69,8 @@ const configured = !!(
         <p id="pf-card-nickname" class="text-sm font-bold text-slate-900 hidden mb-1"></p>
         <p id="pf-card-goal" class="text-xs text-slate-500 hidden mb-2"></p>
         <p id="pf-card-level" class="font-mono text-[10px] tracking-widest uppercase text-emerald-600 hidden"></p>
+        <p id="pf-card-rank" class="font-mono text-[10px] tracking-widest uppercase text-slate-400 hidden mt-1.5"></p>
+        <p id="pf-card-founder" class="font-mono text-[10px] tracking-widest uppercase text-amber-600 hidden mt-1">Founder · XNLAB Studio</p>
       </div>
 
       <form id="profile-form" class="max-w-sm space-y-4" novalidate>
@@ -194,10 +196,16 @@ const configured = !!(
   import { readLocalProgress, toSupabasePayload } from '../lib/progress';
 
   const LEVEL_LABELS: Record<string, string> = {
-    starter: 'Estoy empezando',
-    builder: 'Ya construyo cosas con IA',
+    starter:  'Estoy empezando',
+    builder:  'Ya construyo cosas con IA',
     operator: 'Quiero operar sistemas reales',
-    team: 'Quiero formar o dirigir equipo',
+    team:     'Quiero formar o dirigir equipo',
+  };
+
+  const RANK_DESC: Record<string, string> = {
+    monkey:  'Monkey · en formación',
+    gorilla: 'Gorilla · ejecuta con fuerza',
+    eagle:   'Eagle · puede volar solo',
   };
 
   async function doSync(userId: string) {
@@ -225,14 +233,14 @@ const configured = !!(
   (async () => {
     if (!supabase) return;
 
-    const loadingEl = document.getElementById('loading-state');
+    const loadingEl  = document.getElementById('loading-state');
     const loggedOutEl = document.getElementById('logged-out-state');
-    const loggedInEl = document.getElementById('logged-in-state');
-    const emailEl = document.getElementById('user-email');
-    const syncBtn = document.getElementById('sync-btn') as HTMLButtonElement | null;
-    const syncMsg = document.getElementById('sync-message');
-    const syncResult = document.getElementById('sync-result');
-    const logoutBtn = document.getElementById('logout-btn');
+    const loggedInEl  = document.getElementById('logged-in-state');
+    const emailEl     = document.getElementById('user-email');
+    const syncBtn     = document.getElementById('sync-btn') as HTMLButtonElement | null;
+    const syncMsg     = document.getElementById('sync-message');
+    const syncResult  = document.getElementById('sync-result');
+    const logoutBtn   = document.getElementById('logout-btn');
 
     const { data: { session } } = await supabase.auth.getSession();
 
@@ -252,25 +260,39 @@ const configured = !!(
       const [profileRes, autoError] = await Promise.all([
         supabase
           .from('profiles')
-          .select('nickname, operator_goal, experience_level')
+          .select('nickname, operator_goal, experience_level, operator_rank, founder_badge')
           .eq('id', session.user.id)
           .single(),
         doSync(session.user.id),
       ]);
 
-      // Populate card and form with profile data
-      const prof = profileRes.data as { nickname?: string; operator_goal?: string; experience_level?: string } | null;
+      // Populate card and form
+      const prof = profileRes.data as {
+        nickname?: string;
+        operator_goal?: string;
+        experience_level?: string;
+        operator_rank?: string;
+        founder_badge?: boolean;
+      } | null;
+
       if (prof) {
         setCardField('pf-card-nickname', prof.nickname ?? null);
         setCardField('pf-card-goal', prof.operator_goal ?? null);
         setCardField('pf-card-level', prof.experience_level ? (LEVEL_LABELS[prof.experience_level] ?? null) : null);
+        setCardField(
+          'pf-card-rank',
+          prof.operator_rank ? `Rango validado por XNLAB: ${RANK_DESC[prof.operator_rank] ?? prof.operator_rank}` : null
+        );
+        if (prof.founder_badge) {
+          document.getElementById('pf-card-founder')?.classList.remove('hidden');
+        }
 
-        const nickInput = document.getElementById('pf-nickname') as HTMLInputElement | null;
-        const goalInput = document.getElementById('pf-goal') as HTMLInputElement | null;
-        const levelSelect = document.getElementById('pf-level') as HTMLSelectElement | null;
-        if (nickInput && prof.nickname) nickInput.value = prof.nickname;
-        if (goalInput && prof.operator_goal) goalInput.value = prof.operator_goal;
-        if (levelSelect && prof.experience_level) levelSelect.value = prof.experience_level;
+        const nickInput  = document.getElementById('pf-nickname')  as HTMLInputElement  | null;
+        const goalInput  = document.getElementById('pf-goal')      as HTMLInputElement  | null;
+        const levelSelect = document.getElementById('pf-level')    as HTMLSelectElement | null;
+        if (nickInput   && prof.nickname)          nickInput.value   = prof.nickname;
+        if (goalInput   && prof.operator_goal)     goalInput.value   = prof.operator_goal;
+        if (levelSelect && prof.experience_level)  levelSelect.value = prof.experience_level;
       }
 
       // Sync result
@@ -303,23 +325,23 @@ const configured = !!(
         }
       });
 
-      // Profile form
+      // Profile form — only edits: nickname, operator_goal, experience_level
       const profileForm = document.getElementById('profile-form') as HTMLFormElement | null;
-      const pfSubmit = document.getElementById('pf-submit') as HTMLButtonElement | null;
-      const pfStatus = document.getElementById('pf-status');
-      const pfError = document.getElementById('pf-error');
+      const pfSubmit    = document.getElementById('pf-submit')    as HTMLButtonElement | null;
+      const pfStatus    = document.getElementById('pf-status');
+      const pfError     = document.getElementById('pf-error');
 
       profileForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
         if (!supabase || !profileForm || !session?.user) return;
 
-        const nickname = (profileForm.querySelector('[name="nickname"]') as HTMLInputElement)?.value.trim() || null;
-        const operator_goal = (profileForm.querySelector('[name="operator_goal"]') as HTMLInputElement)?.value.trim() || null;
+        const nickname        = (profileForm.querySelector('[name="nickname"]')         as HTMLInputElement)?.value.trim() || null;
+        const operator_goal   = (profileForm.querySelector('[name="operator_goal"]')    as HTMLInputElement)?.value.trim() || null;
         const experience_level = (profileForm.querySelector('[name="experience_level"]') as HTMLSelectElement)?.value || null;
 
         if (pfSubmit) { pfSubmit.disabled = true; pfSubmit.textContent = 'Guardando…'; }
         if (pfStatus) pfStatus.classList.add('hidden');
-        if (pfError) pfError.classList.add('hidden');
+        if (pfError)  pfError.classList.add('hidden');
 
         const { error } = await supabase
           .from('profiles')

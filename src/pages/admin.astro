@@ -15,141 +15,267 @@ const configured = !!(
     <span class="label block mb-3">ADMIN</span>
     <h1 class="text-2xl font-bold text-slate-900 mb-3">Panel de operadores.</h1>
     <p class="text-slate-500 text-sm leading-relaxed max-w-md">
-      Vista de estado de la plataforma piloto. Acceso restringido — pendiente de implementar autenticación admin.
+      Gestión interna de rangos y estado del piloto. Acceso restringido.
     </p>
   </section>
 
-  {!configured ? (
+  {!configured && (
     <section class="py-12">
-      <div class="bg-amber-50 border border-amber-200 rounded-2xl p-8 max-w-lg mb-6">
+      <div class="bg-amber-50 border border-amber-200 rounded-2xl p-8 max-w-lg">
         <span class="font-mono text-[10px] tracking-widest text-amber-700 uppercase block mb-3">SETUP PENDIENTE</span>
         <h2 class="text-lg font-bold text-slate-900 mb-3">Admin pendiente de conexión.</h2>
         <p class="text-slate-600 text-sm leading-relaxed mb-4">
-          El panel admin requiere Supabase configurado. Una vez activo, este panel mostrará datos reales del piloto.
+          El panel admin requiere Supabase configurado.
         </p>
         <p class="font-mono text-xs text-amber-700">Consulta <code>docs/platform-next-steps.md</code> en el repositorio.</p>
       </div>
-
-      <!-- Preview of what it will show -->
-      <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-4">VISTA PREVIA — DATOS REALES CUANDO ESTÉ ACTIVO</p>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
-        {[
-          { label: 'Monkeys registrados', value: '—', color: 'text-emerald-600' },
-          { label: 'N1 completados', value: '—', color: 'text-emerald-600' },
-          { label: 'N2 en curso', value: '—', color: 'text-violet-600' },
-          { label: 'Feedbacks recibidos', value: '—', color: 'text-amber-600' },
-        ].map(s => (
-          <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm text-center opacity-50">
-            <p class={`text-2xl font-bold font-mono mb-1 ${s.color}`}>{s.value}</p>
-            <p class="text-xs text-slate-500">{s.label}</p>
-          </div>
-        ))}
-      </div>
-
-      <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-4">TABLA DE MONKEYS — PENDIENTE</p>
-      <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden opacity-50">
-        <div class="bg-slate-50 border-b border-slate-200 px-5 py-3 grid grid-cols-5 gap-4">
-          {['Email', 'Nivel actual', 'N1', 'N2/N3', 'Última actividad'].map(h => (
-            <p class="font-mono text-[10px] uppercase tracking-widest text-slate-400">{h}</p>
-          ))}
-        </div>
-        {[1, 2, 3].map(() => (
-          <div class="border-b border-slate-100 px-5 py-3 grid grid-cols-5 gap-4">
-            {['—', '—', '—', '—', '—'].map(v => (
-              <p class="text-xs text-slate-400 font-mono">{v}</p>
-            ))}
-          </div>
-        ))}
-      </div>
     </section>
-  ) : (
+  )}
+
+  {configured && (
     <section class="py-12">
-      <div class="bg-rose-50 border border-rose-200 rounded-2xl p-6 max-w-lg mb-8">
-        <p class="font-mono text-[10px] tracking-widest text-rose-700 uppercase mb-2">SEGURIDAD</p>
-        <p class="text-sm text-slate-700 leading-relaxed">
-          Este panel aún no tiene autenticación server-side. No expongas datos sensibles hasta implementar RLS y verificación de rol admin en Supabase.
-        </p>
-      </div>
+      <div id="admin-loading" class="text-sm text-slate-400 font-mono py-4">Comprobando acceso…</div>
 
-      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8" id="stats-grid">
-        {[
-          { label: 'Monkeys registrados', id: 'stat-total', color: 'text-emerald-600' },
-          { label: 'N1 completados', id: 'stat-n1', color: 'text-emerald-600' },
-          { label: 'Feedbacks recibidos', id: 'stat-fb', color: 'text-violet-600' },
-          { label: 'Leads captados', id: 'stat-leads', color: 'text-amber-600' },
-        ].map(s => (
-          <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm text-center">
-            <p id={s.id} class={`text-2xl font-bold font-mono mb-1 ${s.color}`}>—</p>
-            <p class="text-xs text-slate-500">{s.label}</p>
-          </div>
-        ))}
-      </div>
-
-      <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-4">MONKEYS REGISTRADOS</p>
-      <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden">
-        <div class="bg-slate-50 border-b border-slate-200 px-5 py-3 grid grid-cols-4 gap-4">
-          {['Email', 'Registrado', 'N1', 'N2/N3'].map(h => (
-            <p class="font-mono text-[10px] uppercase tracking-widest text-slate-400">{h}</p>
-          ))}
+      <div id="admin-blocked" class="hidden">
+        <div class="bg-rose-50 border border-rose-200 rounded-xl px-5 py-5 max-w-sm">
+          <p class="font-mono text-[10px] tracking-widest text-rose-700 uppercase mb-2">ACCESO DENEGADO</p>
+          <p class="text-sm text-slate-700 mb-3">No tienes acceso a este panel.</p>
+          <a href="/cuenta" class="inline-block font-mono text-xs text-slate-500 border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-50 transition-colors">Volver a mi cuenta →</a>
         </div>
-        <div id="users-table-body">
-          <div class="px-5 py-4 text-sm text-slate-400 font-mono">Cargando…</div>
+      </div>
+
+      <div id="admin-panel" class="hidden">
+        <!-- Stats -->
+        <div class="grid sm:grid-cols-3 gap-3 mb-10 max-w-2xl">
+          <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm text-center">
+            <p id="stat-total" class="text-2xl font-bold font-mono mb-1 text-emerald-600">—</p>
+            <p class="text-xs text-slate-500">Operadores</p>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm text-center">
+            <p id="stat-n1" class="text-2xl font-bold font-mono mb-1 text-emerald-600">—</p>
+            <p class="text-xs text-slate-500">N1 completados</p>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm text-center">
+            <p id="stat-fb" class="text-2xl font-bold font-mono mb-1 text-violet-600">—</p>
+            <p class="text-xs text-slate-500">Feedbacks</p>
+          </div>
+        </div>
+
+        <!-- User list -->
+        <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-4">OPERADORES REGISTRADOS</p>
+        <div id="admin-users-list" class="space-y-3 max-w-2xl"></div>
+
+        <!-- Technical note -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl px-5 py-4 max-w-2xl mt-8">
+          <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-2">NOTA TÉCNICA</p>
+          <p class="text-xs text-slate-500 leading-relaxed">
+            Cambios de rango validados server-side vía RPC <code class="font-mono bg-slate-100 px-1 rounded text-[11px]">update_operator_rank</code>.
+            Los campos <code class="font-mono bg-slate-100 px-1 rounded text-[11px]">role</code> y <code class="font-mono bg-slate-100 px-1 rounded text-[11px]">founder_badge</code> se modifican directamente en Supabase.
+            Pendiente: endurecer <code class="font-mono bg-slate-100 px-1 rounded text-[11px]">profiles_self_update</code> con RPC de escritura segura en fase 2.
+          </p>
         </div>
       </div>
     </section>
   )}
 </Layout>
 
-<!-- Script unconditional — Astro/Vite bundles it. Runtime guard handles unconfigured case.
-     Data is protected by RLS — unauthenticated/non-admin queries return empty sets. -->
+<!-- Script unconditional — Astro/Vite bundles it. Runtime guard handles unconfigured case. -->
 <script>
   import { supabase } from '../lib/supabase';
 
-  (async () => {
-    // No Supabase or stats panel not in DOM (setup-pending state shown)
-    if (!supabase || !document.getElementById('users-table-body')) return;
+  type Profile = {
+    id: string;
+    email: string | null;
+    role: string;
+    nickname: string | null;
+    operator_goal: string | null;
+    experience_level: string | null;
+    operator_rank: string;
+    operator_rank_notes: string | null;
+    founder_badge: boolean;
+    created_at: string | null;
+  };
 
-    const [profilesRes, feedbackRes, leadsRes] = await Promise.all([
-      supabase.from('profiles').select('id, email, created_at, role', { count: 'exact' }),
+  const RANK_OPTIONS = [
+    { value: 'monkey',  label: 'Monkey · en formación' },
+    { value: 'gorilla', label: 'Gorilla · ejecuta con fuerza' },
+    { value: 'eagle',   label: 'Eagle · puede volar solo' },
+  ];
+
+  const LEVEL_LABELS: Record<string, string> = {
+    starter:  'Estoy empezando',
+    builder:  'Ya construyo cosas con IA',
+    operator: 'Quiero operar sistemas reales',
+    team:     'Quiero formar o dirigir equipo',
+  };
+
+  function esc(s: string | null | undefined): string {
+    if (s == null) return '';
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function roleBadge(role: string): string {
+    const map: Record<string, string> = {
+      founder: 'bg-amber-50 border-amber-200 text-amber-700',
+      admin:   'bg-violet-50 border-violet-200 text-violet-700',
+      student: 'bg-slate-50 border-slate-200 text-slate-500',
+    };
+    const cls = map[role] ?? map['student'];
+    return `<span class="font-mono text-[10px] px-2 py-0.5 rounded-full border ${cls}">${esc(role)}</span>`;
+  }
+
+  function renderUserCard(u: Profile): string {
+    const rank = u.operator_rank ?? 'monkey';
+    const rankLabel = RANK_OPTIONS.find(r => r.value === rank)?.label ?? rank;
+    const rankColors: Record<string, string> = {
+      monkey:  'text-slate-500 border-slate-200',
+      gorilla: 'text-violet-600 border-violet-200',
+      eagle:   'text-emerald-600 border-emerald-300',
+    };
+    const rankCls = rankColors[rank] ?? rankColors['monkey'];
+    const rankOptions = RANK_OPTIONS.map(r =>
+      `<option value="${r.value}"${rank === r.value ? ' selected' : ''}>${esc(r.label)}</option>`
+    ).join('');
+
+    return `
+      <div class="bg-white border border-slate-200 rounded-xl px-5 py-4" data-user-id="${esc(u.id)}">
+        <div class="flex flex-wrap items-center gap-2 mb-2">
+          <p class="font-mono text-xs text-slate-700 truncate max-w-[220px]">${esc(u.email)}</p>
+          ${u.nickname ? `<span class="text-xs font-medium text-slate-900">${esc(u.nickname)}</span>` : ''}
+          ${roleBadge(u.role)}
+          <span class="font-mono text-[10px] px-2 py-0.5 rounded-full border ${rankCls}">${esc(rankLabel)}</span>
+          ${u.founder_badge ? '<span class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700">Founder · XNLAB Studio</span>' : ''}
+        </div>
+        ${u.operator_goal ? `<p class="text-xs text-slate-400 mb-2 truncate max-w-lg">${esc(u.operator_goal)}</p>` : ''}
+        ${u.experience_level ? `<p class="font-mono text-[11px] text-slate-400 mb-2">${esc(LEVEL_LABELS[u.experience_level] ?? u.experience_level)}</p>` : ''}
+        <div class="flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3 mt-1">
+          <p class="font-mono text-[10px] uppercase tracking-widest text-slate-400">Rango</p>
+          <select class="rank-select font-mono text-xs border border-slate-200 rounded-lg px-2 py-1 bg-white focus:outline-none focus:ring-1 focus:ring-emerald-400">
+            ${rankOptions}
+          </select>
+          <input
+            type="text"
+            class="rank-notes font-mono text-xs border border-slate-200 rounded-lg px-2 py-1 flex-1 min-w-[100px] focus:outline-none focus:ring-1 focus:ring-emerald-400"
+            placeholder="Nota interna"
+            value="${esc(u.operator_rank_notes)}"
+            maxlength="200"
+          />
+          <button class="rank-save font-mono text-xs font-medium text-emerald-600 border border-emerald-300 px-3 py-1 rounded-lg hover:bg-emerald-50 transition-colors">
+            Guardar →
+          </button>
+          <span class="rank-status font-mono text-[10px] hidden text-emerald-600"></span>
+        </div>
+      </div>
+    `;
+  }
+
+  (async () => {
+    if (!supabase) return;
+
+    const loadingEl = document.getElementById('admin-loading');
+    const blockedEl = document.getElementById('admin-blocked');
+    const panelEl   = document.getElementById('admin-panel');
+
+    const { data: { session } } = await supabase.auth.getSession();
+
+    loadingEl?.classList.add('hidden');
+
+    if (!session?.user) {
+      blockedEl?.classList.remove('hidden');
+      return;
+    }
+
+    // Check caller's role before revealing panel
+    const { data: selfProfile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', session.user.id)
+      .single();
+
+    if (!['admin', 'founder'].includes(selfProfile?.role ?? '')) {
+      blockedEl?.classList.remove('hidden');
+      return;
+    }
+
+    panelEl?.classList.remove('hidden');
+
+    // Load all data in parallel
+    const [profilesRes, feedbackRes, progressRes] = await Promise.all([
+      supabase.from('profiles').select(
+        'id, email, role, nickname, operator_goal, experience_level, operator_rank, operator_rank_notes, founder_badge, created_at'
+      ),
       supabase.from('feedback').select('id', { count: 'exact' }),
-      supabase.from('leads').select('id', { count: 'exact' }),
+      supabase.from('progress').select('user_id, level_1_completed'),
     ]);
 
-    const progressRes = await supabase
-      .from('progress')
-      .select('user_id, level_1_completed, level_2_completed, level_3_completed');
+    const profiles = (profilesRes.data ?? []) as Profile[];
+    const n1Count  = (progressRes.data ?? []).filter((r: any) => r.level_1_completed).length;
 
     const setEl = (id: string, val: string | number) => {
       const el = document.getElementById(id);
       if (el) el.textContent = String(val);
     };
-
-    setEl('stat-total', profilesRes.count ?? '—');
-    setEl('stat-n1', progressRes.data?.filter((r: any) => r.level_1_completed).length ?? '—');
+    setEl('stat-total', profiles.length);
+    setEl('stat-n1', n1Count);
     setEl('stat-fb', feedbackRes.count ?? '—');
-    setEl('stat-leads', leadsRes.count ?? '—');
 
-    const tbody = document.getElementById('users-table-body');
-    if (!tbody) return;
+    const listEl = document.getElementById('admin-users-list');
+    if (!listEl) return;
 
-    const profiles = profilesRes.data ?? [];
     if (profiles.length === 0) {
-      tbody.innerHTML = '<div class="px-5 py-4 text-sm text-slate-400 font-mono">Sin registros todavía.</div>';
+      listEl.innerHTML = '<p class="text-sm text-slate-400 font-mono">Sin operadores registrados.</p>';
       return;
     }
 
-    const progressMap: Record<string, any> = {};
-    (progressRes.data ?? []).forEach((p: any) => { progressMap[p.user_id] = p; });
+    // Sort: founder first, then by created_at asc
+    profiles.sort((a, b) => {
+      if (a.founder_badge && !b.founder_badge) return -1;
+      if (!a.founder_badge && b.founder_badge) return 1;
+      return (a.created_at ?? '').localeCompare(b.created_at ?? '');
+    });
 
-    tbody.innerHTML = profiles.map((u: any) => {
-      const prog = progressMap[u.id] ?? {};
-      const date = u.created_at ? new Date(u.created_at).toLocaleDateString('es-ES') : '—';
-      return `<div class="border-b border-slate-100 px-5 py-3 grid grid-cols-4 gap-4">
-        <p class="text-xs text-slate-700 font-mono truncate">${u.email ?? '—'}</p>
-        <p class="text-xs text-slate-500">${date}</p>
-        <p class="text-xs font-mono ${prog.level_1_completed ? 'text-emerald-600' : 'text-slate-400'}">${prog.level_1_completed ? '✓' : '—'}</p>
-        <p class="text-xs font-mono ${(prog.level_2_completed || prog.level_3_completed) ? 'text-violet-600' : 'text-slate-400'}">${prog.level_2_completed ? 'N2✓' : ''}${prog.level_3_completed ? ' N3✓' : ''}</p>
-      </div>`;
-    }).join('');
+    listEl.innerHTML = profiles.map(renderUserCard).join('');
+
+    // Event delegation — handles save for any user card
+    listEl.addEventListener('click', async (e) => {
+      const btn = (e.target as Element).closest('.rank-save') as HTMLElement | null;
+      if (!btn) return;
+
+      const card     = btn.closest('[data-user-id]') as HTMLElement | null;
+      const targetId = card?.dataset.userId;
+      if (!targetId || !supabase) return;
+
+      const rankSelect = card.querySelector('.rank-select') as HTMLSelectElement | null;
+      const notesInput = card.querySelector('.rank-notes')  as HTMLInputElement  | null;
+      const statusEl   = card.querySelector('.rank-status') as HTMLElement       | null;
+
+      const newRank  = rankSelect?.value ?? 'monkey';
+      const newNotes = notesInput?.value.trim() || null;
+
+      btn.setAttribute('disabled', 'true');
+      btn.textContent = 'Guardando…';
+      if (statusEl) statusEl.classList.add('hidden');
+
+      const { error } = await supabase.rpc('update_operator_rank', {
+        target_id: targetId,
+        new_rank:  newRank,
+        new_notes: newNotes,
+      });
+
+      btn.removeAttribute('disabled');
+      btn.textContent = 'Guardar →';
+
+      if (statusEl) {
+        statusEl.textContent = error ? `Error: ${error.message}` : 'Guardado.';
+        statusEl.className   = `rank-status font-mono text-[10px] ${error ? 'text-rose-600' : 'text-emerald-600'}`;
+        statusEl.classList.remove('hidden');
+        if (!error) setTimeout(() => statusEl.classList.add('hidden'), 3000);
+      }
+      if (error) console.error('[admin] rank update error:', error.message);
+    });
   })();
 </script>
