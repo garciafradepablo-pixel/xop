@@ -189,6 +189,55 @@ const servicios = [
     </div>
   </section>
 
+  <!-- De escuela a sistema -->
+  <section class="py-16 border-t border-slate-200">
+    <span class="label block mb-3">DE ESCUELA A SISTEMA</span>
+    <p class="text-slate-500 text-sm leading-relaxed max-w-xl mb-10">
+      MOONKEY XN SCHOOL no es solo una formación. Es el punto de entrada a una metodología de trabajo. Tres caminos, un mismo destino: operar IA con criterio.
+    </p>
+    <div class="grid sm:grid-cols-3 gap-5 mb-10">
+      {[
+        {
+          who: 'El que aprende solo',
+          desc: 'Entra, sigue la escuela, desbloquea las 3 Keys y sale con un sistema de trabajo real. Sin depender de nadie.',
+          tag: 'Monkeys',
+          href: '/monkeys',
+          bg: 'bg-emerald-50',
+          border: 'border-emerald-200',
+          text: 'text-emerald-700',
+          lbl: 'text-emerald-500',
+        },
+        {
+          who: 'El que quiere escalar',
+          desc: 'Accede a niveles avanzados, soporte de implementación y recursos adicionales cuando estén disponibles.',
+          tag: 'Planes',
+          href: '/planes',
+          bg: 'bg-violet-50',
+          border: 'border-violet-200',
+          text: 'text-violet-700',
+          lbl: 'text-violet-500',
+        },
+        {
+          who: 'El que necesita ayuda',
+          desc: 'Dudas técnicas, acceso piloto, implementación para equipos. Contacto directo, sin formularios.',
+          tag: 'Soporte',
+          href: '/soporte',
+          bg: 'bg-amber-50',
+          border: 'border-amber-200',
+          text: 'text-amber-700',
+          lbl: 'text-amber-500',
+        },
+      ].map(c => (
+        <a href={c.href} class={`${c.bg} border ${c.border} rounded-2xl p-6 flex flex-col gap-3 hover:shadow-sm transition-shadow`}>
+          <span class={`font-mono text-xs font-bold ${c.lbl}`}>{c.tag}</span>
+          <h3 class={`font-semibold text-sm ${c.text}`}>{c.who}</h3>
+          <p class="text-slate-500 text-xs leading-relaxed flex-1">{c.desc}</p>
+          <span class={`font-mono text-xs font-medium ${c.text}`}>Ver más →</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
   <!-- Qué puedes hacer -->
   <section class="py-16 border-t border-slate-200">
     <span class="label block mb-10">¿QUÉ QUIERES HACER?</span>
@@ -215,10 +264,10 @@ const servicios = [
           ctaClass: 'text-sky-600 hover:text-sky-800',
         },
         {
-          path: 'Quiero contratar ayuda',
-          desc: 'También construimos este sistema para equipos. Desde formación hasta sistemas de trabajo completos.',
-          cta: 'Ver servicios →',
-          href: '#servicios',
+          path: 'Ver planes de acceso',
+          desc: 'Acceso libre en fase piloto. Niveles avanzados y soporte dedicado próximamente.',
+          cta: 'Ver planes →',
+          href: '/planes',
           bg: 'bg-violet-50',
           border: 'border-violet-200',
           text: 'text-violet-700',

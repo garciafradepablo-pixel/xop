@@ -19,13 +19,24 @@ const { title, description = 'Escuela modular para aprender a operar IA, automat
     <title>{title} — MOONKEY XN SCHOOL</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
-  <body class="min-h-screen antialiased">
+  <body class="min-h-screen antialiased bg-[#f8fafc] text-slate-900">
     <Header />
     <main class="max-w-3xl mx-auto px-6 py-16">
       <slot />
     </main>
-    <footer class="border-t border-slate-200 mt-24 py-8 text-center text-slate-400 text-xs font-mono tracking-widest">
-      MOONKEY XN SCHOOL — MMXXVI
+    <footer class="border-t border-slate-200 bg-white mt-24 py-10">
+      <div class="max-w-3xl mx-auto px-6 text-center">
+        <p class="font-mono text-xs tracking-widest text-slate-400 mb-3">MOONKEY XN SCHOOL — MMXXVI</p>
+        <p class="text-xs text-slate-400 mb-5 leading-relaxed">Aprende, desbloquea Keys y convierte IA en sistemas reales de trabajo.</p>
+        <nav class="flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs font-mono">
+          <a href="/monkeys" class="text-slate-400 hover:text-emerald-600 transition-colors">Monkeys</a>
+          <a href="/planes" class="text-slate-400 hover:text-emerald-600 transition-colors">Planes</a>
+          <a href="/soporte" class="text-slate-400 hover:text-emerald-600 transition-colors">Soporte</a>
+          <a href="/prueba-operador" class="text-slate-400 hover:text-emerald-600 transition-colors">Test de Operador</a>
+          <a href="/glosario" class="text-slate-400 hover:text-emerald-600 transition-colors">Glosario</a>
+          <a href="/onboarding" class="text-slate-400 hover:text-emerald-600 transition-colors">Onboarding</a>
+        </nav>
+      </div>
     </footer>
   </body>
 </html>

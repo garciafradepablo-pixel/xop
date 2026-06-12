@@ -1,0 +1,137 @@
+---
+import Layout from '../components/Layout.astro';
+
+const planes = [
+  {
+    nombre: 'Monkey Starter',
+    para: 'Para aprender a tu ritmo',
+    estado: 'Programa piloto',
+    estadoColor: 'text-emerald-700',
+    estadoBg: 'bg-emerald-50',
+    border: 'border-emerald-200',
+    dash: 'text-emerald-500',
+    cta: 'Empezar gratis →',
+    ctaHref: '/modulos',
+    ctaStyle: 'bg-emerald-500 text-white hover:bg-emerald-600',
+    incluye: [
+      'Nivel 1 — Operator Foundations completo',
+      'Arsenal de Prompts operativos',
+      'Glosario de términos clave',
+      'Test de Operador',
+      'Progreso por módulos guardado localmente',
+    ],
+  },
+  {
+    nombre: 'Moonkey Operator',
+    para: 'Para completar la escuela',
+    estado: 'Próximamente',
+    estadoColor: 'text-violet-700',
+    estadoBg: 'bg-violet-50',
+    border: 'border-violet-200',
+    dash: 'text-violet-500',
+    cta: 'Solicitar acceso →',
+    ctaHref: '/soporte',
+    ctaStyle: 'bg-violet-500 text-white hover:bg-violet-600',
+    incluye: [
+      'Niveles 1, 2 y 3 completos',
+      'Advanced Operator Playbook',
+      'Migration System ChatGPT → Claude Code',
+      'Soporte básico de implementación',
+      'Certificado de completado (próximamente)',
+    ],
+  },
+  {
+    nombre: 'XN Team System',
+    para: 'Para equipos y negocios',
+    estado: 'Bajo solicitud',
+    estadoColor: 'text-amber-700',
+    estadoBg: 'bg-amber-50',
+    border: 'border-amber-200',
+    dash: 'text-amber-500',
+    cta: 'Ver servicios →',
+    ctaHref: '/onboarding',
+    ctaStyle: 'bg-slate-900 text-white hover:bg-slate-800',
+    incluye: [
+      'Escuela interna personalizada para el equipo',
+      'Sistema de prompts y SOPs a medida',
+      'Migración ChatGPT → Claude Code',
+      'Automatización de workflows de trabajo',
+      'Soporte de implementación dedicado',
+    ],
+  },
+];
+---
+
+<Layout title="Planes de Acceso" description="Planes de MOONKEY XN SCHOOL. Desde acceso gratuito hasta implementación para equipos.">
+
+  <section class="pb-12 border-b border-slate-200">
+    <span class="label block mb-2">PLANES DE ACCESO</span>
+    <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-4">
+      Elige tu camino<br/>como Operator.
+    </h1>
+    <p class="text-slate-600 text-base leading-relaxed max-w-xl">
+      MOONKEY XN SCHOOL está en fase piloto. El acceso a Nivel 1 es libre. Los niveles avanzados y el acceso privado se activarán progresivamente. Los primeros Monkeys entran por participación directa.
+    </p>
+  </section>
+
+  <!-- Cards de planes -->
+  <section class="py-12 border-b border-slate-200">
+    <div class="grid sm:grid-cols-3 gap-5">
+      {planes.map(p => (
+        <div class={`bg-white border-2 ${p.border} rounded-2xl p-6 flex flex-col shadow-sm`}>
+          <div class="mb-5">
+            <span class={`inline-block font-mono text-xs font-bold px-2.5 py-1 rounded-lg mb-3 ${p.estadoBg} ${p.estadoColor}`}>
+              {p.estado}
+            </span>
+            <h2 class="text-lg font-bold text-slate-900 mb-1">{p.nombre}</h2>
+            <p class="text-sm text-slate-500">{p.para}</p>
+          </div>
+          <ul class="space-y-2.5 flex-1 mb-6">
+            {p.incluye.map(item => (
+              <li class="flex items-start gap-2.5 text-xs text-slate-600 leading-relaxed">
+                <span class={`${p.dash} font-mono shrink-0 mt-0.5`}>—</span>
+                {item}
+              </li>
+            ))}
+          </ul>
+          <a href={p.ctaHref} class={`block w-full text-center font-mono text-sm font-medium px-5 py-3 rounded-xl transition-colors ${p.ctaStyle}`}>
+            {p.cta}
+          </a>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Aviso acceso de pago -->
+  <section class="py-12 border-b border-slate-200">
+    <span class="label block mb-6">ACCESO PRIVADO Y PAGOS</span>
+    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-8">
+      <h2 class="text-xl font-bold text-slate-900 mb-3">Próximamente.</h2>
+      <p class="text-slate-600 text-sm leading-relaxed mb-6 max-w-lg">
+        MOONKEY XN SCHOOL está preparada para evolucionar a acceso privado. Los pagos reales se implementarán en una fase posterior. Los participantes del programa piloto tendrán condiciones especiales.
+      </p>
+      <p class="text-slate-400 text-xs font-mono leading-relaxed max-w-lg">
+        Sistema propio de formación modular. Metodología MOONKEY XN. Todos los contenidos, estructura y materiales son propiedad del ecosistema MOONKEY XN. Una metodología en construcción.
+      </p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-12">
+    <div class="grid sm:grid-cols-3 gap-4">
+      <a href="/modulos" class="bg-emerald-50 border border-emerald-200 rounded-xl p-5 hover:bg-emerald-100 transition-colors text-center">
+        <p class="font-semibold text-emerald-700 text-sm mb-1">Empezar gratis</p>
+        <p class="text-xs text-slate-500">Nivel 1 siempre disponible</p>
+      </a>
+      <a href="/soporte" class="bg-violet-50 border border-violet-200 rounded-xl p-5 hover:bg-violet-100 transition-colors text-center">
+        <p class="font-semibold text-violet-700 text-sm mb-1">Solicitar acceso piloto</p>
+        <p class="text-xs text-slate-500">Contacto directo</p>
+      </a>
+      <a href="/onboarding" class="bg-amber-50 border border-amber-200 rounded-xl p-5 hover:bg-amber-100 transition-colors text-center">
+        <p class="font-semibold text-amber-700 text-sm mb-1">Ver servicios de equipo</p>
+        <p class="text-xs text-slate-500">Implementación a medida</p>
+      </a>
+    </div>
+  </section>
+
+</Layout>

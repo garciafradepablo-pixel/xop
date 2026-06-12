@@ -21,22 +21,32 @@ const { title, description = 'Escuela modular para aprender a operar IA, automat
   </head>
   <body class="min-h-screen antialiased bg-[#f8fafc] text-slate-900">
     <Header />
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
-      <div class="lg:flex lg:gap-8 lg:items-start">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-10 xl:gap-12 lg:items-start">
         <!-- Sidebar: desktop sticky -->
-        <aside class="hidden lg:block w-52 shrink-0">
-          <div class="sticky top-6 max-h-[calc(100vh-6rem)] overflow-y-auto">
+        <aside class="hidden lg:block">
+          <div class="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto">
             <slot name="sidebar" />
           </div>
         </aside>
         <!-- Main content -->
-        <main class="flex-1 min-w-0">
+        <main class="min-w-0">
           <slot />
         </main>
       </div>
     </div>
-    <footer class="border-t border-slate-200 bg-white mt-20 py-8 text-center text-slate-400 text-xs font-mono tracking-widest">
-      MOONKEY XN SCHOOL — MMXXVI
+    <footer class="border-t border-slate-200 bg-white mt-20 py-10">
+      <div class="max-w-3xl mx-auto px-6 text-center">
+        <p class="font-mono text-xs tracking-widest text-slate-400 mb-3">MOONKEY XN SCHOOL — MMXXVI</p>
+        <p class="text-xs text-slate-400 mb-5 leading-relaxed">Aprende, desbloquea Keys y convierte IA en sistemas reales de trabajo.</p>
+        <nav class="flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs font-mono">
+          <a href="/monkeys" class="text-slate-400 hover:text-emerald-600 transition-colors">Monkeys</a>
+          <a href="/planes" class="text-slate-400 hover:text-emerald-600 transition-colors">Planes</a>
+          <a href="/soporte" class="text-slate-400 hover:text-emerald-600 transition-colors">Soporte</a>
+          <a href="/prueba-operador" class="text-slate-400 hover:text-emerald-600 transition-colors">Test de Operador</a>
+          <a href="/glosario" class="text-slate-400 hover:text-emerald-600 transition-colors">Glosario</a>
+        </nav>
+      </div>
     </footer>
   </body>
 </html>

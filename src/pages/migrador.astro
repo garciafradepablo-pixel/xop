@@ -259,7 +259,7 @@ const serviciosComerciales = [
   <div id="migrador-content" class="hidden">
 
     <!-- Qué migras realmente -->
-    <section id="que-migras" class="py-12 border-b border-slate-200 scroll-mt-6">
+    <section id="que-migras" class="py-12 border-b border-slate-200 scroll-mt-28">
       <span class="label block mb-6">QUÉ ESTÁS MIGRANDO REALMENTE</span>
       <p class="text-slate-600 text-sm leading-relaxed mb-6">
         La migración no es copiar y pegar conversaciones. Es extraer el conocimiento que existe solo en tus chats y convertirlo en algo que Claude Code puede usar como sistema.
@@ -284,7 +284,7 @@ const serviciosComerciales = [
     </section>
 
     <!-- Inventario -->
-    <section id="inventario" class="py-12 border-b border-slate-200 scroll-mt-6">
+    <section id="inventario" class="py-12 border-b border-slate-200 scroll-mt-28">
       <span class="label block mb-2">INVENTARIO DE CONOCIMIENTO</span>
       <p class="text-slate-500 text-sm mb-8">Antes de migrar, necesitas saber qué tienes. Marca lo que ya existe en tu caso:</p>
       <div class="space-y-6">
@@ -305,7 +305,7 @@ const serviciosComerciales = [
     </section>
 
     <!-- Clasificación -->
-    <section id="clasificacion" class="py-12 border-b border-slate-200 scroll-mt-6">
+    <section id="clasificacion" class="py-12 border-b border-slate-200 scroll-mt-28">
       <span class="label block mb-6">CLASIFICACIÓN DE PROYECTOS</span>
       <p class="text-slate-500 text-sm mb-8">Antes de migrar un proyecto, clasifícalo. El estado define qué hacer con él:</p>
       <div class="grid sm:grid-cols-2 gap-3">
@@ -319,7 +319,7 @@ const serviciosComerciales = [
     </section>
 
     <!-- Calculadora manual -->
-    <section id="calculadora" class="py-12 border-b border-slate-200 scroll-mt-6">
+    <section id="calculadora" class="py-12 border-b border-slate-200 scroll-mt-28">
       <span class="label block mb-2">CALCULADORA DE PERFIL</span>
       <p class="text-slate-500 text-sm mb-8">Evalúa tu situación actual para identificar tu perfil de migración. No hace falta calcular nada: lee cada fila y decide tu nivel actual.</p>
       <div class="space-y-2 mb-8">
@@ -347,7 +347,7 @@ const serviciosComerciales = [
     </section>
 
     <!-- Perfiles -->
-    <section id="perfiles" class="py-12 border-b border-slate-200 scroll-mt-6">
+    <section id="perfiles" class="py-12 border-b border-slate-200 scroll-mt-28">
       <span class="label block mb-8">RESULTADO SUGERIDO</span>
       <div class="space-y-4">
         {perfiles.map(p => (
@@ -377,7 +377,7 @@ const serviciosComerciales = [
     </section>
 
     <!-- Conversión a sistema -->
-    <section id="sistema" class="py-12 border-b border-slate-200 scroll-mt-6">
+    <section id="sistema" class="py-12 border-b border-slate-200 scroll-mt-28">
       <span class="label block mb-2">CONVERSIÓN A SISTEMA CLAUDE CODE</span>
       <p class="text-slate-500 text-sm mb-8">Cada tipo de conocimiento migrado va a un destino específico:</p>
       <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm divide-y divide-slate-100">
@@ -391,7 +391,7 @@ const serviciosComerciales = [
     </section>
 
     <!-- Prompts -->
-    <section id="prompts-migracion" class="py-12 border-b border-slate-200 scroll-mt-6">
+    <section id="prompts-migracion" class="py-12 border-b border-slate-200 scroll-mt-28">
       <span class="label block mb-8">PROMPTS DE MIGRACIÓN</span>
       <PromptBlock tag="PROMPT N3-01" title="Extraer conocimiento operativo desde ChatGPT" prompt={promptExtraerChatGPT} />
       <PromptBlock tag="PROMPT N3-02" title="Convertir material disperso en CLAUDE.md" prompt={promptConvertirCLAUDEmd} />
@@ -421,7 +421,7 @@ const serviciosComerciales = [
     </section>
 
     <!-- Completion -->
-    <div id="completar-n3" class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-7 mt-4 scroll-mt-6">
+    <div id="completar-n3" class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-7 mt-4 scroll-mt-28">
       <span class="font-mono text-xs text-amber-600 tracking-widest uppercase block mb-2">NIVEL 3 — CHECKLIST DE FINALIZACIÓN</span>
       <p class="text-slate-600 text-sm leading-relaxed mb-6">Completa estos puntos antes de marcar el nivel:</p>
       <ul class="space-y-2.5 mb-8">

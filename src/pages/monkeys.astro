@@ -1,0 +1,151 @@
+---
+import Layout from '../components/Layout.astro';
+
+const keys = [
+  {
+    tag: 'Key 1',
+    title: 'Operator Foundations',
+    desc: 'Entorno de trabajo, CLAUDE.md, GitHub, prompts operativos y primera automatización.',
+    color: 'text-emerald-700',
+    bg: 'bg-emerald-50',
+    border: 'border-emerald-200',
+    href: '/modulos',
+  },
+  {
+    tag: 'Key 2',
+    title: 'Advanced Operator',
+    desc: 'Arquitectura, debugging, refactors, MCPs, deploy y documentación operativa avanzada.',
+    color: 'text-violet-700',
+    bg: 'bg-violet-50',
+    border: 'border-violet-200',
+    href: '/advanced',
+  },
+  {
+    tag: 'Key 3',
+    title: 'Migration Master',
+    desc: 'Contexto migrado desde ChatGPT, sistema de prompts propio y workflows operativos documentados.',
+    color: 'text-amber-700',
+    bg: 'bg-amber-50',
+    border: 'border-amber-200',
+    href: '/migrador',
+  },
+];
+
+const rasgos = [
+  { title: 'Sistemático', desc: 'No improvisa. Construye con estructura. Cada nivel tiene ejercicios reales y entregables concretos.' },
+  { title: 'Constructor', desc: 'No memoriza teoría. Hace cosas. La formación se mide en archivos creados y sistemas que funcionan.' },
+  { title: 'En progresión', desc: 'Empieza en Nivel 1 y desbloquea Keys a medida que completa el trabajo. Sin atajos.' },
+  { title: 'Parte del ecosistema', desc: 'Los Monkeys que completan la escuela pueden colaborar con el ecosistema MOONKEY XN.' },
+];
+---
+
+<Layout title="The Monkey Lab" description="Comunidad de operadores MOONKEY XN. Aprende, desbloquea Keys y construye sistemas reales con IA.">
+
+  <!-- Hero -->
+  <section class="pb-12 border-b border-slate-200">
+    <span class="label block mb-2">THE MONKEY LAB</span>
+    <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-4">
+      Bienvenido al Lab.<br/>
+      <span class="text-emerald-600">Monkeys en formación.</span>
+    </h1>
+    <p class="text-slate-600 text-base leading-relaxed max-w-xl mb-4">
+      MOONKEY XN SCHOOL forma operadores que aprenden a construir con IA de forma sistemática. Los llamamos Monkeys: aprendices ágiles, curiosos y constructores de sistemas.
+    </p>
+    <p class="text-slate-400 text-sm font-mono">
+      Moon + Monkey + Key — visión, agilidad y acceso.
+    </p>
+  </section>
+
+  <!-- Qué es un Monkey -->
+  <section class="py-12 border-b border-slate-200">
+    <span class="label block mb-6">QUÉ ES UN MONKEY</span>
+    <div class="grid sm:grid-cols-2 gap-4">
+      {rasgos.map(r => (
+        <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+          <h3 class="font-semibold text-slate-900 text-sm mb-2">{r.title}</h3>
+          <p class="text-slate-500 text-xs leading-relaxed">{r.desc}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Keys de progreso -->
+  <section class="py-12 border-b border-slate-200">
+    <span class="label block mb-2">LAS KEYS DE PROGRESO</span>
+    <p class="text-slate-500 text-sm mb-8 max-w-xl">
+      Cada nivel completado desbloquea una Key. Las Keys son el registro del Operator Path — el camino de formación de la metodología MOONKEY XN.
+    </p>
+    <div class="space-y-4">
+      {keys.map(k => (
+        <a href={k.href} class={`flex items-start gap-4 ${k.bg} border ${k.border} rounded-xl p-5 hover:shadow-md transition-shadow group`}>
+          <span class={`font-mono text-xs font-bold shrink-0 mt-0.5 ${k.color}`}>{k.tag}</span>
+          <div class="flex-1">
+            <p class={`font-semibold text-sm mb-1 ${k.color}`}>{k.title}</p>
+            <p class="text-slate-500 text-xs leading-relaxed">{k.desc}</p>
+          </div>
+          <span class={`font-mono text-xs shrink-0 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity ${k.color}`}>→</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- De Monkey a Moonkey -->
+  <section class="py-12 border-b border-slate-200">
+    <span class="label block mb-6">DE MONKEY A MOONKEY</span>
+    <div class="bg-slate-900 rounded-2xl px-8 py-10">
+      <span class="font-mono text-xs tracking-widest uppercase text-emerald-400 block mb-4">OPERATOR PATH COMPLETO</span>
+      <h2 class="text-2xl font-bold text-white mb-3 leading-snug">
+        Completa las 3 Keys.<br/>Conviértete en Moonkey.
+      </h2>
+      <p class="text-slate-400 text-sm leading-relaxed mb-8 max-w-lg">
+        Un Moonkey es un operador que ha completado los tres niveles de formación y puede trabajar con IA de forma autónoma, documentada y sistemática. La base para colaborar con el ecosistema MOONKEY XN o implementar sistemas en su propio entorno.
+      </p>
+      <div class="grid sm:grid-cols-3 gap-4 mb-8">
+        {[
+          { label: '3 Keys', desc: 'niveles completados' },
+          { label: 'Sistema', desc: 'CLAUDE.md + prompts + workflows' },
+          { label: 'Operator Path', desc: 'metodología MOONKEY XN' },
+        ].map(s => (
+          <div class="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
+            <p class="text-emerald-400 font-bold font-mono text-lg mb-1">{s.label}</p>
+            <p class="text-slate-400 text-xs">{s.desc}</p>
+          </div>
+        ))}
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <a href="/modulos" class="inline-block font-mono text-sm font-medium text-slate-900 bg-emerald-400 px-6 py-3 rounded-xl hover:bg-emerald-300 transition-colors">
+          Empezar Nivel 1 →
+        </a>
+        <a href="/prueba-operador" class="inline-block font-mono text-sm text-slate-400 border border-slate-600 px-6 py-3 rounded-xl hover:border-slate-400 transition-colors">
+          Test de Operador
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Programa piloto -->
+  <section class="py-12">
+    <span class="label block mb-6">PROGRAMA PILOTO</span>
+    <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-8">
+      <h2 class="text-xl font-bold text-slate-900 mb-3">Los primeros Monkeys.</h2>
+      <p class="text-slate-600 text-sm leading-relaxed mb-4 max-w-lg">
+        Estamos formando los primeros operadores del ecosistema. Esta fase piloto es de acceso libre para los primeros participantes. Los niveles avanzados y el acceso privado evolucionarán en una fase posterior.
+      </p>
+      <p class="text-slate-500 text-sm leading-relaxed mb-8 max-w-lg">
+        Si quieres acceso anticipado a recursos avanzados, colaborar con el ecosistema o integrar esta formación en tu equipo, escríbenos directamente.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <a href="/modulos" class="inline-block font-mono text-sm font-medium text-white bg-emerald-500 px-6 py-3 rounded-xl hover:bg-emerald-600 transition-colors">
+          Empezar ahora →
+        </a>
+        <a href="/soporte" class="inline-block font-mono text-sm text-emerald-700 border border-emerald-300 bg-white px-6 py-3 rounded-xl hover:bg-emerald-50 transition-colors">
+          Contactar para acceso
+        </a>
+        <a href="/planes" class="inline-block font-mono text-sm text-slate-600 border border-slate-200 bg-white px-6 py-3 rounded-xl hover:bg-slate-50 transition-colors">
+          Ver planes
+        </a>
+      </div>
+    </div>
+  </section>
+
+</Layout>

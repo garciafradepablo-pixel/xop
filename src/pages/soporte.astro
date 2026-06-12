@@ -1,0 +1,138 @@
+---
+import Layout from '../components/Layout.astro';
+
+const faqs = [
+  {
+    q: '¿Cómo funciona el desbloqueo de niveles?',
+    a: 'El progreso se guarda en tu navegador (localStorage). Completa el Nivel 1 y haz clic en "Marcar Nivel 1 como completado" al final de la página. El Nivel 2 se desbloqueará automáticamente. Mismo sistema para el Nivel 3.',
+  },
+  {
+    q: '¿Qué pasa si cierro el navegador?',
+    a: 'Tu progreso se mantiene si usas el mismo navegador y dispositivo. Si cambias de dispositivo o borras el caché del navegador, el progreso se reinicia desde cero.',
+  },
+  {
+    q: 'El Nivel 2 no se desbloquea. ¿Qué hago?',
+    a: 'Ve a /modulos, llega al final de la página y haz clic en "Marcar Nivel 1 como completado". Si el botón ya no aparece pero el nivel sigue bloqueado, intenta desde un navegador sin modo incógnito o limpia el caché.',
+  },
+  {
+    q: '¿Cómo reinicio mi progreso?',
+    a: 'En la pantalla de inicio, al final de la página, hay un botón "Reiniciar progreso". También puedes abrir la consola del navegador (F12) y ejecutar: localStorage.clear()',
+  },
+  {
+    q: '¿Es necesario crear una cuenta?',
+    a: 'No. MOONKEY XN SCHOOL funciona sin registro ni login. Todo el progreso se guarda localmente en tu navegador, sin servidores ni bases de datos.',
+  },
+  {
+    q: '¿Cuándo estará disponible el acceso de pago?',
+    a: 'Estamos en programa piloto con acceso libre. El acceso privado y los pagos se implementarán en una fase posterior. Los primeros participantes tendrán condiciones especiales.',
+  },
+  {
+    q: '¿Puedo usar el Arsenal de Prompts aunque no haya terminado el Nivel 1?',
+    a: 'Sí. El Arsenal de Prompts, el Glosario y el Test de Operador son accesibles directamente desde el menú, sin prerequisitos.',
+  },
+];
+---
+
+<Layout title="Soporte y Acceso" description="Soporte técnico y preguntas frecuentes de MOONKEY XN SCHOOL.">
+
+  <!-- Hero -->
+  <section class="pb-12 border-b border-slate-200">
+    <span class="label block mb-2">SOPORTE Y ACCESO</span>
+    <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-4">
+      Estamos aquí.
+    </h1>
+    <p class="text-slate-600 text-base leading-relaxed max-w-xl">
+      Dudas técnicas, problemas de acceso, información sobre el programa piloto o servicios de equipo. Aquí encuentras lo que necesitas.
+    </p>
+  </section>
+
+  <!-- FAQ -->
+  <section class="py-12 border-b border-slate-200">
+    <span class="label block mb-8">PREGUNTAS FRECUENTES</span>
+    <div class="space-y-4">
+      {faqs.map(item => (
+        <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+          <p class="font-semibold text-slate-900 text-sm mb-2">{item.q}</p>
+          <p class="text-slate-500 text-sm leading-relaxed">{item.a}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Reiniciar progreso -->
+  <section class="py-12 border-b border-slate-200">
+    <span class="label block mb-6">REINICIAR PROGRESO</span>
+    <div class="bg-rose-50 border border-rose-200 rounded-xl p-6">
+      <h3 class="font-semibold text-slate-900 text-sm mb-3">Cómo reiniciar tu progreso</h3>
+      <ol class="space-y-2 mb-5">
+        {[
+          'Ve a la pantalla de inicio (/).',
+          'Baja al final de la página.',
+          'Haz clic en el botón "Reiniciar progreso" y confirma.',
+        ].map((step, i) => (
+          <li class="flex items-start gap-3 text-sm text-slate-600">
+            <span class="font-mono text-rose-400 shrink-0">{i+1}.</span>
+            {step}
+          </li>
+        ))}
+      </ol>
+      <p class="text-slate-400 text-xs font-mono">
+        Alternativa técnica: consola del navegador (F12) → <code class="bg-rose-100 px-1.5 py-0.5 rounded">localStorage.clear()</code>
+      </p>
+    </div>
+  </section>
+
+  <!-- Acceso de pago próximamente -->
+  <section class="py-12 border-b border-slate-200">
+    <span class="label block mb-6">ACCESO PRIVADO Y PAGOS</span>
+    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-8">
+      <h2 class="text-xl font-bold text-slate-900 mb-3">Acceso privado próximamente.</h2>
+      <p class="text-slate-600 text-sm leading-relaxed mb-5 max-w-lg">
+        MOONKEY XN SCHOOL está en programa piloto. En una fase posterior se habilitarán:
+      </p>
+      <ul class="space-y-2.5 mb-6">
+        {[
+          'Acceso privado a niveles avanzados',
+          'Sistema de pagos integrado',
+          'Panel de progreso personal',
+          'Certificados de completado',
+          'Soporte directo y acompañamiento',
+        ].map(item => (
+          <li class="flex items-center gap-2.5 text-sm text-slate-600">
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-300 shrink-0"></span>
+            {item}
+          </li>
+        ))}
+      </ul>
+      <a href="/planes" class="inline-block font-mono text-sm font-medium text-slate-700 border border-slate-300 px-5 py-2.5 rounded-xl hover:bg-white transition-colors">
+        Ver planes de acceso →
+      </a>
+    </div>
+  </section>
+
+  <!-- Contacto directo -->
+  <section class="py-12">
+    <span class="label block mb-6">CONTACTO DIRECTO</span>
+    <div class="grid sm:grid-cols-2 gap-4">
+      <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-6">
+        <h3 class="font-semibold text-slate-900 text-sm mb-2">Programa piloto</h3>
+        <p class="text-slate-500 text-xs leading-relaxed mb-4">
+          ¿Quieres acceso anticipado, recursos avanzados o tienes dudas sobre el programa? Canal de contacto privado.
+        </p>
+        <a href="mailto:garciafradepablo@gmail.com?subject=MOONKEY%20XN%20-%20Acceso%20piloto" class="font-mono text-xs font-medium text-emerald-700 hover:underline">
+          → Contacto directo
+        </a>
+      </div>
+      <div class="bg-violet-50 border border-violet-200 rounded-xl p-6">
+        <h3 class="font-semibold text-slate-900 text-sm mb-2">Implementación para equipos</h3>
+        <p class="text-slate-500 text-xs leading-relaxed mb-4">
+          ¿Quieres esta formación para tu equipo o construir un sistema interno? Ve el proceso de colaboración.
+        </p>
+        <a href="/onboarding" class="font-mono text-xs font-medium text-violet-700 hover:underline">
+          → Ver proceso de colaboración
+        </a>
+      </div>
+    </div>
+  </section>
+
+</Layout>
