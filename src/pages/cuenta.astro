@@ -58,6 +58,65 @@ const configured = !!(
     )}
   </section>
 
+  <!-- Monkey profile — shown by script when session is active -->
+  {configured && (
+    <section id="monkey-profile-section" class="py-10 border-b border-slate-200 hidden">
+      <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-5">PERFIL MONKEY</p>
+
+      <div class="bg-white border border-slate-200 rounded-xl px-5 py-5 max-w-sm mb-6 shadow-sm">
+        <p class="font-mono text-[10px] tracking-widest text-emerald-600 uppercase mb-3">MONKEY ID</p>
+        <p id="pf-card-email" class="text-xs font-mono text-slate-500 mb-1"></p>
+        <p id="pf-card-nickname" class="text-sm font-bold text-slate-900 hidden mb-1"></p>
+        <p id="pf-card-goal" class="text-xs text-slate-500 hidden mb-2"></p>
+        <p id="pf-card-level" class="font-mono text-[10px] tracking-widest uppercase text-emerald-600 hidden"></p>
+      </div>
+
+      <form id="profile-form" class="max-w-sm space-y-4" novalidate>
+        <div>
+          <label for="pf-nickname" class="block text-sm font-medium text-slate-700 mb-1.5">Nickname</label>
+          <input
+            id="pf-nickname" name="nickname" type="text" maxlength="40"
+            placeholder="Cómo quieres que te llamen"
+            class="w-full font-mono text-sm border border-slate-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label for="pf-goal" class="block text-sm font-medium text-slate-700 mb-1.5">Objetivo principal</label>
+          <input
+            id="pf-goal" name="operator_goal" type="text" maxlength="120"
+            placeholder="¿Qué quieres lograr con IA?"
+            class="w-full font-mono text-sm border border-slate-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label for="pf-level" class="block text-sm font-medium text-slate-700 mb-1.5">Nivel de experiencia</label>
+          <select
+            id="pf-level" name="experience_level"
+            class="w-full font-mono text-sm border border-slate-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent bg-white"
+          >
+            <option value="">Selecciona tu nivel</option>
+            <option value="starter">Estoy empezando</option>
+            <option value="builder">Ya construyo cosas con IA</option>
+            <option value="operator">Quiero operar sistemas reales</option>
+            <option value="team">Quiero formar o dirigir equipo</option>
+          </select>
+        </div>
+
+        <p id="pf-error" class="hidden text-xs text-rose-600 font-mono border border-rose-200 bg-rose-50 rounded-lg px-3 py-2"></p>
+
+        <div class="flex items-center gap-4">
+          <button
+            type="submit" id="pf-submit"
+            class="font-mono text-xs font-medium text-white bg-emerald-500 px-5 py-2 rounded-lg hover:bg-emerald-600 transition-colors disabled:opacity-50"
+          >
+            Guardar perfil →
+          </button>
+          <p id="pf-status" class="hidden text-xs font-mono text-emerald-700"></p>
+        </div>
+      </form>
+    </section>
+  )}
+
   <!-- Local progress summary -->
   <section class="py-10 border-b border-slate-200">
     <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-5">PROGRESO LOCAL</p>
@@ -134,6 +193,13 @@ const configured = !!(
   import { supabase } from '../lib/supabase';
   import { readLocalProgress, toSupabasePayload } from '../lib/progress';
 
+  const LEVEL_LABELS: Record<string, string> = {
+    starter: 'Estoy empezando',
+    builder: 'Ya construyo cosas con IA',
+    operator: 'Quiero operar sistemas reales',
+    team: 'Quiero formar o dirigir equipo',
+  };
+
   async function doSync(userId: string) {
     if (!supabase) return null;
     const data = readLocalProgress();
@@ -143,6 +209,17 @@ const configured = !!(
       .upsert(payload, { onConflict: 'user_id' });
     if (error) console.error('[cuenta] sync error:', error.message);
     return error;
+  }
+
+  function setCardField(id: string, value: string | null | undefined) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (value) {
+      el.textContent = value;
+      el.classList.remove('hidden');
+    } else {
+      el.classList.add('hidden');
+    }
   }
 
   (async () => {
@@ -165,10 +242,38 @@ const configured = !!(
       loggedInEl?.classList.remove('hidden');
       if (emailEl) emailEl.textContent = session.user.email ?? '';
 
-      // Auto-sync on page load — no button click required
-      if (syncMsg) syncMsg.textContent = 'Sincronizando progreso…';
-      const autoError = await doSync(session.user.id);
+      // Show profile section immediately; seed email in card
+      document.getElementById('monkey-profile-section')?.classList.remove('hidden');
+      const cardEmail = document.getElementById('pf-card-email');
+      if (cardEmail) cardEmail.textContent = session.user.email ?? '';
 
+      // Load profile + auto-sync progress in parallel
+      if (syncMsg) syncMsg.textContent = 'Sincronizando progreso…';
+      const [profileRes, autoError] = await Promise.all([
+        supabase
+          .from('profiles')
+          .select('nickname, operator_goal, experience_level')
+          .eq('id', session.user.id)
+          .single(),
+        doSync(session.user.id),
+      ]);
+
+      // Populate card and form with profile data
+      const prof = profileRes.data as { nickname?: string; operator_goal?: string; experience_level?: string } | null;
+      if (prof) {
+        setCardField('pf-card-nickname', prof.nickname ?? null);
+        setCardField('pf-card-goal', prof.operator_goal ?? null);
+        setCardField('pf-card-level', prof.experience_level ? (LEVEL_LABELS[prof.experience_level] ?? null) : null);
+
+        const nickInput = document.getElementById('pf-nickname') as HTMLInputElement | null;
+        const goalInput = document.getElementById('pf-goal') as HTMLInputElement | null;
+        const levelSelect = document.getElementById('pf-level') as HTMLSelectElement | null;
+        if (nickInput && prof.nickname) nickInput.value = prof.nickname;
+        if (goalInput && prof.operator_goal) goalInput.value = prof.operator_goal;
+        if (levelSelect && prof.experience_level) levelSelect.value = prof.experience_level;
+      }
+
+      // Sync result
       if (syncResult) {
         syncResult.textContent = autoError
           ? `Error al sincronizar: ${autoError.message}`
@@ -187,9 +292,7 @@ const configured = !!(
         syncBtn.disabled = true;
         syncBtn.textContent = 'Sincronizando…';
         if (syncResult) syncResult.classList.add('hidden');
-
         const manualError = await doSync(session.user.id);
-
         syncBtn.disabled = false;
         syncBtn.textContent = 'Sincronizar de nuevo →';
         if (syncResult) {
@@ -199,6 +302,43 @@ const configured = !!(
           syncResult.classList.remove('hidden');
         }
       });
+
+      // Profile form
+      const profileForm = document.getElementById('profile-form') as HTMLFormElement | null;
+      const pfSubmit = document.getElementById('pf-submit') as HTMLButtonElement | null;
+      const pfStatus = document.getElementById('pf-status');
+      const pfError = document.getElementById('pf-error');
+
+      profileForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!supabase || !profileForm || !session?.user) return;
+
+        const nickname = (profileForm.querySelector('[name="nickname"]') as HTMLInputElement)?.value.trim() || null;
+        const operator_goal = (profileForm.querySelector('[name="operator_goal"]') as HTMLInputElement)?.value.trim() || null;
+        const experience_level = (profileForm.querySelector('[name="experience_level"]') as HTMLSelectElement)?.value || null;
+
+        if (pfSubmit) { pfSubmit.disabled = true; pfSubmit.textContent = 'Guardando…'; }
+        if (pfStatus) pfStatus.classList.add('hidden');
+        if (pfError) pfError.classList.add('hidden');
+
+        const { error } = await supabase
+          .from('profiles')
+          .update({ nickname, operator_goal, experience_level, updated_at: new Date().toISOString() })
+          .eq('id', session.user.id);
+
+        if (pfSubmit) { pfSubmit.disabled = false; pfSubmit.textContent = 'Guardar perfil →'; }
+
+        if (error) {
+          if (pfError) { pfError.textContent = `Error: ${error.message}`; pfError.classList.remove('hidden'); }
+          console.error('[cuenta] profile update error:', error.message);
+        } else {
+          if (pfStatus) { pfStatus.textContent = 'Perfil actualizado.'; pfStatus.classList.remove('hidden'); }
+          setCardField('pf-card-nickname', nickname);
+          setCardField('pf-card-goal', operator_goal);
+          setCardField('pf-card-level', experience_level ? (LEVEL_LABELS[experience_level] ?? null) : null);
+        }
+      });
+
     } else {
       loggedOutEl?.classList.remove('hidden');
     }
