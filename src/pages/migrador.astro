@@ -1,0 +1,541 @@
+---
+import LayoutLevel from '../components/LayoutLevel.astro';
+import PromptBlock from '../components/PromptBlock.astro';
+import FlowDiagram from '../components/FlowDiagram.astro';
+
+const promptExtraerChatGPT = `Actúa como archivista de conocimiento operativo.
+
+Tengo conversaciones o historial de trabajo con ChatGPT que quiero procesar.
+
+De este material: [pega conversaciones relevantes o describe los temas principales]
+
+Extrae y estructura:
+1. Proyectos activos mencionados (nombre, estado, próximo paso)
+2. Prompts que usé y que produjeron buenos resultados
+3. Decisiones importantes tomadas con su razonamiento
+4. Reglas de trabajo o preferencias personales que emergen del historial
+5. Tareas repetidas que podrían automatizarse
+6. Conocimiento tácito que solo existe en las conversaciones
+
+Formato: Markdown. Organizado por categoría. Una línea por ítem. Sin relleno.`;
+
+const promptConvertirCLAUDEmd = `Actúa como arquitecto de contexto operativo.
+
+Tengo este material disperso: [pega el material: notas, conversaciones, descripciones de proyectos]
+
+Convierte todo esto en un CLAUDE.md principal que sirva como punto de entrada para trabajar con Claude Code en cualquier proyecto de mi ecosistema.
+
+El archivo debe incluir:
+- Quién soy y a qué me dedico (3-5 líneas, denso)
+- Proyectos activos con estado actual
+- Herramientas que uso habitualmente
+- Mi forma preferida de trabajar con IA
+- Lo que NO quiero que Claude haga nunca
+- Reglas de estilo y tono si aplica
+
+Máximo 50 líneas. Que pueda añadirlo al inicio de cualquier sesión.`;
+
+const promptPlanMigracion = `Actúa como consultor de migración de sistemas de trabajo.
+
+Tengo estos proyectos y recursos: [lista tus proyectos activos, documentos clave y herramientas]
+
+Crea un plan de migración ChatGPT → Claude Code que incluya:
+
+1. Priorización de proyectos (cuál migrar primero y por qué)
+2. Para cada proyecto: qué migrar, en qué formato y qué crear en Claude Code
+3. Lista de prompts a recuperar y cómo convertirlos en archivos /prompts
+4. Qué workflows documentar y en qué formato
+5. Estimación de tiempo con tareas de máximo 30 minutos cada una
+
+Resultado final esperado: estructura de carpetas lista para operar con Claude Code.`;
+
+const inventario = [
+  { cat: 'Conversaciones', items: ['Conversaciones de trabajo útiles archivadas', 'Chats con decisiones importantes documentadas', 'Hilos con prompts que funcionaron bien', 'Sesiones de planificación o brainstorming valiosas'] },
+  { cat: 'Proyectos', items: ['Proyectos activos con estado actual claro', 'Proyectos pausados con motivo documentado', 'Ideas viables con contexto suficiente', 'Proyectos descartados con razón registrada'] },
+  { cat: 'Conocimiento', items: ['Prompts personales que producen buen resultado', 'Workflows repetidos con pasos definidos', 'Documentos de referencia usados frecuentemente', 'Reglas de estilo o criterios de decisión propios'] },
+];
+
+const clasificacion = [
+  { label: 'Activo', desc: 'Trabajas en él esta semana', color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200' },
+  { label: 'Pausado', desc: 'Lo retomarás, pero no ahora', color: 'text-sky-700', bg: 'bg-sky-50', border: 'border-sky-200' },
+  { label: 'Descartado', desc: 'No va a salir. Ciérralo con nota.', color: 'text-slate-500', bg: 'bg-slate-50', border: 'border-slate-200' },
+  { label: 'Automatizable', desc: 'Claude puede ejecutarlo con instrucciones claras', color: 'text-violet-700', bg: 'bg-violet-50', border: 'border-violet-200' },
+  { label: 'Delegable', desc: 'Otro operador puede tomarlo con contexto', color: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200' },
+  { label: 'Formativo', desc: 'Lo que aprendiste construyéndolo merece documentarse', color: 'text-rose-700', bg: 'bg-rose-50', border: 'border-rose-200' },
+];
+
+const matrizVars = [
+  { label: 'Proyectos activos', bajo: '1–2', medio: '3–5', alto: '6+' },
+  { label: 'Prompts útiles guardados', bajo: '0–5', medio: '6–20', alto: '20+' },
+  { label: 'Workflows repetidos por semana', bajo: '1–2', medio: '3–6', alto: '7+' },
+  { label: 'Documentación actual', bajo: 'Nula o dispersa', medio: 'Notas parciales', alto: 'Docs estructurados' },
+  { label: 'Urgencia de automatizar', bajo: 'Puede esperar', medio: 'Este mes', alto: 'Esta semana' },
+];
+
+const perfiles = [
+  {
+    label: 'Migración ligera',
+    for: 'Pocas variables en nivel bajo o medio',
+    primero: 'CLAUDE.md personal + carpeta /prompts con 5 plantillas',
+    tiempo: '2–4 horas en una tarde',
+    resultado: 'Sistema mínimo funcional para trabajar con Claude Code',
+    color: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200',
+  },
+  {
+    label: 'Migración operativa',
+    for: 'Mayoría de variables en nivel medio',
+    primero: 'CLAUDE.md + /prompts + /workflows documentados',
+    tiempo: '1–2 días distribuidos en una semana',
+    resultado: 'Sistema operativo con prompts, workflows y contexto migrado',
+    color: 'text-orange-700', bg: 'bg-orange-50', border: 'border-orange-200',
+  },
+  {
+    label: 'Migración completa',
+    for: 'Varias variables en nivel alto',
+    primero: 'Inventario completo → clasificación → migración por proyecto',
+    tiempo: '1–2 semanas con sesiones diarias de 30–60 min',
+    resultado: 'Ecosistema Claude Code completo con backlog de automatizaciones',
+    color: 'text-rose-700', bg: 'bg-rose-50', border: 'border-rose-200',
+  },
+];
+
+const sistemaClaude = [
+  { archivo: 'CLAUDE.md', desc: 'Contexto personal y reglas de trabajo con Claude' },
+  { archivo: 'README.md', desc: 'Descripción del ecosistema, proyectos activos y estado' },
+  { archivo: '/prompts', desc: 'Carpeta con prompts nombrados por tarea, listos para copiar' },
+  { archivo: '/workflows', desc: 'Flujos documentados con pasos, herramientas y criterios de éxito' },
+  { archivo: '/docs', desc: 'Documentación de decisiones, arquitecturas y procesos' },
+  { archivo: 'backlog.md', desc: 'Lista de automatizaciones priorizadas por impacto/esfuerzo' },
+];
+
+const serviciosComerciales = [
+  'Ordenar tu conocimiento disperso en un sistema operativo',
+  'Crear sistema de prompts personalizados para tu flujo',
+  'Migrar workflows de ChatGPT a Claude Code con contexto',
+  'Construir portal interno de prompts y SOPs para tu equipo',
+  'Preparar Claude Code para colaborar con otros operadores',
+];
+---
+
+<LayoutLevel title="Nivel 3 — Migration System" description="Convierte tu conocimiento disperso en un sistema operativo para trabajar con Claude Code.">
+
+  <!-- SIDEBAR (desktop) -->
+  <div slot="sidebar">
+    <!-- Locked card (hidden when N2 complete) -->
+    <div id="sb-n3-locked" class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 text-center">
+      <span class="font-mono text-xs text-amber-600 tracking-widest uppercase block mb-0.5">NIVEL 3</span>
+      <p class="text-sm font-semibold text-slate-500 leading-snug mb-3">Migration System</p>
+      <p class="text-xs text-slate-400 leading-relaxed mb-3">Completa Nivel 2 para desbloquear este nivel.</p>
+      <a href="/advanced" class="font-mono text-xs text-amber-600 hover:underline">→ Ir a Nivel 2</a>
+    </div>
+    <!-- Unlocked sidebar (shown when N2 complete) -->
+    <div id="sb-n3-unlocked" class="hidden bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+      <div class="px-4 py-3 border-b border-slate-100">
+        <span class="font-mono text-xs text-amber-600 tracking-widest uppercase block mb-0.5">NIVEL 3</span>
+        <p class="font-semibold text-slate-900 leading-snug text-sm">Migration System</p>
+        <p id="sb-l3-status" class="font-mono text-xs text-amber-600 mt-0.5">Disponible</p>
+      </div>
+      <div class="px-4 py-3 border-b border-slate-100">
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="font-mono text-xs text-slate-400">Progreso</span>
+          <span id="sb-l3-count" class="font-mono text-xs text-slate-500">0/8</span>
+        </div>
+        <div class="bg-slate-100 rounded-full h-1.5 overflow-hidden">
+          <div id="sb-l3-bar" class="bg-amber-500 h-1.5 rounded-full transition-all duration-500" style="width:0%"></div>
+        </div>
+      </div>
+      <nav class="p-2 space-y-0.5">
+        {[
+          { key: 1, anchor: 'que-migras',   label: 'Qué migras' },
+          { key: 2, anchor: 'inventario',   label: 'Inventario' },
+          { key: 3, anchor: 'clasificacion',label: 'Clasificación' },
+          { key: 4, anchor: 'calculadora',  label: 'Calculadora' },
+          { key: 5, anchor: 'perfiles',     label: 'Perfil sugerido' },
+          { key: 6, anchor: 'sistema',      label: 'Sistema Claude' },
+          { key: 7, anchor: 'prompts-migracion', label: 'Prompts' },
+          { key: 8, anchor: 'completar-n3', label: 'Finalización' },
+        ].map(s => (
+          <div class="flex items-center gap-1.5">
+            <button
+              class="sb-mod-btn w-4 h-4 rounded border border-slate-200 shrink-0 text-xs flex items-center justify-center hover:border-amber-400 transition-colors bg-white leading-none"
+              data-mkey={`moonkey_level_3_section_${s.key}`}
+              type="button"
+              title={`Marcar "${s.label}" completado`}
+            ></button>
+            <a
+              href={`#${s.anchor}`}
+              class="flex-1 text-xs text-slate-500 hover:text-slate-900 px-1 py-1 rounded hover:bg-slate-50 transition-colors truncate"
+            >
+              {s.label}
+            </a>
+          </div>
+        ))}
+      </nav>
+      <div class="p-3 border-t border-slate-100">
+        <a href="#completar-n3" class="block w-full text-center font-mono text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 px-3 py-2 rounded-lg hover:bg-amber-100 transition-colors">
+          Finalizar Nivel 3 →
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOBILE NAV -->
+  <details class="lg:hidden bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden mb-6">
+    <summary class="flex items-center justify-between px-4 py-3 cursor-pointer select-none list-none">
+      <span class="font-mono text-xs text-amber-600 tracking-widest uppercase">N3 — Migration System</span>
+      <span class="text-slate-400 text-xs font-mono">▾</span>
+    </summary>
+    <nav class="px-4 py-2 border-t border-slate-100 grid grid-cols-2 gap-x-4 gap-y-1">
+      {[
+        { anchor: 'que-migras',    label: 'Qué migras' },
+        { anchor: 'inventario',    label: 'Inventario' },
+        { anchor: 'clasificacion', label: 'Clasificación' },
+        { anchor: 'calculadora',   label: 'Calculadora' },
+        { anchor: 'perfiles',      label: 'Perfil sugerido' },
+        { anchor: 'sistema',       label: 'Sistema Claude' },
+        { anchor: 'prompts-migracion', label: 'Prompts' },
+        { anchor: 'completar-n3', label: 'Finalización' },
+      ].map(s => (
+        <a href={`#${s.anchor}`} class="text-xs text-slate-600 hover:text-amber-600 py-1 transition-colors truncate">
+          {s.label}
+        </a>
+      ))}
+    </nav>
+  </details>
+
+  <!-- PREVIEW (always visible) -->
+  <section class="pb-12 border-b border-slate-200">
+    <span class="font-mono text-xs text-amber-600 tracking-widest uppercase block mb-2">NIVEL 3 · MOONKEY XN SCHOOL</span>
+    <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-4">
+      ChatGPT → Claude<br/>Migration System
+    </h1>
+    <p class="text-slate-600 text-base leading-relaxed max-w-xl mb-8">
+      No migras chats. Migras conocimiento operativo. Convierte conversaciones, prompts, decisiones y workflows dispersos en un sistema estructurado para trabajar con Claude Code.
+    </p>
+    <div class="bg-amber-50 border border-amber-200 rounded-xl p-5">
+      <p class="font-mono text-xs text-amber-600 uppercase tracking-widest mb-3">Lo que construirás</p>
+      <div class="grid sm:grid-cols-2 gap-2">
+        {sistemaClaude.map(s => (
+          <div class="flex items-start gap-2 text-xs text-slate-600">
+            <code class="bg-white border border-amber-200 text-amber-700 font-mono px-1.5 py-0.5 rounded shrink-0">{s.archivo}</code>
+            <span class="text-slate-500 leading-relaxed">{s.desc}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <FlowDiagram
+    title="Diagrama — Cómo migras de ChatGPT a Claude Code"
+    color="amber"
+    nodes={[
+      { label: 'Chats y prompts dispersos', sub: 'Historial en ChatGPT, notas, documentos' },
+      { label: 'Extracción de contexto', sub: 'Qué sabes, cómo trabajas, qué proyectos tienes' },
+      { label: 'Clasificación de proyectos y workflows', sub: 'Activos, pausados, automatizables' },
+      { label: 'Conversión a CLAUDE.md + README + /prompts', sub: 'Conocimiento estructurado y reutilizable' },
+      { label: 'Backlog de automatizaciones', sub: 'Tareas priorizadas por impacto y esfuerzo' },
+      { label: 'Sistema operativo en Claude Code', sub: 'Listo para trabajar con contexto desde el día 1' },
+    ]}
+  />
+
+  <!-- LOCK OVERLAY -->
+  <div id="migrador-lock-overlay" class="py-16 text-center">
+    <div class="bg-white border-2 border-amber-200 rounded-2xl px-8 py-10 max-w-md mx-auto shadow-sm">
+      <span class="font-mono text-xs text-slate-400 tracking-widest uppercase block mb-4">CONTENIDO BLOQUEADO</span>
+      <h2 class="text-xl font-bold text-slate-900 mb-3">Completa Nivel 2 para desbloquear</h2>
+      <p class="text-slate-500 text-sm leading-relaxed mb-6">
+        El Migration System se desbloquea cuando completas el Advanced Operator Playbook. Este nivel asume que ya sabes operar Claude Code con criterio profesional.
+      </p>
+      <a
+        href="/advanced"
+        class="inline-block font-mono text-sm font-semibold text-white bg-violet-500 px-6 py-3 rounded-xl hover:bg-violet-600 transition-colors"
+      >
+        Ir a Nivel 2 — Advanced Operator Playbook →
+      </a>
+    </div>
+  </div>
+
+  <!-- FULL CONTENT (hidden by default) -->
+  <div id="migrador-content" class="hidden">
+
+    <!-- Qué migras realmente -->
+    <section id="que-migras" class="py-12 border-b border-slate-200 scroll-mt-6">
+      <span class="label block mb-6">QUÉ ESTÁS MIGRANDO REALMENTE</span>
+      <p class="text-slate-600 text-sm leading-relaxed mb-6">
+        La migración no es copiar y pegar conversaciones. Es extraer el conocimiento que existe solo en tus chats y convertirlo en algo que Claude Code puede usar como sistema.
+      </p>
+      <div class="grid sm:grid-cols-2 gap-3">
+        {[
+          { label: 'Contexto',   desc: 'Quién eres, cómo trabajas, qué objetivos tienes' },
+          { label: 'Estilo',     desc: 'Cómo prefieres que Claude se comunique contigo' },
+          { label: 'Reglas',     desc: 'Lo que nunca debe hacer, lo que siempre debe evitar' },
+          { label: 'Proyectos',  desc: 'Estado actual, próximos pasos, dependencias' },
+          { label: 'Prompts',    desc: 'Los que ya funcionan, no los genéricos' },
+          { label: 'Decisiones', desc: 'Las importantes y su razonamiento' },
+          { label: 'Workflows',  desc: 'Procesos repetidos con pasos definidos' },
+          { label: 'Memoria',    desc: 'Lo que aprendiste y no está escrito en ningún lado' },
+        ].map(item => (
+          <div class="bg-white border border-amber-100 rounded-xl px-4 py-3">
+            <p class="font-mono text-xs text-amber-600 font-bold mb-0.5">{item.label}</p>
+            <p class="text-slate-500 text-xs leading-relaxed">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Inventario -->
+    <section id="inventario" class="py-12 border-b border-slate-200 scroll-mt-6">
+      <span class="label block mb-2">INVENTARIO DE CONOCIMIENTO</span>
+      <p class="text-slate-500 text-sm mb-8">Antes de migrar, necesitas saber qué tienes. Marca lo que ya existe en tu caso:</p>
+      <div class="space-y-6">
+        {inventario.map(cat => (
+          <div>
+            <p class="font-mono text-xs text-amber-600 uppercase tracking-widest mb-3">{cat.cat}</p>
+            <div class="space-y-2">
+              {cat.items.map(item => (
+                <label class="flex items-start gap-3 bg-white border border-slate-200 rounded-xl px-4 py-3 cursor-pointer hover:border-amber-200 transition-colors">
+                  <input type="checkbox" class="mt-0.5 shrink-0 accent-amber-500" />
+                  <span class="text-slate-600 text-sm leading-relaxed">{item}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Clasificación -->
+    <section id="clasificacion" class="py-12 border-b border-slate-200 scroll-mt-6">
+      <span class="label block mb-6">CLASIFICACIÓN DE PROYECTOS</span>
+      <p class="text-slate-500 text-sm mb-8">Antes de migrar un proyecto, clasifícalo. El estado define qué hacer con él:</p>
+      <div class="grid sm:grid-cols-2 gap-3">
+        {clasificacion.map(c => (
+          <div class={`${c.bg} border ${c.border} rounded-xl px-4 py-4`}>
+            <p class={`font-mono text-xs font-bold mb-1 ${c.color}`}>{c.label}</p>
+            <p class="text-slate-500 text-xs leading-relaxed">{c.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Calculadora manual -->
+    <section id="calculadora" class="py-12 border-b border-slate-200 scroll-mt-6">
+      <span class="label block mb-2">CALCULADORA DE PERFIL</span>
+      <p class="text-slate-500 text-sm mb-8">Evalúa tu situación actual para identificar tu perfil de migración. No hace falta calcular nada: lee cada fila y decide tu nivel actual.</p>
+      <div class="space-y-2 mb-8">
+        <div class="flex bg-white border border-slate-200 rounded-xl overflow-hidden text-xs font-mono">
+          <div class="w-44 px-4 py-2.5 bg-slate-50 border-r border-slate-200 text-slate-500 uppercase tracking-widest text-xs">Variable</div>
+          <div class="flex-1 grid grid-cols-3">
+            <div class="px-3 py-2.5 border-r border-slate-100 text-center text-amber-600 font-bold">BAJO</div>
+            <div class="px-3 py-2.5 border-r border-slate-100 text-center text-orange-600 font-bold">MEDIO</div>
+            <div class="px-3 py-2.5 text-center text-rose-600 font-bold">ALTO</div>
+          </div>
+        </div>
+        {matrizVars.map(v => (
+          <div class="flex bg-white border border-slate-200 rounded-xl overflow-hidden">
+            <div class="w-44 shrink-0 px-4 py-3 bg-slate-50 border-r border-slate-200">
+              <p class="text-slate-700 text-xs leading-tight">{v.label}</p>
+            </div>
+            <div class="flex-1 grid grid-cols-3">
+              <div class="px-3 py-3 border-r border-slate-100 text-center text-slate-500 text-xs">{v.bajo}</div>
+              <div class="px-3 py-3 border-r border-slate-100 text-center text-slate-500 text-xs">{v.medio}</div>
+              <div class="px-3 py-3 text-center text-slate-500 text-xs">{v.alto}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Perfiles -->
+    <section id="perfiles" class="py-12 border-b border-slate-200 scroll-mt-6">
+      <span class="label block mb-8">RESULTADO SUGERIDO</span>
+      <div class="space-y-4">
+        {perfiles.map(p => (
+          <div class={`${p.bg} border-2 ${p.border} rounded-2xl p-6`}>
+            <h3 class={`font-bold text-base mb-4 ${p.color}`}>{p.label}</h3>
+            <div class="grid sm:grid-cols-2 gap-4 text-xs">
+              <div>
+                <p class="font-mono text-slate-400 uppercase tracking-widest mb-1">Para quién</p>
+                <p class="text-slate-600 leading-relaxed">{p.for}</p>
+              </div>
+              <div>
+                <p class="font-mono text-slate-400 uppercase tracking-widest mb-1">Qué migrar primero</p>
+                <p class="text-slate-600 leading-relaxed">{p.primero}</p>
+              </div>
+              <div>
+                <p class="font-mono text-slate-400 uppercase tracking-widest mb-1">Tiempo estimado</p>
+                <p class="text-slate-600 leading-relaxed">{p.tiempo}</p>
+              </div>
+              <div>
+                <p class="font-mono text-slate-400 uppercase tracking-widest mb-1">Entregable final</p>
+                <p class="text-slate-600 leading-relaxed">{p.resultado}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Conversión a sistema -->
+    <section id="sistema" class="py-12 border-b border-slate-200 scroll-mt-6">
+      <span class="label block mb-2">CONVERSIÓN A SISTEMA CLAUDE CODE</span>
+      <p class="text-slate-500 text-sm mb-8">Cada tipo de conocimiento migrado va a un destino específico:</p>
+      <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm divide-y divide-slate-100">
+        {sistemaClaude.map(s => (
+          <div class="flex items-start gap-5 px-6 py-4">
+            <code class="bg-amber-50 border border-amber-200 text-amber-700 font-mono text-xs px-2 py-1 rounded shrink-0 mt-0.5">{s.archivo}</code>
+            <p class="text-slate-600 text-sm leading-relaxed">{s.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Prompts -->
+    <section id="prompts-migracion" class="py-12 border-b border-slate-200 scroll-mt-6">
+      <span class="label block mb-8">PROMPTS DE MIGRACIÓN</span>
+      <PromptBlock tag="PROMPT N3-01" title="Extraer conocimiento operativo desde ChatGPT" prompt={promptExtraerChatGPT} />
+      <PromptBlock tag="PROMPT N3-02" title="Convertir material disperso en CLAUDE.md" prompt={promptConvertirCLAUDEmd} />
+      <PromptBlock tag="PROMPT N3-03" title="Crear plan de migración por proyecto" prompt={promptPlanMigracion} />
+    </section>
+
+    <!-- CTA comercial -->
+    <section class="py-12 border-b border-slate-200">
+      <div class="bg-slate-900 rounded-2xl px-8 py-10">
+        <span class="font-mono text-xs tracking-widest uppercase text-amber-400 block mb-4">SERVICIO</span>
+        <h2 class="text-2xl font-bold text-white mb-3">Podemos migrar tu sistema contigo.</h2>
+        <p class="text-slate-400 text-sm leading-relaxed mb-8 max-w-lg">
+          Si tienes conocimiento disperso en ChatGPT, Notion, emails o documentos y quieres convertirlo en un sistema operativo con Claude Code, lo hacemos juntos.
+        </p>
+        <ul class="space-y-2 mb-8">
+          {serviciosComerciales.map(s => (
+            <li class="flex items-center gap-3 text-slate-300 text-sm">
+              <span class="text-amber-400 font-mono text-xs shrink-0">—</span>
+              {s}
+            </li>
+          ))}
+        </ul>
+        <a href="/onboarding" class="inline-block font-mono text-sm font-medium text-slate-900 bg-amber-400 px-6 py-3 rounded-xl hover:bg-amber-300 transition-colors">
+          Ver cómo trabajar juntos →
+        </a>
+      </div>
+    </section>
+
+    <!-- Completion -->
+    <div id="completar-n3" class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-7 mt-4 scroll-mt-6">
+      <span class="font-mono text-xs text-amber-600 tracking-widest uppercase block mb-2">NIVEL 3 — CHECKLIST DE FINALIZACIÓN</span>
+      <p class="text-slate-600 text-sm leading-relaxed mb-6">Completa estos puntos antes de marcar el nivel:</p>
+      <ul class="space-y-2.5 mb-8">
+        {[
+          'Inventario de conocimiento completado (qué tienes y dónde)',
+          'Proyectos clasificados por estado con criterio claro',
+          'Perfil de migración identificado (ligera / operativa / completa)',
+          'CLAUDE.md personal creado con contexto migrado',
+          'Carpeta /prompts con al menos 5 prompts operativos propios',
+          'Al menos 1 workflow documentado en /workflows',
+          'backlog.md con automatizaciones priorizadas',
+          'README.md del ecosistema actualizado',
+        ].map(item => (
+          <li class="flex items-start gap-3 text-sm text-slate-600">
+            <span class="text-amber-500 font-mono shrink-0 mt-0.5 text-base leading-4">✓</span>
+            {item}
+          </li>
+        ))}
+      </ul>
+
+      <button
+        id="btn-complete-l3"
+        class="w-full font-mono text-sm font-semibold text-white bg-amber-500 px-6 py-4 rounded-xl hover:bg-amber-600 transition-colors cursor-pointer border-0"
+      >
+        Marcar Nivel 3 como completado →
+      </button>
+
+      <div id="msg-complete-l3" class="hidden">
+        <div class="bg-amber-500 text-white rounded-xl px-6 py-5 text-center mb-4">
+          <p class="font-mono text-xs tracking-widest uppercase mb-1.5 opacity-80">NIVEL 3 COMPLETADO</p>
+          <p class="font-semibold text-base">MOONKEY XN SCHOOL completada</p>
+        </div>
+        <a
+          href="/"
+          class="block w-full text-center font-mono text-sm font-semibold text-emerald-700 border-2 border-emerald-300 bg-emerald-50 px-6 py-4 rounded-xl hover:bg-emerald-100 transition-colors"
+        >
+          Volver al inicio — ver logro completado →
+        </a>
+      </div>
+    </div>
+
+  </div><!-- end #migrador-content -->
+
+</LayoutLevel>
+
+<script is:inline>
+  (function () {
+    var l2 = localStorage.getItem('moonkey_level_2_completed') === 'true';
+    var l3 = localStorage.getItem('moonkey_level_3_completed') === 'true';
+    var SKEYS = [1,2,3,4,5,6,7,8].map(function(i) { return 'moonkey_level_3_section_' + i; });
+    var TOTAL = 8;
+
+    // Lock / unlock main content
+    if (l2) {
+      var overlay = document.getElementById('migrador-lock-overlay');
+      if (overlay) overlay.classList.add('hidden');
+      var content = document.getElementById('migrador-content');
+      if (content) content.classList.remove('hidden');
+    }
+
+    // Sidebar state
+    var sbLocked = document.getElementById('sb-n3-locked');
+    var sbUnlocked = document.getElementById('sb-n3-unlocked');
+    if (l2) {
+      if (sbLocked) sbLocked.classList.add('hidden');
+      if (sbUnlocked) sbUnlocked.classList.remove('hidden');
+    }
+
+    function getCount() {
+      return SKEYS.reduce(function(n, k) { return n + (localStorage.getItem(k) === 'true' ? 1 : 0); }, 0);
+    }
+
+    function applyChecks() {
+      var count = getCount();
+      document.querySelectorAll('.sb-mod-btn').forEach(function(btn) {
+        var done = localStorage.getItem(btn.getAttribute('data-mkey')) === 'true';
+        btn.textContent = done ? '✓' : '';
+        btn.style.background = done ? '#f59e0b' : '';
+        btn.style.borderColor = done ? '#f59e0b' : '';
+        btn.style.color = done ? '#fff' : '';
+      });
+      var bar = document.getElementById('sb-l3-bar');
+      if (bar) bar.style.width = (count / TOTAL * 100).toFixed(0) + '%';
+      var cnt = document.getElementById('sb-l3-count');
+      if (cnt) cnt.textContent = count + '/' + TOTAL;
+    }
+
+    applyChecks();
+
+    if (l2) {
+      document.querySelectorAll('.sb-mod-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var key = btn.getAttribute('data-mkey');
+          var done = localStorage.getItem(key) === 'true';
+          localStorage.setItem(key, done ? 'false' : 'true');
+          applyChecks();
+        });
+      });
+    }
+
+    // Level completion
+    function showDone3() {
+      var b = document.getElementById('btn-complete-l3');
+      if (b) b.style.display = 'none';
+      var m = document.getElementById('msg-complete-l3');
+      if (m) m.classList.remove('hidden');
+    }
+    if (l3) showDone3();
+    var complBtn = document.getElementById('btn-complete-l3');
+    if (complBtn) {
+      complBtn.addEventListener('click', function() {
+        localStorage.setItem('moonkey_level_3_completed', 'true');
+        showDone3();
+      });
+    }
+  })();
+</script>

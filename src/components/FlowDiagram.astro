@@ -1,0 +1,32 @@
+---
+interface Props {
+  title: string;
+  nodes: { label: string; sub?: string }[];
+  color?: 'emerald' | 'violet' | 'amber';
+}
+
+const { title, nodes, color = 'emerald' } = Astro.props;
+
+const bg  = color === 'violet' ? 'bg-violet-50'    : color === 'amber' ? 'bg-amber-50'    : 'bg-emerald-50';
+const bdr = color === 'violet' ? 'border-violet-200': color === 'amber' ? 'border-amber-200': 'border-emerald-200';
+const txt = color === 'violet' ? 'text-violet-800'  : color === 'amber' ? 'text-amber-800'  : 'text-emerald-800';
+const lbl = color === 'violet' ? 'text-violet-600'  : color === 'amber' ? 'text-amber-600'  : 'text-emerald-600';
+const bar = color === 'violet' ? 'bg-violet-200'    : color === 'amber' ? 'bg-amber-200'    : 'bg-emerald-200';
+---
+
+<div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm my-8">
+  <p class={`font-mono text-xs tracking-widest uppercase mb-6 ${lbl}`}>{title}</p>
+  <div class="flex flex-col items-center max-w-xs mx-auto">
+    {nodes.map((node, i) => (
+      <div class="w-full">
+        <div class={`${bg} border ${bdr} rounded-xl px-5 py-3 text-center`}>
+          <p class={`text-sm font-semibold ${txt}`}>{node.label}</p>
+          {node.sub && <p class="text-xs text-slate-500 mt-0.5 leading-relaxed">{node.sub}</p>}
+        </div>
+        {i < nodes.length - 1 && (
+          <div class={`w-0.5 h-5 ${bar} mx-auto mt-1 mb-1`} aria-hidden="true" />
+        )}
+      </div>
+    ))}
+  </div>
+</div>

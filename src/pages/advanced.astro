@@ -1,0 +1,464 @@
+---
+import LayoutLevel from '../components/LayoutLevel.astro';
+import PromptBlock from '../components/PromptBlock.astro';
+import FlowDiagram from '../components/FlowDiagram.astro';
+
+const promptArquitectura = `Actúa como arquitecto de software senior.
+
+Analiza la estructura de este proyecto: [pega aquí el árbol de archivos o describe las carpetas]
+
+Evalúa:
+1. ¿La organización de carpetas tiene sentido para el tipo de proyecto?
+2. ¿Qué archivos sobran, faltan o están en el lugar equivocado?
+3. ¿Qué convenciones de naming podrían mejorarse?
+4. ¿Cómo organizarías esto para que Claude pueda navegar sin ambigüedades?
+
+Propuesta: sugiere una estructura alternativa si la actual tiene problemas.
+Sé específico. No generalices.`;
+
+const promptClaudeMdAvanzado = `Actúa como arquitecto de instrucciones para Claude Code.
+
+Este es el contexto del proyecto: [describe el proyecto, su stack y sus objetivos]
+
+Crea un CLAUDE.md avanzado que incluya:
+1. Descripción del proyecto y propósito en una sola línea
+2. Stack técnico con versiones exactas
+3. Comandos críticos (build, test, lint, deploy)
+4. Reglas de arquitectura: qué hacer y qué nunca hacer
+5. Convenciones de naming y organización de archivos
+6. Flujo de trabajo esperado: cómo Claude debe proponer cambios
+7. Reglas de seguridad: qué archivos o variables nunca tocar
+8. Señales de éxito: cómo saber si el trabajo está bien hecho
+
+Máximo 60 líneas. Denso. Sin relleno.`;
+
+const promptRefactorSeguro = `Actúa como ingeniero de refactorización.
+
+Quiero mejorar este fragmento de código: [pega el código]
+
+Antes de editar nada, necesito un plan de refactor que incluya:
+1. Qué problemas tiene el código actual (específicos, no vagos)
+2. Qué cambiarías y por qué
+3. Riesgos de cada cambio propuesto
+4. En qué orden hacer los cambios para que el código nunca quede roto
+5. Cómo validar que cada cambio no ha introducido regresiones
+
+No empieces a escribir código hasta que yo apruebe el plan.`;
+
+const modulos = [
+  {
+    num: 'M01', title: 'Arquitectura de proyectos',
+    objetivo: 'Estructurar un proyecto para que Claude pueda entenderlo y modificarlo sin romperlo.',
+    resultado: 'Repo limpio, README claro, carpetas coherentes y reglas iniciales documentadas.',
+    ejercicio: 'Auditar estructura de un proyecto y proponer mejoras en un documento',
+    entregable: 'mapa-arquitectura.md',
+  },
+  {
+    num: 'M02', title: 'CLAUDE.md avanzado',
+    objetivo: 'Crear reglas operativas profundas para un proyecto complejo.',
+    resultado: 'Claude entiende estilo, límites, stack, comandos, seguridad y forma de trabajar.',
+    ejercicio: 'Escribir un CLAUDE.md v2 con las 8 secciones del prompt de arriba',
+    entregable: 'CLAUDE.md v2',
+  },
+  {
+    num: 'M03', title: 'Control de contexto',
+    objetivo: 'Aprender qué darle a Claude, qué no darle y cuándo resumir.',
+    resultado: 'Menos tokens desperdiciados, respuestas más precisas, sesiones más eficientes.',
+    ejercicio: 'Resumir contexto largo en un brief de proyecto de máximo 20 líneas',
+    entregable: 'brief-proyecto.md',
+  },
+  {
+    num: 'M04', title: 'Git workflow profesional',
+    objetivo: 'Trabajar con commits, ramas y diffs sin caos ni pérdida de trabajo.',
+    resultado: 'Cambios pequeños, reversibles y revisables. Historial que cuenta una historia.',
+    ejercicio: 'Crear rama feature, cambio pequeño, commit semántico y merge limpio',
+    entregable: 'git-workflow.md documentado',
+  },
+  {
+    num: 'M05', title: 'Debugging asistido',
+    objetivo: 'Usar Claude para encontrar errores sin depender ciegamente de sus sugerencias.',
+    resultado: 'Bugs aislados con hipótesis claras y fixes pequeños y reversibles.',
+    ejercicio: 'Dar a Claude un error real y pedir plan de diagnóstico antes de editar',
+    entregable: 'bug-report + solución aplicada',
+  },
+  {
+    num: 'M06', title: 'Refactors seguros',
+    objetivo: 'Mejorar código sin romper funcionalidades existentes ni introducir deuda nueva.',
+    resultado: 'Refactors por fases con build passing después de cada cambio.',
+    ejercicio: 'Pedir refactor limitado a 1 componente con plan de validación',
+    entregable: 'before/after documentado con diff',
+  },
+  {
+    num: 'M07', title: 'Automatizaciones y MCPs',
+    objetivo: 'Entender cuándo conectar herramientas externas y cuándo es sobreingeniería.',
+    resultado: 'Mapa de automatizaciones útiles con justificación para cada una.',
+    ejercicio: 'Diseñar workflow con GitHub, archivos o calendario sin implementarlo',
+    entregable: 'diagrama-automatizacion.md',
+  },
+  {
+    num: 'M08', title: 'Testing y validación',
+    objetivo: 'No confiar solo en que "parece funcionar" antes de publicar.',
+    resultado: 'Checklist de pruebas manuales ejecutado antes de cada deploy.',
+    ejercicio: 'Crear QA checklist para un proyecto real con al menos 10 puntos',
+    entregable: 'qa-checklist.md',
+  },
+  {
+    num: 'M09', title: 'Deploy y mantenimiento',
+    objetivo: 'Publicar sin romper producción y mantener el ciclo de mejora activo.',
+    resultado: 'Flujo deploy → revisar → corregir → versionar documentado y ejecutable.',
+    ejercicio: 'Documentar proceso completo de deploy para tu proyecto principal',
+    entregable: 'sop-deploy.md',
+  },
+  {
+    num: 'M10', title: 'Documentación operativa',
+    objetivo: 'Convertir trabajo propio en sistema reutilizable por otras personas o agentes.',
+    resultado: 'Procesos documentados con el nivel de detalle suficiente para delegar.',
+    ejercicio: 'Convertir una tarea repetida en SOP de máximo 1 página',
+    entregable: 'sop-proceso.md',
+  },
+];
+
+const playbooks = [
+  { title: 'Crear una landing completa', desc: 'Desde brief hasta deploy. Hero, copy, estructura, componentes, SEO básico y push.' },
+  { title: 'Auditar un sistema existente', desc: 'Leer código, documentar lo que hace, identificar riesgos y proponer plan de mejora.' },
+  { title: 'Convertir proceso manual en sistema', desc: 'Mapear pasos, identificar automatizables, diseñar flujo y documentar SOP.' },
+  { title: 'Preparar repo para colaboración', desc: 'CLAUDE.md, README, .gitignore, estructura de carpetas y reglas de contribución.' },
+];
+
+const erroresAvanzados = [
+  'Pedir demasiado de golpe — Claude pierde contexto y produce código que rompe otras partes.',
+  'No aislar cambios — un refactor que toca 5 archivos a la vez es imposible de revisar.',
+  'No usar commits — si algo se rompe, no puedes volver a ningún punto anterior estable.',
+  'No leer diffs — aprobar cambios que no entiendes es garantía de bugs silenciosos.',
+  'Subir secretos — una API key en GitHub puede generar deuda en horas.',
+  'Usar IA sin validar — el output de Claude puede ser plausible pero incorrecto.',
+  'Dejar que Claude rehaga todo — pide cambios quirúrgicos, no reescrituras masivas.',
+];
+---
+
+<LayoutLevel title="Nivel 2 — Advanced Operator Playbook" description="Claude Code como sistema profesional. 10 módulos avanzados para operar, depurar, refactorizar y documentar.">
+
+  <!-- SIDEBAR (desktop) -->
+  <div slot="sidebar">
+    <!-- Locked card (hidden when N1 complete) -->
+    <div id="sb-n2-locked" class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 text-center">
+      <span class="font-mono text-xs text-violet-600 tracking-widest uppercase block mb-0.5">NIVEL 2</span>
+      <p class="text-sm font-semibold text-slate-500 leading-snug mb-3">Advanced Operator Playbook</p>
+      <p class="text-xs text-slate-400 leading-relaxed mb-3">Completa Nivel 1 para desbloquear este nivel.</p>
+      <a href="/modulos" class="font-mono text-xs text-violet-600 hover:underline">→ Ir a Nivel 1</a>
+    </div>
+    <!-- Unlocked sidebar (shown when N1 complete) -->
+    <div id="sb-n2-unlocked" class="hidden bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+      <div class="px-4 py-3 border-b border-slate-100">
+        <span class="font-mono text-xs text-violet-600 tracking-widest uppercase block mb-0.5">NIVEL 2</span>
+        <p class="font-semibold text-slate-900 leading-snug text-sm">Advanced Operator Playbook</p>
+        <p id="sb-l2-status" class="font-mono text-xs text-violet-600 mt-0.5">Disponible</p>
+      </div>
+      <div class="px-4 py-3 border-b border-slate-100">
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="font-mono text-xs text-slate-400">Progreso</span>
+          <span id="sb-l2-count" class="font-mono text-xs text-slate-500">0/10</span>
+        </div>
+        <div class="bg-slate-100 rounded-full h-1.5 overflow-hidden">
+          <div id="sb-l2-bar" class="bg-violet-500 h-1.5 rounded-full transition-all duration-500" style="width:0%"></div>
+        </div>
+      </div>
+      <nav class="p-2 space-y-0.5">
+        {modulos.map((m, i) => (
+          <div class="flex items-center gap-1.5">
+            <button
+              class="sb-mod-btn w-4 h-4 rounded border border-slate-200 shrink-0 text-xs flex items-center justify-center hover:border-violet-400 transition-colors bg-white leading-none"
+              data-mkey={`moonkey_level_2_module_${i+1}`}
+              type="button"
+              title={`Marcar ${m.num} completado`}
+            ></button>
+            <a
+              href={`#adv-m${i+1}`}
+              class="flex-1 flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 px-1 py-1 rounded hover:bg-slate-50 transition-colors overflow-hidden"
+            >
+              <span class="font-mono text-slate-300 shrink-0">{m.num}</span>
+              <span class="truncate">{m.title}</span>
+            </a>
+          </div>
+        ))}
+      </nav>
+      <div class="p-3 border-t border-slate-100">
+        <a href="#completar-n2" class="block w-full text-center font-mono text-xs font-medium text-violet-700 bg-violet-50 border border-violet-200 px-3 py-2 rounded-lg hover:bg-violet-100 transition-colors">
+          Finalizar Nivel 2 →
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOBILE NAV -->
+  <details class="lg:hidden bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden mb-6">
+    <summary class="flex items-center justify-between px-4 py-3 cursor-pointer select-none list-none">
+      <span class="font-mono text-xs text-violet-600 tracking-widest uppercase">N2 — Advanced Operator</span>
+      <span class="text-slate-400 text-xs font-mono">▾</span>
+    </summary>
+    <nav class="px-4 py-2 border-t border-slate-100 grid grid-cols-2 gap-x-4 gap-y-1">
+      {modulos.map((m, i) => (
+        <a href={`#adv-m${i+1}`} class="text-xs text-slate-600 hover:text-violet-600 py-1 transition-colors flex items-center gap-1.5">
+          <span class="font-mono text-slate-300">{m.num}</span>{m.title}
+        </a>
+      ))}
+    </nav>
+  </details>
+
+  <!-- PREVIEW (always visible) -->
+  <section class="pb-12 border-b border-slate-200">
+    <span class="font-mono text-xs text-violet-600 tracking-widest uppercase block mb-2">NIVEL 2 · MOONKEY XN SCHOOL</span>
+    <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-4">
+      Advanced Operator<br/>Playbook
+    </h1>
+    <p class="text-slate-600 text-base leading-relaxed max-w-xl mb-8">
+      Claude Code como sistema profesional de trabajo. 10 módulos para construir, depurar, refactorizar, automatizar, documentar y colaborar sin perder el control del proyecto.
+    </p>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+      {[
+        { value: '10', label: 'módulos', cls: 'text-violet-600' },
+        { value: '~5h', label: 'en total', cls: 'text-sky-600' },
+        { value: 'N1', label: 'prerequisito', cls: 'text-slate-500' },
+        { value: '10', label: 'entregables', cls: 'text-violet-600' },
+      ].map(s => (
+        <div class="bg-white rounded-xl border border-slate-200 p-4 text-center shadow-sm">
+          <div class={`text-2xl font-semibold mb-1 ${s.cls}`}>{s.value}</div>
+          <div class="text-xs text-slate-500 font-mono">{s.label}</div>
+        </div>
+      ))}
+    </div>
+    <div class="bg-violet-50 border border-violet-200 rounded-xl p-5 mb-4">
+      <p class="font-mono text-xs text-violet-600 uppercase tracking-widest mb-3">Lo que aprenderás</p>
+      <div class="grid sm:grid-cols-2 gap-2">
+        {modulos.map(m => (
+          <div class="flex items-center gap-2 text-xs text-slate-600">
+            <span class="bg-violet-100 text-violet-700 font-mono text-xs px-1.5 py-0.5 rounded shrink-0">{m.num}</span>
+            {m.title}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <FlowDiagram
+    title="Diagrama — Cómo trabaja un operador avanzado"
+    color="violet"
+    nodes={[
+      { label: 'Objetivo', sub: 'Qué quieres construir o mejorar' },
+      { label: 'Arquitectura del proyecto', sub: 'Estructura, carpetas, convenciones' },
+      { label: 'Contexto + CLAUDE.md avanzado', sub: 'Reglas, stack, restricciones, flujo' },
+      { label: 'Git + debugging + refactors', sub: 'Cambios pequeños, reversibles, auditables' },
+      { label: 'Automatizaciones + MCPs', sub: 'Herramientas conectadas con criterio' },
+      { label: 'Deploy + documentación', sub: 'Publicar, versionar, transferir' },
+      { label: 'Sistema escalable', sub: 'Otro operador puede continuar sin fricción' },
+    ]}
+  />
+
+  <!-- LOCK OVERLAY -->
+  <div id="advanced-lock-overlay" class="py-16 text-center">
+    <div class="bg-white border-2 border-violet-200 rounded-2xl px-8 py-10 max-w-md mx-auto shadow-sm">
+      <span class="font-mono text-xs text-slate-400 tracking-widest uppercase block mb-4">CONTENIDO BLOQUEADO</span>
+      <h2 class="text-xl font-bold text-slate-900 mb-3">Completa Nivel 1 para desbloquear</h2>
+      <p class="text-slate-500 text-sm leading-relaxed mb-6">
+        El Advanced Operator Playbook se desbloquea cuando completas Operator Foundations. El Nivel 1 te da la base que este nivel asume que ya tienes.
+      </p>
+      <a
+        href="/modulos"
+        class="inline-block font-mono text-sm font-semibold text-white bg-emerald-500 px-6 py-3 rounded-xl hover:bg-emerald-600 transition-colors"
+      >
+        Ir a Nivel 1 — Operator Foundations →
+      </a>
+    </div>
+  </div>
+
+  <!-- FULL CONTENT (hidden by default) -->
+  <div id="advanced-content" class="hidden">
+
+    <!-- Modules -->
+    <section class="py-12 border-b border-slate-200">
+      <span class="label block mb-8">MÓDULOS</span>
+      <div class="space-y-4">
+        {modulos.map((m, i) => (
+          <div id={`adv-m${i+1}`} class="bg-white border border-violet-100 rounded-2xl p-6 scroll-mt-20">
+            <div class="flex items-start gap-4 mb-4">
+              <span class="bg-violet-100 text-violet-700 font-mono text-sm font-bold rounded-lg px-3 py-1.5 shrink-0 tabular-nums">{m.num}</span>
+              <h3 class="text-slate-900 font-semibold text-base leading-snug pt-1.5">{m.title}</h3>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4 mb-4">
+              <div>
+                <p class="font-mono text-xs text-violet-500 uppercase tracking-widest mb-1">Objetivo</p>
+                <p class="text-slate-600 text-xs leading-relaxed">{m.objetivo}</p>
+              </div>
+              <div>
+                <p class="font-mono text-xs text-violet-500 uppercase tracking-widest mb-1">Resultado</p>
+                <p class="text-slate-600 text-xs leading-relaxed">{m.resultado}</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-x-6 gap-y-2 border-t border-slate-100 pt-4 text-xs text-slate-500">
+              <span><span class="text-violet-500 font-mono">Ejercicio:</span> {m.ejercicio}</span>
+              <span><span class="text-violet-500 font-mono">Entregable:</span> <code class="bg-slate-100 px-1.5 py-0.5 rounded font-mono text-slate-600">{m.entregable}</code></span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Playbooks -->
+    <section class="py-12 border-b border-slate-200">
+      <span class="label block mb-2">PLAYBOOKS AVANZADOS</span>
+      <p class="text-slate-500 text-sm mb-8">Cuatro escenarios completos con Claude Code como sistema de producción.</p>
+      <div class="grid sm:grid-cols-2 gap-4">
+        {playbooks.map((p, i) => (
+          <div class="bg-violet-50 border border-violet-200 rounded-xl p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="bg-violet-200 text-violet-700 font-mono text-xs font-bold px-1.5 py-0.5 rounded">PB{String(i + 1).padStart(2,'0')}</span>
+              <h4 class="text-slate-900 font-semibold text-sm">{p.title}</h4>
+            </div>
+            <p class="text-slate-500 text-xs leading-relaxed">{p.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Errores avanzados -->
+    <section class="py-12 border-b border-slate-200">
+      <span class="label block mb-8">ERRORES AVANZADOS A EVITAR</span>
+      <ul class="space-y-3">
+        {erroresAvanzados.map(e => (
+          <li class="flex items-start gap-3 bg-white border border-slate-200 rounded-xl px-5 py-4 shadow-sm">
+            <span class="text-rose-400 font-mono text-sm font-bold shrink-0 mt-0.5">×</span>
+            <span class="text-slate-600 text-sm leading-relaxed">{e}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- Prompts -->
+    <section class="py-12 border-b border-slate-200">
+      <span class="label block mb-8">PROMPTS AVANZADOS</span>
+      <PromptBlock tag="PROMPT N2-01" title="Auditar arquitectura de proyecto" prompt={promptArquitectura} />
+      <PromptBlock tag="PROMPT N2-02" title="Crear CLAUDE.md avanzado" prompt={promptClaudeMdAvanzado} />
+      <PromptBlock tag="PROMPT N2-03" title="Planificar refactor seguro" prompt={promptRefactorSeguro} />
+    </section>
+
+    <!-- Completion -->
+    <div id="completar-n2" class="bg-violet-50 border-2 border-violet-200 rounded-2xl p-7 mt-4 scroll-mt-6">
+      <span class="font-mono text-xs text-violet-600 tracking-widest uppercase block mb-2">NIVEL 2 — CHECKLIST DE FINALIZACIÓN</span>
+      <p class="text-slate-600 text-sm leading-relaxed mb-6">Verifica haber completado los 10 módulos antes de marcar el nivel:</p>
+      <ul class="space-y-2.5 mb-8">
+        {[
+          'Mapa de arquitectura de un proyecto real documentado',
+          'CLAUDE.md avanzado con las 8 secciones operativas',
+          'Brief de proyecto de máximo 20 líneas creado',
+          'Flujo Git con rama, commit semántico y merge documentado',
+          'Debugging asistido ejecutado en un bug real',
+          'Refactor limitado con before/after documentado',
+          'Diagrama de automatización sin implementar aún',
+          'QA checklist con al menos 10 puntos de validación',
+          'SOP de deploy documentado y ejecutado una vez',
+          'SOP de proceso delegable de máximo 1 página',
+        ].map(item => (
+          <li class="flex items-start gap-3 text-sm text-slate-600">
+            <span class="text-violet-500 font-mono shrink-0 mt-0.5 text-base leading-4">✓</span>
+            {item}
+          </li>
+        ))}
+      </ul>
+
+      <button
+        id="btn-complete-l2"
+        class="w-full font-mono text-sm font-semibold text-white bg-violet-500 px-6 py-4 rounded-xl hover:bg-violet-600 transition-colors cursor-pointer border-0"
+      >
+        Marcar Nivel 2 como completado →
+      </button>
+
+      <div id="msg-complete-l2" class="hidden">
+        <div class="bg-violet-500 text-white rounded-xl px-6 py-5 text-center mb-4">
+          <p class="font-mono text-xs tracking-widest uppercase mb-1.5 opacity-80">NIVEL 2 COMPLETADO</p>
+          <p class="font-semibold text-base">Nivel 3 desbloqueado: ChatGPT → Claude Migration System</p>
+        </div>
+        <a
+          href="/migrador"
+          class="block w-full text-center font-mono text-sm font-semibold text-amber-700 border-2 border-amber-300 bg-amber-50 px-6 py-4 rounded-xl hover:bg-amber-100 transition-colors"
+        >
+          Ir a Nivel 3 — Migration System →
+        </a>
+      </div>
+    </div>
+
+  </div><!-- end #advanced-content -->
+
+</LayoutLevel>
+
+<script is:inline>
+  (function () {
+    var l1 = localStorage.getItem('moonkey_level_1_completed') === 'true';
+    var l2 = localStorage.getItem('moonkey_level_2_completed') === 'true';
+    var MKEYS = [1,2,3,4,5,6,7,8,9,10].map(function(i) { return 'moonkey_level_2_module_' + i; });
+    var TOTAL = 10;
+
+    // Lock / unlock main content
+    if (l1) {
+      var overlay = document.getElementById('advanced-lock-overlay');
+      if (overlay) overlay.classList.add('hidden');
+      var content = document.getElementById('advanced-content');
+      if (content) content.classList.remove('hidden');
+    }
+
+    // Sidebar state
+    var sbLocked = document.getElementById('sb-n2-locked');
+    var sbUnlocked = document.getElementById('sb-n2-unlocked');
+    if (l1) {
+      if (sbLocked) sbLocked.classList.add('hidden');
+      if (sbUnlocked) sbUnlocked.classList.remove('hidden');
+    }
+
+    function getCount() {
+      return MKEYS.reduce(function(n, k) { return n + (localStorage.getItem(k) === 'true' ? 1 : 0); }, 0);
+    }
+
+    function applyChecks() {
+      var count = getCount();
+      document.querySelectorAll('.sb-mod-btn').forEach(function(btn) {
+        var done = localStorage.getItem(btn.getAttribute('data-mkey')) === 'true';
+        btn.textContent = done ? '✓' : '';
+        btn.style.background = done ? '#8b5cf6' : '';
+        btn.style.borderColor = done ? '#8b5cf6' : '';
+        btn.style.color = done ? '#fff' : '';
+      });
+      var bar = document.getElementById('sb-l2-bar');
+      if (bar) bar.style.width = (count / TOTAL * 100).toFixed(0) + '%';
+      var cnt = document.getElementById('sb-l2-count');
+      if (cnt) cnt.textContent = count + '/' + TOTAL;
+    }
+
+    applyChecks();
+
+    if (l1) {
+      document.querySelectorAll('.sb-mod-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var key = btn.getAttribute('data-mkey');
+          var done = localStorage.getItem(key) === 'true';
+          localStorage.setItem(key, done ? 'false' : 'true');
+          applyChecks();
+        });
+      });
+    }
+
+    // Level completion
+    function showDone2() {
+      var b = document.getElementById('btn-complete-l2');
+      if (b) b.style.display = 'none';
+      var m = document.getElementById('msg-complete-l2');
+      if (m) m.classList.remove('hidden');
+    }
+    if (l2) showDone2();
+    var complBtn = document.getElementById('btn-complete-l2');
+    if (complBtn) {
+      complBtn.addEventListener('click', function() {
+        localStorage.setItem('moonkey_level_2_completed', 'true');
+        showDone2();
+      });
+    }
+  })();
+</script>

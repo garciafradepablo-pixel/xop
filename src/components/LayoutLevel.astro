@@ -1,0 +1,42 @@
+---
+import '../styles/global.css';
+import Header from './Header.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'Escuela modular para aprender a operar IA, automatizaciones y sistemas creativos.' } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title} — MOONKEY XN SCHOOL</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body class="min-h-screen antialiased bg-[#f8fafc] text-slate-900">
+    <Header />
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
+      <div class="lg:flex lg:gap-8 lg:items-start">
+        <!-- Sidebar: desktop sticky -->
+        <aside class="hidden lg:block w-52 shrink-0">
+          <div class="sticky top-6 max-h-[calc(100vh-6rem)] overflow-y-auto">
+            <slot name="sidebar" />
+          </div>
+        </aside>
+        <!-- Main content -->
+        <main class="flex-1 min-w-0">
+          <slot />
+        </main>
+      </div>
+    </div>
+    <footer class="border-t border-slate-200 bg-white mt-20 py-8 text-center text-slate-400 text-xs font-mono tracking-widest">
+      MOONKEY XN SCHOOL — MMXXVI
+    </footer>
+  </body>
+</html>
