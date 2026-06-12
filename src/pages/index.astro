@@ -436,9 +436,13 @@ const servicios = [
     if (resetBtn) {
       resetBtn.addEventListener('click', function () {
         if (confirm('¿Reiniciar todo el progreso de MOONKEY XN SCHOOL?')) {
-          localStorage.removeItem('moonkey_level_1_completed');
-          localStorage.removeItem('moonkey_level_2_completed');
-          localStorage.removeItem('moonkey_level_3_completed');
+          var keys = [
+            'moonkey_level_1_completed', 'moonkey_level_2_completed', 'moonkey_level_3_completed'
+          ];
+          for (var i = 0; i <= 7; i++) keys.push('moonkey_level_1_module_' + i);
+          for (var i = 1; i <= 10; i++) keys.push('moonkey_level_2_module_' + i);
+          for (var i = 1; i <= 8; i++) keys.push('moonkey_level_3_section_' + i);
+          keys.forEach(function(k) { localStorage.removeItem(k); });
           window.location.reload();
         }
       });
