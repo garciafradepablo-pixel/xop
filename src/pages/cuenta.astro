@@ -134,6 +134,17 @@ const configured = !!(
   import { supabase } from '../lib/supabase';
   import { readLocalProgress, toSupabasePayload } from '../lib/progress';
 
+  async function doSync(userId: string) {
+    if (!supabase) return null;
+    const data = readLocalProgress();
+    const payload = toSupabasePayload(data, userId);
+    const { error } = await supabase
+      .from('progress')
+      .upsert(payload, { onConflict: 'user_id' });
+    if (error) console.error('[cuenta] sync error:', error.message);
+    return error;
+  }
+
   (async () => {
     if (!supabase) return;
 
@@ -153,23 +164,38 @@ const configured = !!(
     if (session?.user) {
       loggedInEl?.classList.remove('hidden');
       if (emailEl) emailEl.textContent = session.user.email ?? '';
-      if (syncMsg) syncMsg.textContent = 'Tu sesión está activa. Puedes sincronizar el progreso local a la nube.';
+
+      // Auto-sync on page load — no button click required
+      if (syncMsg) syncMsg.textContent = 'Sincronizando progreso…';
+      const autoError = await doSync(session.user.id);
+
+      if (syncResult) {
+        syncResult.textContent = autoError
+          ? `Error al sincronizar: ${autoError.message}`
+          : '✓ Progreso sincronizado en la nube.';
+        syncResult.classList.remove('hidden');
+      }
+      if (syncMsg) syncMsg.textContent = autoError
+        ? 'Hubo un error al sincronizar. Prueba de nuevo.'
+        : 'Tu progreso está guardado en la nube.';
+
       syncBtn?.classList.remove('hidden');
+      if (syncBtn) syncBtn.textContent = 'Sincronizar de nuevo →';
 
       syncBtn?.addEventListener('click', async () => {
         if (!supabase || !session?.user) return;
         syncBtn.disabled = true;
         syncBtn.textContent = 'Sincronizando…';
+        if (syncResult) syncResult.classList.add('hidden');
 
-        const data = readLocalProgress();
-        const payload = toSupabasePayload(data, session.user.id);
-        const { error } = await supabase.from('progress').upsert(payload, { onConflict: 'user_id' });
+        const manualError = await doSync(session.user.id);
 
         syncBtn.disabled = false;
-        syncBtn.textContent = 'Sincronizar ahora →';
-
+        syncBtn.textContent = 'Sincronizar de nuevo →';
         if (syncResult) {
-          syncResult.textContent = error ? `Error: ${error.message}` : '✓ Progreso sincronizado.';
+          syncResult.textContent = manualError
+            ? `Error: ${manualError.message}`
+            : '✓ Progreso sincronizado.';
           syncResult.classList.remove('hidden');
         }
       });
