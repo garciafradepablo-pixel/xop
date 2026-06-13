@@ -1,0 +1,25 @@
+MOONKEY LAB
+
+Bienvenido al Lab.
+
+La mayoría consume.
+Una minoría construye.
+Muy pocos pueden demostrarlo.
+
+Entrar al Nivel 1:
+{{ .ConfirmationURL }}
+
+(Este enlace es tu entrada.)
+
+— Operator Path —
+N1 · Foundations
+N2 · Builder
+N3 · Mastery
+
+El Lab no premia la actividad.
+Premia la prueba.
+
+Demuestra algo.
+
+— MOONKEY LAB
+Si no solicitaste este acceso, ignora este correo.
