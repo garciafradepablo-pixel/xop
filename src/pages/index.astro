@@ -1,7 +1,6 @@
 ---
 import Layout from '../components/Layout.astro';
 import LanguageBar from '../components/LanguageBar.astro';
-import MoonkeyLogo from '../components/MoonkeyLogo.astro';
 
 const level1Outcomes = [
   'Terminal, VS Code y Claude Code operativos',
@@ -59,50 +58,137 @@ const audiencia = [
 
   <!-- Hero -->
   <section class="pb-16 border-b border-slate-200">
-    <!-- Jerarquía de marca: entidad → producto -->
-    <p class="font-mono text-[10px] tracking-[0.25em] text-slate-400 uppercase mb-4">XNLAB Studio</p>
-    <MoonkeyLogo variant="horizontal" size="md" class="mb-7" />
-    <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 leading-[1.08] tracking-tight mb-4">
-      Aprende a operar IA.<br/>
-      <span class="text-emerald-600">Nivel a nivel.</span>
-    </h1>
-    <p class="text-lg sm:text-xl text-slate-700 font-semibold mb-6">Convertimos prompts en sistemas.</p>
-    <p class="text-slate-600 text-base leading-relaxed max-w-xl mb-3">
-      MOONKEY LAB es el laboratorio de formación de XNLAB Studio: un entorno para aprender a operar IA, automatizar y construir sistemas de trabajo reales — no para coleccionar tutoriales.
-    </p>
-    <p class="text-slate-400 text-sm mb-8 font-mono">
-      No necesitas saber programar. Necesitas querer construir.
-    </p>
-    <!-- Stats strip -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
-      {[
-        { val: '3',    lbl: 'niveles'         },
-        { val: '26',   lbl: 'módulos'         },
-        { val: '0',    lbl: 'código requerido'},
-        { val: '100%', lbl: 'práctico'        },
-      ].map(s => (
-        <div class="bg-white border border-slate-200 rounded-xl px-4 py-3 text-center shadow-sm">
-          <p class="text-lg font-bold text-emerald-600 font-mono">{s.val}</p>
-          <p class="text-[10px] font-mono text-slate-400 tracking-wide uppercase">{s.lbl}</p>
+    <div class="flex flex-col lg:flex-row lg:items-center gap-10 lg:gap-14">
+
+      <!-- Left: copy -->
+      <div class="flex-1 min-w-0">
+        <p class="font-mono text-[10px] tracking-[0.25em] text-slate-400 uppercase mb-5">THE MONKEY LAB</p>
+        <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 leading-[1.08] tracking-tight mb-5">
+          Bienvenido al Lab.<br/>
+          <span class="text-emerald-600">Monkeys en formación.</span>
+        </h1>
+        <p class="text-slate-600 text-base leading-relaxed max-w-lg mb-3">
+          MOONKEY LAB forma operadores que aprenden a construir con IA de forma sistemática. Los llamamos Monkeys: aprendices ágiles, curiosos y constructores de sistemas reales.
+        </p>
+        <p class="text-slate-900 text-lg font-bold leading-snug mb-7">
+          No completas módulos.<br/>
+          <span class="text-emerald-600">Evolucionas dentro de la jungla.</span>
+        </p>
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 inline-flex flex-wrap items-center gap-2.5 mb-7">
+          <span class="font-mono text-xs text-slate-400">ETIMOLOGÍA</span>
+          <span class="w-px h-4 bg-slate-300 shrink-0"></span>
+          <span class="text-sm text-slate-600 font-medium">Moon</span>
+          <span class="text-slate-300 text-xs">+</span>
+          <span class="text-sm text-slate-600 font-medium">Monkey</span>
+          <span class="text-slate-300 text-xs">+</span>
+          <span class="text-sm text-emerald-600 font-bold">Key</span>
+          <span class="w-px h-4 bg-slate-300 shrink-0"></span>
+          <span class="text-xs text-slate-400 font-mono">visión · agilidad · acceso</span>
         </div>
-      ))}
-    </div>
-    <div class="flex flex-wrap gap-3 mb-8">
-      <a href="/modulos" class="inline-block font-mono text-sm font-medium text-white bg-emerald-500 px-6 py-3 rounded-xl hover:bg-emerald-600 transition-colors shadow-sm">
-        Empezar Nivel 1 →
-      </a>
-      <a href="/info" class="inline-block font-mono text-sm text-slate-600 border border-slate-300 px-6 py-3 rounded-xl hover:bg-slate-50 transition-colors">
-        Cómo funciona
-      </a>
-      <a href="/prueba-operador" class="inline-block font-mono text-sm text-slate-400 border border-slate-200 px-6 py-3 rounded-xl hover:bg-slate-50 transition-colors">
-        Test de Operador
-      </a>
+        <div class="flex flex-wrap gap-3">
+          <a href="/monkeys" class="inline-block font-mono text-sm font-medium text-white bg-emerald-500 px-6 py-3 rounded-xl hover:bg-emerald-600 transition-colors shadow-sm">
+            Entrar al Lab
+          </a>
+          <a href="/monkeys" class="inline-block font-mono text-sm text-slate-600 border border-slate-300 px-6 py-3 rounded-xl hover:bg-slate-50 transition-colors">
+            Explorar Monkeys
+          </a>
+        </div>
+      </div>
+
+      <!-- Right: jungle visual orb -->
+      <div class="lg:w-[400px] shrink-0 flex justify-center pt-8 lg:pt-0">
+        <div class="relative w-[280px] h-[280px] sm:w-[340px] sm:h-[340px]">
+          <!-- Main orb -->
+          <div class="absolute inset-0 rounded-full overflow-hidden shadow-2xl" style="background:radial-gradient(ellipse at 30% 25%,#064e3b 0%,#0f172a 55%,#022c22 100%)">
+            <!-- Subtle glow -->
+            <div class="absolute inset-0" style="background:radial-gradient(ellipse at 35% 28%,rgba(52,211,153,0.22) 0%,transparent 60%)"></div>
+            <!-- Orbital rings -->
+            <div class="absolute inset-5 rounded-full" style="border:1px solid rgba(52,211,153,0.18)"></div>
+            <div class="absolute inset-[48px] rounded-full" style="border:1px solid rgba(52,211,153,0.12)"></div>
+            <div class="absolute inset-[82px] rounded-full" style="border:1px solid rgba(52,211,153,0.07)"></div>
+            <!-- Moon crescent SVG -->
+            <div class="absolute inset-0 flex items-center justify-center">
+              <svg width="110" height="110" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <mask id="moon-home-hero">
+                    <rect width="100" height="100" fill="white"/>
+                    <circle cx="60" cy="32" r="30" fill="black"/>
+                  </mask>
+                </defs>
+                <circle cx="44" cy="46" r="36" fill="#34d399" mask="url(#moon-home-hero)" opacity="0.9"/>
+                <circle cx="44" cy="46" r="36" fill="none" stroke="rgba(110,231,183,0.3)" stroke-width="0.8"/>
+              </svg>
+            </div>
+            <!-- Particles -->
+            <div class="absolute top-[20%] left-[18%] w-1.5 h-1.5 rounded-full" style="background:rgba(52,211,153,0.7)"></div>
+            <div class="absolute top-[62%] right-[20%] w-1 h-1 rounded-full" style="background:rgba(52,211,153,0.55)"></div>
+            <div class="absolute bottom-[28%] left-[26%] w-2 h-2 rounded-full" style="background:rgba(52,211,153,0.45)"></div>
+            <div class="absolute top-[38%] right-[14%] w-1 h-1 rounded-full" style="background:rgba(134,239,172,0.4)"></div>
+          </div>
+          <!-- Floating card: JUNGLA ACTIVA -->
+          <div class="absolute -bottom-4 -right-2 sm:-right-5 bg-white shadow-lg rounded-2xl px-4 py-3 border border-slate-100" style="min-width:152px">
+            <p class="font-mono text-[9px] tracking-widest text-emerald-600 uppercase mb-1.5">JUNGLA ACTIVA</p>
+            <p class="text-base font-bold text-slate-900 font-mono mb-1">Monkeys</p>
+            <div class="flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <p class="font-mono text-[9px] text-slate-400">Aprendiendo ahora</p>
+            </div>
+          </div>
+          <!-- Monkey badge top-right -->
+          <div class="absolute -top-3 -right-3 sm:-right-5 bg-emerald-500 rounded-xl p-2.5 shadow-md">
+            <svg width="18" height="18" viewBox="0 0 20 30" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <mask id="mk-hero-badge">
+                  <rect width="20" height="20" fill="white"/>
+                  <circle cx="13" cy="6.5" r="6.5" fill="black"/>
+                </mask>
+              </defs>
+              <circle cx="9.5" cy="8.5" r="7.5" fill="white" mask="url(#mk-hero-badge)" opacity="0.9"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
     </div>
     <!-- Language bar -->
-    <div class="border-t border-slate-100 pt-6">
+    <div class="border-t border-slate-100 pt-6 mt-12">
       <LanguageBar />
     </div>
   </section>
+
+  <!-- Benefits band -->
+  <div class="bg-white border border-slate-100 rounded-2xl shadow-sm px-6 sm:px-10 py-7 my-10">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+      <div class="flex items-start gap-3">
+        <span class="font-mono text-emerald-500 text-base shrink-0 mt-0.5 select-none">◎</span>
+        <div>
+          <p class="font-semibold text-slate-900 text-sm mb-1">Aprende</p>
+          <p class="text-xs text-slate-500 leading-relaxed">Conceptos claros. Fundamentos sólidos.</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="font-mono text-emerald-500 text-base shrink-0 mt-0.5 select-none">⌘</span>
+        <div>
+          <p class="font-semibold text-slate-900 text-sm mb-1">Construyes</p>
+          <p class="text-xs text-slate-500 leading-relaxed">Sistemas reales. Proyectos con IA.</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="font-mono text-emerald-500 text-base shrink-0 mt-0.5 select-none">⇌</span>
+        <div>
+          <p class="font-semibold text-slate-900 text-sm mb-1">Compartes</p>
+          <p class="text-xs text-slate-500 leading-relaxed">La jungla crece contigo.</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="font-mono text-emerald-500 text-base shrink-0 mt-0.5 select-none">↑</span>
+        <div>
+          <p class="font-semibold text-slate-900 text-sm mb-1">Evolucionas</p>
+          <p class="text-xs text-slate-500 leading-relaxed">De aprendiz a operador. De operador a líder.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- El ecosistema -->
   <section class="py-16 border-b border-slate-200">
@@ -266,11 +352,15 @@ const audiencia = [
     <p class="text-slate-600 text-sm max-w-md mx-auto">Has completado los tres niveles. Ya operas sistemas IA con criterio y autonomía. Lo que viene ahora lo decides tú.</p>
   </div>
 
-  <!-- Nivel 1 -->
+  <!-- EL CAMINO -->
   <section class="pt-12">
-    <div class="flex items-center justify-between mb-6">
-      <span class="label">EL CAMINO</span>
-      <a href="/info" class="font-mono text-xs text-slate-400 hover:text-slate-600 transition-colors">Cómo funciona →</a>
+    <!-- Dark intro banner -->
+    <div class="bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950/40 rounded-2xl px-7 sm:px-10 py-9 mb-6">
+      <span class="font-mono text-[10px] tracking-widest text-emerald-400 uppercase block mb-3">EL CAMINO</span>
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+        <h2 class="text-2xl sm:text-3xl font-bold text-white leading-snug max-w-md">Tres niveles para convertirte en un operador completo.</h2>
+        <a href="/info" class="font-mono text-xs text-slate-500 hover:text-emerald-400 transition-colors shrink-0">Cómo funciona →</a>
+      </div>
     </div>
     <div class="bg-white border-2 border-emerald-200 rounded-2xl p-7 shadow-sm hover:shadow-md transition-shadow mb-6">
       <div class="flex items-center justify-between mb-5">
@@ -370,6 +460,30 @@ const audiencia = [
       <a id="l3-cta-unlocked" href="/migrador" class="hidden block w-full text-center font-mono text-sm font-medium text-white bg-amber-500 px-5 py-3 rounded-xl hover:bg-amber-600 transition-colors">
         Empezar Nivel 3 →
       </a>
+    </div>
+  </section>
+
+  <!-- Principios -->
+  <section class="py-8 border-t border-slate-200">
+    <div class="bg-slate-900 rounded-2xl px-7 sm:px-10 py-7">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-5">
+        <div class="flex items-center gap-3">
+          <span class="font-mono text-emerald-400 text-sm shrink-0 select-none">○</span>
+          <span class="font-mono text-xs text-slate-300 leading-snug">Sin academias vacías</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="font-mono text-emerald-400 text-sm shrink-0 select-none">◇</span>
+          <span class="font-mono text-xs text-slate-300 leading-snug">Sin humo</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="font-mono text-emerald-400 text-sm shrink-0 select-none">△</span>
+          <span class="font-mono text-xs text-slate-300 leading-snug">Sin límites</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="font-mono text-emerald-400 text-sm shrink-0 select-none">◆</span>
+          <span class="font-mono text-xs text-slate-300 leading-snug">Con jungla</span>
+        </div>
+      </div>
     </div>
   </section>
 
