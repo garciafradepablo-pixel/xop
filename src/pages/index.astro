@@ -56,208 +56,154 @@ const audiencia = [
 
 <Layout title="Inicio" description="MOONKEY LAB by XNLAB Studio — Aprende a operar IA de forma sistemática. Sin código. Sin teoría infinita.">
 
-  <!-- Hero -->
-  <section class="pb-16 border-b border-slate-200 relative overflow-hidden">
-    <div class="absolute inset-0 pointer-events-none select-none" style="background:radial-gradient(ellipse at 72% 45%,rgba(16,185,129,0.07) 0%,transparent 62%)"></div>
-    <div class="relative flex flex-col lg:flex-row lg:items-center gap-10 lg:gap-14">
+  <!-- Hero — Atmospheric Portal -->
+  <section class="relative overflow-hidden" style="background:linear-gradient(165deg,#030b05 0%,#060e08 38%,#080f09 62%,#0a1a0c 100%)">
 
-      <!-- Left: copy -->
-      <div class="flex-1 min-w-0">
-        <p class="font-mono text-[10px] tracking-[0.25em] text-slate-400 uppercase mb-5">THE MONKEY LAB</p>
-        <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 leading-[1.08] tracking-tight mb-5">
-          Bienvenido al Lab.<br/>
-          <span class="text-emerald-600">Monkeys en formación.</span>
-        </h1>
-        <p class="text-slate-600 text-base leading-relaxed max-w-lg mb-3">
-          MOONKEY LAB forma operadores que aprenden a construir con IA de forma sistemática. Los llamamos Monkeys: aprendices ágiles, curiosos y constructores de sistemas reales.
-        </p>
-        <p class="text-slate-900 text-lg font-bold leading-snug mb-7">
-          No completas módulos.<br/>
-          <span class="text-emerald-600">Evolucionas dentro de la jungla.</span>
-        </p>
-        <div class="bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 inline-flex flex-wrap items-center gap-2.5 mb-7">
-          <span class="font-mono text-xs text-slate-400">ETIMOLOGÍA</span>
-          <span class="w-px h-4 bg-slate-300 shrink-0"></span>
-          <span class="text-sm text-slate-600 font-medium">Moon</span>
-          <span class="text-slate-300 text-xs">+</span>
-          <span class="text-sm text-slate-600 font-medium">Monkey</span>
-          <span class="text-slate-300 text-xs">+</span>
-          <span class="text-sm text-emerald-600 font-bold">Key</span>
-          <span class="w-px h-4 bg-slate-300 shrink-0"></span>
-          <span class="text-xs text-slate-400 font-mono">visión · agilidad · acceso</span>
+    <!-- Atmosphere: depth layers -->
+    <div class="absolute inset-0 pointer-events-none select-none">
+      <!-- Layer 1: multi-point mist -->
+      <div class="absolute inset-0" style="background:radial-gradient(ellipse at 68% 35%,rgba(16,185,129,0.13) 0%,transparent 52%),radial-gradient(ellipse at 12% 68%,rgba(6,78,59,0.18) 0%,transparent 48%),radial-gradient(ellipse at 88% 8%,rgba(4,120,87,0.08) 0%,transparent 38%),radial-gradient(ellipse at 42% 92%,rgba(2,44,34,0.22) 0%,transparent 42%)"></div>
+      <!-- Layer 2: SVG fractal noise -->
+      <svg class="absolute inset-0 w-full h-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <filter id="atm-noise" x="0%" y="0%" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.68" numOctaves="4" stitchTiles="stitch"/>
+          <feColorMatrix type="saturate" values="0"/>
+        </filter>
+        <rect width="100%" height="100%" filter="url(#atm-noise)"/>
+      </svg>
+      <!-- Layer 3: edge vignette -->
+      <div class="absolute inset-0" style="background:radial-gradient(ellipse at 50% 45%,transparent 30%,rgba(0,0,0,0.48) 100%)"></div>
+    </div>
+
+    <div class="relative pt-16 pb-32">
+      <div class="flex flex-col lg:flex-row lg:items-center gap-10 lg:gap-14">
+
+        <!-- Left: copy -->
+        <div class="flex-1 min-w-0">
+          <p class="font-mono text-[10px] tracking-[0.3em] uppercase mb-5" style="color:rgba(52,211,153,0.6)">THE MONKEY LAB</p>
+          <h1 class="text-4xl sm:text-5xl font-bold leading-[1.08] tracking-tight mb-5" style="color:#f0fdf4">
+            Bienvenido al Lab.<br/>
+            <span style="color:#34d399">Monkeys en formación.</span>
+          </h1>
+          <p class="text-base leading-relaxed max-w-lg mb-3" style="color:#94a3b8">
+            MOONKEY LAB forma operadores que aprenden a construir con IA de forma sistemática. Los llamamos Monkeys: aprendices ágiles, curiosos y constructores de sistemas reales.
+          </p>
+          <p class="text-lg font-bold leading-snug mb-8" style="color:#e2e8f0">
+            No completas módulos.<br/>
+            <span style="color:#34d399">Evolucionas dentro de la jungla.</span>
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <a href="/monkeys" class="inline-flex items-center gap-2 font-mono text-sm font-semibold px-6 py-3 rounded-xl transition-colors" style="background:#34d399;color:#022c22">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              Entrar al Lab
+            </a>
+            <a href="/modulos" class="inline-flex items-center gap-2 font-mono text-sm px-6 py-3 rounded-xl transition-colors" style="color:#94a3b8;border:1px solid rgba(255,255,255,0.11)">
+              Empezar Nivel 1 →
+            </a>
+          </div>
         </div>
-        <div class="flex flex-wrap gap-3">
-          <a href="/monkeys" class="inline-flex items-center gap-2 font-mono text-sm font-medium text-white bg-emerald-500 px-6 py-3 rounded-xl hover:bg-emerald-600 transition-colors shadow-sm">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            Entrar al Lab
-          </a>
-          <a href="/monkeys" class="inline-flex items-center gap-2 font-mono text-sm text-slate-600 border border-slate-300 px-6 py-3 rounded-xl hover:bg-slate-50 transition-colors">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
-            Explorar Monkeys
-          </a>
-        </div>
-      </div>
 
-      <!-- Right: jungle visual -->
-      <div class="lg:w-[440px] shrink-0 flex justify-center pt-8 lg:pt-0">
-        <div class="relative w-[300px] h-[300px] sm:w-[360px] sm:h-[360px]">
+        <!-- Right: jungle portal -->
+        <div class="lg:w-[440px] shrink-0 flex justify-center pt-8 lg:pt-0">
+          <div class="relative w-[300px] h-[300px] sm:w-[360px] sm:h-[360px]">
 
-          <!-- Leaf decorations outside orb -->
-          <div class="absolute -left-10 top-[28%] pointer-events-none select-none" style="transform:rotate(-22deg);opacity:0.4">
-            <svg width="38" height="66" viewBox="0 0 38 66" xmlns="http://www.w3.org/2000/svg">
-              <path d="M19 64 Q3 48 8 26 Q12 8 19 2 Q26 8 30 26 Q35 48 19 64Z" fill="#064e3b"/>
-              <line x1="19" y1="64" x2="19" y2="8" stroke="#34d399" stroke-width="1" opacity="0.45"/>
-            </svg>
-          </div>
-          <div class="absolute -right-8 top-[22%] pointer-events-none select-none" style="transform:rotate(18deg);opacity:0.35">
-            <svg width="32" height="56" viewBox="0 0 32 56" xmlns="http://www.w3.org/2000/svg">
-              <path d="M16 54 Q2 40 6 22 Q10 6 16 2 Q22 6 26 22 Q30 40 16 54Z" fill="#064e3b"/>
-              <line x1="16" y1="54" x2="16" y2="6" stroke="#34d399" stroke-width="1" opacity="0.4"/>
-            </svg>
-          </div>
-          <div class="absolute -left-6 bottom-[20%] pointer-events-none select-none" style="transform:rotate(12deg);opacity:0.28">
-            <svg width="26" height="46" viewBox="0 0 26 46" xmlns="http://www.w3.org/2000/svg">
-              <path d="M13 44 Q2 33 5 19 Q8 6 13 2 Q18 6 21 19 Q24 33 13 44Z" fill="#065f46"/>
-            </svg>
-          </div>
+            <!-- Outer atmospheric halo -->
+            <div class="absolute pointer-events-none select-none" style="inset:-54px;background:radial-gradient(ellipse at 50% 50%,rgba(16,185,129,0.09) 0%,transparent 65%);border-radius:50%"></div>
 
-          <!-- Main orb -->
-          <div class="absolute inset-0 rounded-full overflow-hidden" style="background:radial-gradient(ellipse at 32% 22%,#065f46 0%,#0f172a 52%,#022c22 100%);box-shadow:0 0 60px rgba(16,185,129,0.18),0 20px 60px rgba(0,0,0,0.4)">
-            <!-- Sky glow -->
-            <div class="absolute inset-0" style="background:radial-gradient(ellipse at 38% 20%,rgba(52,211,153,0.26) 0%,transparent 52%)"></div>
-            <!-- Orbital rings -->
-            <div class="absolute inset-4 rounded-full" style="border:1px solid rgba(52,211,153,0.14)"></div>
-            <div class="absolute inset-[38px] rounded-full" style="border:1px solid rgba(52,211,153,0.09)"></div>
-            <!-- Moon crescent -->
-            <div class="absolute inset-0 flex items-center" style="justify-content:center;padding-bottom:28%">
-              <svg width="130" height="130" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <mask id="moon-h2">
-                    <rect width="100" height="100" fill="white"/>
-                    <circle cx="62" cy="26" r="36" fill="black"/>
-                  </mask>
-                </defs>
-                <circle cx="36" cy="44" r="32" fill="rgba(52,211,153,0.12)"/>
-                <circle cx="38" cy="42" r="33" fill="#34d399" mask="url(#moon-h2)" opacity="0.95"/>
-                <circle cx="38" cy="42" r="33" fill="none" stroke="rgba(167,243,208,0.45)" stroke-width="1.5" mask="url(#moon-h2)"/>
+            <!-- Leaf depth layer (blurred, distant) -->
+            <div class="absolute -left-12 top-[24%] pointer-events-none select-none" style="transform:rotate(-22deg);opacity:0.22;filter:blur(1px)">
+              <svg width="44" height="76" viewBox="0 0 38 66" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 64 Q3 48 8 26 Q12 8 19 2 Q26 8 30 26 Q35 48 19 64Z" fill="#064e3b"/>
+                <line x1="19" y1="64" x2="19" y2="8" stroke="#34d399" stroke-width="1.2" opacity="0.3"/>
               </svg>
             </div>
-            <!-- Monkey silhouette -->
-            <div class="absolute bottom-0 left-0 right-0 flex justify-center">
-              <svg width="160" height="115" viewBox="0 0 160 115" xmlns="http://www.w3.org/2000/svg">
-                <ellipse cx="80" cy="106" rx="50" ry="14" fill="rgba(0,0,0,0.55)"/>
-                <ellipse cx="80" cy="78" rx="19" ry="23" fill="rgba(0,0,0,0.6)"/>
-                <path d="M63 73 Q50 86 54 100" stroke="rgba(0,0,0,0.6)" stroke-width="10" fill="none" stroke-linecap="round"/>
-                <path d="M97 73 Q110 86 106 100" stroke="rgba(0,0,0,0.6)" stroke-width="10" fill="none" stroke-linecap="round"/>
-                <circle cx="80" cy="50" r="17" fill="rgba(0,0,0,0.62)"/>
-                <circle cx="62" cy="47" r="7" fill="rgba(0,0,0,0.62)"/>
-                <circle cx="98" cy="47" r="7" fill="rgba(0,0,0,0.62)"/>
-                <ellipse cx="80" cy="53" rx="11" ry="8" fill="rgba(0,0,0,0.2)"/>
-                <path d="M99 84 Q120 70 116 52 Q113 40 124 35" stroke="rgba(0,0,0,0.45)" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <div class="absolute -right-9 top-[20%] pointer-events-none select-none" style="transform:rotate(18deg);opacity:0.18;filter:blur(0.5px)">
+              <svg width="36" height="62" viewBox="0 0 32 56" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 54 Q2 40 6 22 Q10 6 16 2 Q22 6 26 22 Q30 40 16 54Z" fill="#064e3b"/>
               </svg>
             </div>
-            <!-- Particles -->
-            <div class="absolute top-[14%] left-[20%] w-1 h-1 rounded-full" style="background:rgba(52,211,153,0.85)"></div>
-            <div class="absolute top-[26%] right-[17%] w-1.5 h-1.5 rounded-full" style="background:rgba(52,211,153,0.6)"></div>
-            <div class="absolute top-[42%] right-[11%] w-1 h-1 rounded-full" style="background:rgba(134,239,172,0.5)"></div>
-            <div class="absolute top-[55%] left-[10%] w-1 h-1 rounded-full" style="background:rgba(52,211,153,0.45)"></div>
-          </div>
+            <div class="absolute -left-7 bottom-[18%] pointer-events-none select-none" style="transform:rotate(10deg);opacity:0.15;filter:blur(0.5px)">
+              <svg width="28" height="50" viewBox="0 0 26 46" xmlns="http://www.w3.org/2000/svg">
+                <path d="M13 44 Q2 33 5 19 Q8 6 13 2 Q18 6 21 19 Q24 33 13 44Z" fill="#065f46"/>
+              </svg>
+            </div>
 
-          <!-- Floating card: JUNGLA ACTIVA -->
-          <div class="absolute -bottom-7 -right-2 sm:-right-7 bg-white shadow-xl rounded-2xl px-4 py-3.5 border border-slate-100" style="min-width:172px">
-            <p class="font-mono text-[9px] tracking-widest text-emerald-600 uppercase mb-1">JUNGLA ACTIVA</p>
-            <div class="flex items-baseline gap-1.5 mb-1">
-              <span class="text-xl font-bold text-slate-900 font-mono leading-none">2,847</span>
-              <span class="text-xs font-semibold text-slate-500">Monkeys</span>
-            </div>
-            <div class="flex items-center gap-1.5 mb-2.5">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-              <p class="font-mono text-[9px] text-slate-400">Aprendiendo ahora</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <div class="flex -space-x-1.5">
-                <div class="w-5 h-5 rounded-full border-2 border-white flex items-center justify-center text-[7px] font-bold text-white" style="background:#34d399">M</div>
-                <div class="w-5 h-5 rounded-full border-2 border-white flex items-center justify-center text-[7px] font-bold text-white" style="background:#a78bfa">A</div>
-                <div class="w-5 h-5 rounded-full border-2 border-white flex items-center justify-center text-[7px] font-bold text-white" style="background:#38bdf8">P</div>
-                <div class="w-5 h-5 rounded-full border-2 border-white flex items-center justify-center text-[7px] font-bold text-white" style="background:#fb923c">S</div>
-                <div class="w-5 h-5 rounded-full border-2 border-white flex items-center justify-center text-[7px] font-bold text-white" style="background:#f43f5e">L</div>
+            <!-- Main orb — the portal -->
+            <div class="absolute inset-0 rounded-full overflow-hidden" style="background:radial-gradient(ellipse at 30% 20%,#0a3d2e 0%,#0d1b2a 48%,#020c05 100%);box-shadow:0 0 0 1px rgba(52,211,153,0.07),0 0 90px rgba(16,185,129,0.28),0 0 180px rgba(16,185,129,0.11),0 28px 56px rgba(0,0,0,0.72)">
+              <!-- Inner sky glow -->
+              <div class="absolute inset-0" style="background:radial-gradient(ellipse at 36% 17%,rgba(52,211,153,0.32) 0%,transparent 44%)"></div>
+              <!-- Deep shadow ground -->
+              <div class="absolute inset-0" style="background:radial-gradient(ellipse at 55% 85%,rgba(1,18,8,0.75) 0%,transparent 50%)"></div>
+              <!-- Orbital rings -->
+              <div class="absolute inset-3 rounded-full" style="border:1px solid rgba(52,211,153,0.11)"></div>
+              <div class="absolute inset-[36px] rounded-full" style="border:1px solid rgba(52,211,153,0.07)"></div>
+              <div class="absolute inset-[65px] rounded-full" style="border:1px solid rgba(52,211,153,0.04)"></div>
+              <!-- Moon crescent — MAIN FOCUS -->
+              <div class="absolute inset-0 flex items-center" style="justify-content:center;padding-bottom:24%">
+                <svg width="154" height="154" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <mask id="moon-atm">
+                      <rect width="100" height="100" fill="white"/>
+                      <circle cx="65" cy="23" r="40" fill="black"/>
+                    </mask>
+                    <radialGradient id="moon-fill" cx="28%" cy="28%" r="70%">
+                      <stop offset="0%" stop-color="#86efac"/>
+                      <stop offset="55%" stop-color="#34d399"/>
+                      <stop offset="100%" stop-color="#047857"/>
+                    </radialGradient>
+                  </defs>
+                  <circle cx="35" cy="46" r="42" fill="rgba(52,211,153,0.05)"/>
+                  <circle cx="35" cy="46" r="35" fill="url(#moon-fill)" mask="url(#moon-atm)" opacity="0.96"/>
+                  <circle cx="35" cy="46" r="35" fill="none" stroke="rgba(167,243,208,0.55)" stroke-width="1.5" mask="url(#moon-atm)"/>
+                </svg>
               </div>
-              <span class="font-mono text-[9px] text-slate-400">+142</span>
+              <!-- Monkey silhouette — SECONDARY, darker and more receded -->
+              <div class="absolute bottom-0 left-0 right-0 flex justify-center">
+                <svg width="155" height="105" viewBox="0 0 160 115" xmlns="http://www.w3.org/2000/svg" style="opacity:0.78">
+                  <ellipse cx="80" cy="106" rx="48" ry="11" fill="rgba(0,0,0,0.75)"/>
+                  <ellipse cx="80" cy="78" rx="19" ry="22" fill="rgba(0,0,0,0.86)"/>
+                  <path d="M63 73 Q50 86 54 100" stroke="rgba(0,0,0,0.86)" stroke-width="10" fill="none" stroke-linecap="round"/>
+                  <path d="M97 73 Q110 86 106 100" stroke="rgba(0,0,0,0.86)" stroke-width="10" fill="none" stroke-linecap="round"/>
+                  <circle cx="80" cy="50" r="17" fill="rgba(0,0,0,0.88)"/>
+                  <circle cx="62" cy="47" r="7" fill="rgba(0,0,0,0.88)"/>
+                  <circle cx="98" cy="47" r="7" fill="rgba(0,0,0,0.88)"/>
+                </svg>
+              </div>
+              <!-- Particles — scattered light -->
+              <div class="absolute top-[11%] left-[21%] w-0.5 h-0.5 rounded-full" style="background:rgba(52,211,153,0.95)"></div>
+              <div class="absolute top-[22%] right-[15%] w-1 h-1 rounded-full" style="background:rgba(52,211,153,0.65)"></div>
+              <div class="absolute top-[37%] right-[9%] w-0.5 h-0.5 rounded-full" style="background:rgba(134,239,172,0.6)"></div>
+              <div class="absolute top-[54%] left-[8%] w-1 h-1 rounded-full" style="background:rgba(52,211,153,0.42)"></div>
+              <div class="absolute top-[29%] left-[13%] w-0.5 h-0.5 rounded-full" style="background:rgba(167,243,208,0.5)"></div>
+              <div class="absolute top-[46%] left-[32%] w-0.5 h-0.5 rounded-full" style="background:rgba(52,211,153,0.35)"></div>
             </div>
-          </div>
 
-          <!-- Hexagonal badge top-right -->
-          <div class="absolute -top-4 -right-4 sm:-right-8 flex items-center justify-center" style="width:54px;height:54px">
-            <svg width="54" height="54" viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0">
-              <path d="M27 2L51 15.5L51 38.5L27 52L3 38.5L3 15.5Z" fill="#10b981"/>
-              <path d="M27 6L48 18L48 36L27 48L6 36L6 18Z" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
-            </svg>
-            <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" style="position:relative;z-index:1">
-              <defs><mask id="mk-hx"><rect width="20" height="20" fill="white"/><circle cx="13" cy="6" r="6" fill="black"/></mask></defs>
-              <circle cx="9" cy="8" r="7" fill="white" mask="url(#mk-hx)" opacity="0.95"/>
-            </svg>
-          </div>
+            <!-- Status — no fake metrics -->
+            <div class="absolute -bottom-10 left-1/2" style="transform:translateX(-50%);min-width:178px">
+              <div class="rounded-2xl px-4 py-3.5" style="background:rgba(248,250,252,0.88);backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,0.65);box-shadow:0 4px 32px rgba(0,0,0,0.14)">
+                <p class="font-mono text-[9px] tracking-widest uppercase mb-1.5" style="color:#059669">JUNGLA ACTIVA</p>
+                <p class="text-sm font-semibold mb-1.5" style="color:#0f172a;line-height:1.35">Operadores aprendiendo.<br/>Sistemas evolucionando.</p>
+                <div class="flex items-center gap-1.5">
+                  <span class="w-1.5 h-1.5 rounded-full animate-pulse shrink-0" style="background:#34d399"></span>
+                  <p class="font-mono text-[9px]" style="color:#64748b">Lab en expansión.</p>
+                </div>
+              </div>
+            </div>
 
+          </div>
         </div>
+
       </div>
 
+      <!-- Language bar -->
+      <div class="mt-24 pt-5 relative" style="border-top:1px solid rgba(255,255,255,0.07)">
+        <LanguageBar />
+      </div>
     </div>
-    <!-- Language bar -->
-    <div class="border-t border-slate-100 pt-6 mt-12">
-      <LanguageBar />
-    </div>
+
+    <!-- Gradient bleed: hero dark → page light -->
+    <div class="absolute bottom-0 left-0 right-0 pointer-events-none" style="height:5rem;background:linear-gradient(to bottom,transparent,#f8fafc)"></div>
   </section>
-
-  <!-- Benefits band -->
-  <div class="bg-white border border-slate-100 rounded-2xl shadow-sm px-6 sm:px-10 py-7 my-10">
-    <div class="grid grid-cols-2 lg:grid-cols-4 divide-y-2 lg:divide-y-0 lg:divide-x-2 divide-slate-50">
-      <div class="flex items-start gap-3.5 pb-5 lg:pb-0 lg:pr-8">
-        <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
-          </svg>
-        </div>
-        <div>
-          <p class="font-semibold text-slate-900 text-sm mb-1">Aprende</p>
-          <p class="text-xs text-slate-500 leading-relaxed">Conceptos claros. Fundamentos sólidos.</p>
-        </div>
-      </div>
-      <div class="flex items-start gap-3.5 pt-5 lg:pt-0 lg:px-8">
-        <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-          </svg>
-        </div>
-        <div>
-          <p class="font-semibold text-slate-900 text-sm mb-1">Construyes</p>
-          <p class="text-xs text-slate-500 leading-relaxed">Sistemas reales. Proyectos con IA.</p>
-        </div>
-      </div>
-      <div class="flex items-start gap-3.5 pb-5 lg:pb-0 lg:px-8">
-        <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-          </svg>
-        </div>
-        <div>
-          <p class="font-semibold text-slate-900 text-sm mb-1">Compartes</p>
-          <p class="text-xs text-slate-500 leading-relaxed">La jungla crece contigo.</p>
-        </div>
-      </div>
-      <div class="flex items-start gap-3.5 pt-5 lg:pt-0 lg:pl-8">
-        <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
-          </svg>
-        </div>
-        <div>
-          <p class="font-semibold text-slate-900 text-sm mb-1">Evolucionas</p>
-          <p class="text-xs text-slate-500 leading-relaxed">De aprendiz a operador. De operador a líder.</p>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- El ecosistema -->
   <section class="py-16 border-b border-slate-200">
