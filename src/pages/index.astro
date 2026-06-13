@@ -56,87 +56,40 @@ const audiencia = [
 
 <Layout title="Inicio" description="MOONKEY LAB by XNLAB Studio — Aprende a operar IA de forma sistemática. Sin código. Sin teoría infinita.">
 
-  <!-- Hero — Cinematic Full-Bleed -->
-  <section class="relative overflow-hidden min-h-[90vh]" style="margin-left:calc(-50vw + 50%);width:100vw;background:linear-gradient(165deg,#030b05 0%,#060e08 38%,#080f09 62%,#0a1a0c 100%)">
+  <!-- Hero — Light Premium / Orbital Jungle -->
+  <section class="relative overflow-hidden flex items-center lg:min-h-[86vh]" style="margin-left:calc(-50vw + 50%);width:100vw;background:radial-gradient(120% 95% at 80% 28%,rgba(16,185,129,0.10) 0%,transparent 55%),linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%)">
 
-    <!-- Background: jungle atmosphere texture -->
-    <img src="/assets/moonkey/jungle-atmosphere.webp" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover pointer-events-none select-none" style="opacity:0.08;z-index:0;mix-blend-mode:screen" />
+    <div class="relative w-full max-w-screen-xl mx-auto px-6 sm:px-10 lg:px-16 py-16 lg:py-0 flex flex-col lg:flex-row items-center gap-12 lg:gap-6" style="z-index:1">
 
-    <!-- Depth gradients + noise grain -->
-    <div class="absolute inset-0 pointer-events-none select-none" style="z-index:1">
-      <div class="absolute inset-0" style="background:radial-gradient(ellipse at 68% 35%,rgba(16,185,129,0.13) 0%,transparent 52%),radial-gradient(ellipse at 12% 68%,rgba(6,78,59,0.18) 0%,transparent 48%),radial-gradient(ellipse at 88% 8%,rgba(4,120,87,0.08) 0%,transparent 38%),radial-gradient(ellipse at 42% 92%,rgba(2,44,34,0.22) 0%,transparent 42%)"></div>
-      <svg class="absolute inset-0 w-full h-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-        <filter id="atm-noise" x="0%" y="0%" width="100%" height="100%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.68" numOctaves="4" stitchTiles="stitch"/>
-          <feColorMatrix type="saturate" values="0"/>
-        </filter>
-        <rect width="100%" height="100%" filter="url(#atm-noise)"/>
-      </svg>
-      <div class="absolute inset-0" style="background:radial-gradient(ellipse at 50% 45%,transparent 30%,rgba(0,0,0,0.48) 100%)"></div>
-    </div>
-
-    <!-- Moon light spill — radiates into the scene, anchored to moon center -->
-    <div class="absolute pointer-events-none select-none hidden sm:block" style="width:1000px;height:1000px;top:50%;right:-200px;transform:translateY(-50%);z-index:1;background:radial-gradient(circle,rgba(52,211,153,0.22) 0%,rgba(52,211,153,0.12) 25%,rgba(52,211,153,0.04) 50%,transparent 75%)"></div>
-
-    <!-- Hero left shade — keeps headline dominant -->
-    <div class="absolute inset-0 pointer-events-none select-none" style="z-index:2;background:linear-gradient(90deg,rgba(3,11,5,0.92) 0%,rgba(3,11,5,0.78) 30%,rgba(3,11,5,0.40) 55%,transparent 100%)"></div>
-
-    <!-- Moon Orb — real asset, 720px, right side, subtle crop -->
-    <div class="absolute pointer-events-none select-none hidden sm:block" style="width:720px;height:720px;top:50%;right:-70px;transform:translateY(-50%);z-index:3">
-      <img src="/assets/moonkey/moon-orb.png" alt="" aria-hidden="true" class="relative w-full h-full" style="object-fit:contain;filter:drop-shadow(0 0 60px rgba(16,185,129,0.34)) drop-shadow(0 0 120px rgba(16,185,129,0.14))" />
-    </div>
-
-    <!-- Monkey Silhouette — real asset, 290px, rim-lit from the moon -->
-    <div class="absolute pointer-events-none select-none hidden sm:block" style="width:290px;bottom:14%;right:210px;z-index:8">
-      <img src="/assets/moonkey/monkey-silhouette.png" alt="" aria-hidden="true" class="w-full block" style="filter:drop-shadow(12px 0 22px rgba(52,211,153,0.18))" />
-    </div>
-
-    <!-- Foreground left leaf — in front of monkey -->
-    <div class="absolute bottom-0 left-0 pointer-events-none select-none" style="width:300px;z-index:12">
-      <img src="/assets/moonkey/leaf-left.png" alt="" aria-hidden="true" class="w-full block" style="filter:brightness(0.12) saturate(0.3);opacity:0.55" />
-    </div>
-
-    <!-- Foreground right leaf — in front of monkey -->
-    <div class="absolute bottom-0 right-0 pointer-events-none select-none" style="width:280px;z-index:12">
-      <img src="/assets/moonkey/leaf-right.png" alt="" aria-hidden="true" class="w-full block" style="filter:brightness(0.12) saturate(0.3);opacity:0.5" />
-    </div>
-
-    <!-- Content -->
-    <div class="relative px-6 sm:px-10 lg:px-20 pt-20 pb-28 max-w-screen-xl mx-auto" style="z-index:10">
-      <div class="max-w-2xl">
-        <p class="font-mono text-[10px] tracking-[0.3em] uppercase mb-5" style="color:rgba(52,211,153,0.6)">THE MONKEY LAB</p>
-        <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.06] tracking-tight mb-6" style="color:#f0fdf4">
+      <!-- LEFT — clean text column -->
+      <div class="flex-1 max-w-[600px]">
+        <p class="font-mono text-[10px] tracking-[0.3em] uppercase mb-5" style="color:#059669">THE MONKEY LAB</p>
+        <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.06] tracking-tight mb-6" style="color:#0f172a">
           De prompt<br/>a operador.<br/>
-          <span style="color:#34d399">En tres niveles.</span>
+          <span style="color:#059669">En tres niveles.</span>
         </h1>
-        <p class="text-base leading-relaxed max-w-lg mb-8" style="color:#94a3b8">
+        <p class="text-base leading-relaxed max-w-lg mb-8" style="color:#475569">
           Sistema de formación para operadores IA. Tres niveles progresivos, módulos prácticos, entregables reales desde el primer día.
         </p>
         <div class="flex flex-wrap gap-3">
-          <a href="/monkeys" class="inline-flex items-center gap-2 font-mono text-sm font-semibold px-6 py-3 rounded-xl transition-colors" style="background:#34d399;color:#022c22">
+          <a href="/monkeys" class="inline-flex items-center gap-2 font-mono text-sm font-semibold px-6 py-3 rounded-xl transition-colors hover:bg-emerald-700" style="background:#059669;color:#ffffff">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
             Entrar al Lab
           </a>
-          <a href="/modulos" class="inline-flex items-center gap-2 font-mono text-sm px-6 py-3 rounded-xl transition-colors" style="color:#94a3b8;border:1px solid rgba(255,255,255,0.11)">
+          <a href="/modulos" class="inline-flex items-center gap-2 font-mono text-sm px-6 py-3 rounded-xl transition-colors hover:border-emerald-400" style="color:#0f172a;border:1px solid #cbd5e1">
             Empezar Nivel 1 →
           </a>
         </div>
       </div>
+
+      <!-- RIGHT — single integrated hero scene -->
+      <div class="relative shrink-0 hidden lg:block" style="width:540px">
+        <div class="absolute pointer-events-none" style="inset:-40px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,0.12) 0%,transparent 70%)"></div>
+        <img src="/assets/moonkey/hero-scene.webp" alt="Escena MOONKEY — luna y mono en la jungla"
+             class="relative w-full h-auto block" loading="eager" />
+      </div>
+
     </div>
-
-    <!-- Bottom fog — reduced height and intensity -->
-    <svg class="absolute bottom-0 left-0 right-0 w-full pointer-events-none select-none" style="height:140px;z-index:6" viewBox="0 0 1440 140" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="fog-bottom" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#030b05" stop-opacity="0"/>
-          <stop offset="100%" stop-color="#030b05" stop-opacity="0.72"/>
-        </linearGradient>
-      </defs>
-      <rect width="1440" height="140" fill="url(#fog-bottom)"/>
-    </svg>
-
-    <!-- Gradient bleed: hero dies in dark -->
-    <div class="absolute bottom-0 left-0 right-0 pointer-events-none" style="height:5rem;background:linear-gradient(to bottom,transparent,#030b05);z-index:7"></div>
   </section>
 
   <!-- Language bar — below hero -->
