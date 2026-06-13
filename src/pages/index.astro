@@ -56,11 +56,14 @@ const audiencia = [
 
 <Layout title="Inicio" description="MOONKEY LAB by XNLAB Studio — Aprende a operar IA de forma sistemática. Sin código. Sin teoría infinita.">
 
-  <!-- Hero — Atmospheric Portal -->
+  <!-- Hero — Cinematic Full-Bleed -->
   <section class="relative overflow-hidden min-h-[90vh]" style="margin-left:calc(-50vw + 50%);width:100vw;background:linear-gradient(165deg,#030b05 0%,#060e08 38%,#080f09 62%,#0a1a0c 100%)">
 
-    <!-- Atmosphere: depth layers -->
-    <div class="absolute inset-0 pointer-events-none select-none">
+    <!-- Background: jungle atmosphere texture -->
+    <img src="/assets/moonkey/jungle-atmosphere.webp" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover pointer-events-none select-none" style="opacity:0.08;z-index:0;mix-blend-mode:screen" />
+
+    <!-- Depth gradients + noise grain -->
+    <div class="absolute inset-0 pointer-events-none select-none" style="z-index:1">
       <div class="absolute inset-0" style="background:radial-gradient(ellipse at 68% 35%,rgba(16,185,129,0.13) 0%,transparent 52%),radial-gradient(ellipse at 12% 68%,rgba(6,78,59,0.18) 0%,transparent 48%),radial-gradient(ellipse at 88% 8%,rgba(4,120,87,0.08) 0%,transparent 38%),radial-gradient(ellipse at 42% 92%,rgba(2,44,34,0.22) 0%,transparent 42%)"></div>
       <svg class="absolute inset-0 w-full h-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
         <filter id="atm-noise" x="0%" y="0%" width="100%" height="100%">
@@ -72,94 +75,34 @@ const audiencia = [
       <div class="absolute inset-0" style="background:radial-gradient(ellipse at 50% 45%,transparent 30%,rgba(0,0,0,0.48) 100%)"></div>
     </div>
 
-    <!-- Moon: 550px, absolute right, partially outside viewport -->
-    <div class="absolute pointer-events-none select-none" style="width:550px;height:550px;top:50%;right:-110px;transform:translateY(-50%);z-index:1">
-      <div class="absolute pointer-events-none" style="inset:-60px;background:radial-gradient(ellipse at 50% 50%,rgba(16,185,129,0.12) 0%,transparent 65%);border-radius:50%"></div>
-      <div class="absolute inset-0 rounded-full overflow-hidden" style="background:radial-gradient(ellipse at 30% 20%,#0a3d2e 0%,#0d1b2a 48%,#020c05 100%);box-shadow:0 0 0 1px rgba(52,211,153,0.07),0 0 120px rgba(16,185,129,0.32),0 0 240px rgba(16,185,129,0.13),0 28px 56px rgba(0,0,0,0.72)">
-        <div class="absolute inset-0" style="background:radial-gradient(ellipse at 36% 17%,rgba(52,211,153,0.32) 0%,transparent 44%)"></div>
-        <div class="absolute inset-0" style="background:radial-gradient(ellipse at 55% 85%,rgba(1,18,8,0.75) 0%,transparent 50%)"></div>
-        <div class="absolute inset-4 rounded-full" style="border:1px solid rgba(52,211,153,0.11)"></div>
-        <div class="absolute inset-[50px] rounded-full" style="border:1px solid rgba(52,211,153,0.07)"></div>
-        <div class="absolute inset-[100px] rounded-full" style="border:1px solid rgba(52,211,153,0.04)"></div>
-        <div class="absolute inset-0 flex items-center justify-center" style="padding-bottom:24%">
-          <svg width="240" height="240" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <mask id="moon-atm">
-                <rect width="100" height="100" fill="white"/>
-                <circle cx="65" cy="23" r="40" fill="black"/>
-              </mask>
-              <radialGradient id="moon-fill" cx="28%" cy="28%" r="70%">
-                <stop offset="0%" stop-color="#86efac"/>
-                <stop offset="55%" stop-color="#34d399"/>
-                <stop offset="100%" stop-color="#047857"/>
-              </radialGradient>
-            </defs>
-            <circle cx="35" cy="46" r="42" fill="rgba(52,211,153,0.05)"/>
-            <circle cx="35" cy="46" r="35" fill="url(#moon-fill)" mask="url(#moon-atm)" opacity="0.96"/>
-            <circle cx="35" cy="46" r="35" fill="none" stroke="rgba(167,243,208,0.55)" stroke-width="1.5" mask="url(#moon-atm)"/>
-          </svg>
-        </div>
-        <div class="absolute bottom-0 left-0 right-0 flex justify-center">
-          <svg width="260" height="175" viewBox="0 0 160 115" xmlns="http://www.w3.org/2000/svg" style="opacity:0.78">
-            <ellipse cx="80" cy="106" rx="48" ry="11" fill="rgba(0,0,0,0.75)"/>
-            <ellipse cx="80" cy="78" rx="19" ry="22" fill="rgba(0,0,0,0.86)"/>
-            <path d="M63 73 Q50 86 54 100" stroke="rgba(0,0,0,0.86)" stroke-width="10" fill="none" stroke-linecap="round"/>
-            <path d="M97 73 Q110 86 106 100" stroke="rgba(0,0,0,0.86)" stroke-width="10" fill="none" stroke-linecap="round"/>
-            <circle cx="80" cy="50" r="17" fill="rgba(0,0,0,0.88)"/>
-            <circle cx="62" cy="47" r="7" fill="rgba(0,0,0,0.88)"/>
-            <circle cx="98" cy="47" r="7" fill="rgba(0,0,0,0.88)"/>
-          </svg>
-        </div>
-        <div class="absolute top-[11%] left-[21%] w-0.5 h-0.5 rounded-full" style="background:rgba(52,211,153,0.95)"></div>
-        <div class="absolute top-[22%] right-[15%] w-1 h-1 rounded-full" style="background:rgba(52,211,153,0.65)"></div>
-        <div class="absolute top-[37%] right-[9%] w-0.5 h-0.5 rounded-full" style="background:rgba(134,239,172,0.6)"></div>
-        <div class="absolute top-[54%] left-[8%] w-1 h-1 rounded-full" style="background:rgba(52,211,153,0.42)"></div>
-        <div class="absolute top-[29%] left-[13%] w-0.5 h-0.5 rounded-full" style="background:rgba(167,243,208,0.5)"></div>
-        <div class="absolute top-[46%] left-[32%] w-0.5 h-0.5 rounded-full" style="background:rgba(52,211,153,0.35)"></div>
-      </div>
+    <!-- Moon light spill — radiates into the scene, anchored to moon center -->
+    <div class="absolute pointer-events-none select-none hidden sm:block" style="width:1000px;height:1000px;top:50%;right:-200px;transform:translateY(-50%);z-index:1;background:radial-gradient(circle,rgba(52,211,153,0.22) 0%,rgba(52,211,153,0.12) 25%,rgba(52,211,153,0.04) 50%,transparent 75%)"></div>
+
+    <!-- Hero left shade — keeps headline dominant -->
+    <div class="absolute inset-0 pointer-events-none select-none" style="z-index:2;background:linear-gradient(90deg,rgba(3,11,5,0.92) 0%,rgba(3,11,5,0.78) 30%,rgba(3,11,5,0.40) 55%,transparent 100%)"></div>
+
+    <!-- Moon Orb — real asset, 720px, right side, subtle crop -->
+    <div class="absolute pointer-events-none select-none hidden sm:block" style="width:720px;height:720px;top:50%;right:-70px;transform:translateY(-50%);z-index:3">
+      <img src="/assets/moonkey/moon-orb.png" alt="" aria-hidden="true" class="relative w-full h-full" style="object-fit:contain;filter:drop-shadow(0 0 60px rgba(16,185,129,0.34)) drop-shadow(0 0 120px rgba(16,185,129,0.14))" />
     </div>
 
-    <!-- Mid fog -->
-    <svg class="absolute pointer-events-none select-none" style="top:25%;left:0;width:100%;height:320px;z-index:1;opacity:0.32" viewBox="0 0 1440 320" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <radialGradient id="fog-mid" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#10b981" stop-opacity="0.18"/>
-          <stop offset="100%" stop-color="#10b981" stop-opacity="0"/>
-        </radialGradient>
-      </defs>
-      <ellipse cx="720" cy="160" rx="640" ry="160" fill="url(#fog-mid)"/>
-    </svg>
+    <!-- Monkey Silhouette — real asset, 290px, rim-lit from the moon -->
+    <div class="absolute pointer-events-none select-none hidden sm:block" style="width:290px;bottom:14%;right:210px;z-index:8">
+      <img src="/assets/moonkey/monkey-silhouette.png" alt="" aria-hidden="true" class="w-full block" style="filter:drop-shadow(12px 0 22px rgba(52,211,153,0.18))" />
+    </div>
 
-    <!-- Left foreground vegetation -->
-    <svg class="absolute bottom-0 left-0 pointer-events-none select-none" style="width:300px;height:440px;z-index:3" viewBox="0 0 300 440" xmlns="http://www.w3.org/2000/svg">
-      <path d="M-20 440 Q35 330 90 285 Q120 262 155 242" stroke="rgba(16,185,129,0.5)" stroke-width="2.5" fill="none"/>
-      <path d="M-20 440 Q15 365 45 305 Q65 272 108 244" stroke="rgba(6,78,59,0.65)" stroke-width="3" fill="none"/>
-      <path d="M5 440 Q55 390 108 345 Q138 312 158 272" stroke="rgba(4,120,87,0.45)" stroke-width="2" fill="none"/>
-      <path d="M15 440 C-28 378 -48 338 25 295 C65 272 98 288 88 328" fill="rgba(2,44,34,0.78)" stroke="rgba(16,185,129,0.28)" stroke-width="1"/>
-      <path d="M-8 440 C-62 388 -82 346 -8 304 C34 280 74 298 58 338" fill="rgba(3,55,40,0.68)" stroke="rgba(16,185,129,0.22)" stroke-width="1"/>
-      <path d="M42 440 Q22 394 55 338" stroke="rgba(16,185,129,0.42)" stroke-width="1.5" fill="none"/>
-      <path d="M65 440 Q50 378 75 325" stroke="rgba(16,185,129,0.32)" stroke-width="1" fill="none"/>
-      <path d="M88 440 Q78 404 95 358" stroke="rgba(6,78,59,0.48)" stroke-width="1.5" fill="none"/>
-      <path d="M-42 412 Q25 362 88 374 Q128 380 118 412" fill="rgba(1,30,15,0.78)" stroke="rgba(52,211,153,0.18)" stroke-width="0.5"/>
-      <path d="M-42 440 Q8 408 62 415 Q108 420 138 440 L-42 440Z" fill="rgba(1,10,5,0.96)"/>
-    </svg>
+    <!-- Foreground left leaf — in front of monkey -->
+    <div class="absolute bottom-0 left-0 pointer-events-none select-none" style="width:300px;z-index:12">
+      <img src="/assets/moonkey/leaf-left.png" alt="" aria-hidden="true" class="w-full block" style="filter:brightness(0.12) saturate(0.3);opacity:0.55" />
+    </div>
 
-    <!-- Right foreground vegetation -->
-    <svg class="absolute bottom-0 right-0 pointer-events-none select-none" style="width:280px;height:400px;z-index:3" viewBox="0 0 280 400" xmlns="http://www.w3.org/2000/svg">
-      <path d="M300 400 Q248 315 205 272 Q178 250 155 235" stroke="rgba(16,185,129,0.48)" stroke-width="2.5" fill="none"/>
-      <path d="M300 400 Q268 348 236 305 Q215 278 178 258" stroke="rgba(6,78,59,0.62)" stroke-width="3" fill="none"/>
-      <path d="M280 400 Q258 365 232 322 Q210 290 192 265" stroke="rgba(4,120,87,0.42)" stroke-width="2" fill="none"/>
-      <path d="M268 400 C322 348 338 305 270 270 C228 248 196 265 212 308" fill="rgba(2,44,34,0.72)" stroke="rgba(16,185,129,0.26)" stroke-width="1"/>
-      <path d="M290 400 C348 358 362 315 295 282 C252 260 220 278 236 320" fill="rgba(3,55,40,0.62)" stroke="rgba(16,185,129,0.2)" stroke-width="1"/>
-      <path d="M235 400 Q255 358 228 310" stroke="rgba(16,185,129,0.38)" stroke-width="1.5" fill="none"/>
-      <path d="M215 400 Q228 360 212 318" stroke="rgba(16,185,129,0.3)" stroke-width="1" fill="none"/>
-      <path d="M194 400 Q205 372 188 332" stroke="rgba(6,78,59,0.45)" stroke-width="1.5" fill="none"/>
-      <path d="M320 378 Q255 340 198 356 Q162 364 172 392" fill="rgba(1,30,15,0.75)" stroke="rgba(52,211,153,0.16)" stroke-width="0.5"/>
-      <path d="M320 400 Q275 378 228 385 Q182 392 158 400 L320 400Z" fill="rgba(1,10,5,0.96)"/>
-    </svg>
+    <!-- Foreground right leaf — in front of monkey -->
+    <div class="absolute bottom-0 right-0 pointer-events-none select-none" style="width:280px;z-index:12">
+      <img src="/assets/moonkey/leaf-right.png" alt="" aria-hidden="true" class="w-full block" style="filter:brightness(0.12) saturate(0.3);opacity:0.5" />
+    </div>
 
     <!-- Content -->
-    <div class="relative z-10 px-6 sm:px-10 lg:px-20 pt-20 pb-28 max-w-screen-xl mx-auto">
+    <div class="relative px-6 sm:px-10 lg:px-20 pt-20 pb-28 max-w-screen-xl mx-auto" style="z-index:10">
       <div class="max-w-2xl">
         <p class="font-mono text-[10px] tracking-[0.3em] uppercase mb-5" style="color:rgba(52,211,153,0.6)">THE MONKEY LAB</p>
         <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.06] tracking-tight mb-6" style="color:#f0fdf4">
@@ -181,19 +124,19 @@ const audiencia = [
       </div>
     </div>
 
-    <!-- Bottom fog -->
-    <svg class="absolute bottom-0 left-0 right-0 w-full pointer-events-none select-none" style="height:240px;z-index:2" viewBox="0 0 1440 240" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Bottom fog — reduced height and intensity -->
+    <svg class="absolute bottom-0 left-0 right-0 w-full pointer-events-none select-none" style="height:140px;z-index:6" viewBox="0 0 1440 140" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="fog-bottom" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stop-color="#030b05" stop-opacity="0"/>
-          <stop offset="100%" stop-color="#030b05" stop-opacity="0.94"/>
+          <stop offset="100%" stop-color="#030b05" stop-opacity="0.72"/>
         </linearGradient>
       </defs>
-      <rect width="1440" height="240" fill="url(#fog-bottom)"/>
+      <rect width="1440" height="140" fill="url(#fog-bottom)"/>
     </svg>
 
-    <!-- Gradient bleed: hero dark → page light -->
-    <div class="absolute bottom-0 left-0 right-0 pointer-events-none" style="height:5rem;background:linear-gradient(to bottom,transparent,#f8fafc);z-index:5"></div>
+    <!-- Gradient bleed: hero dies in dark -->
+    <div class="absolute bottom-0 left-0 right-0 pointer-events-none" style="height:5rem;background:linear-gradient(to bottom,transparent,#030b05);z-index:7"></div>
   </section>
 
   <!-- Language bar — below hero -->
