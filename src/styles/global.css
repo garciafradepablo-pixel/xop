@@ -2,10 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+  DESIGN TOKENS — single coherent system
+  Text:     primary #0f172a · secondary #475569 · muted #64748b
+  Surface:  base #f8fafc · raised #ffffff · ink #0f172a (editorial dark)
+  Accent:   emerald #059669 (action) · #10b981 (bright) · #34d399 (on-dark)
+  Radius:   sm 12px (rounded-xl, interactive) · md 16px (rounded-2xl, cards/blocks)
+  Shadow:   only functional — shadow-sm on raised cards, hover lift on actions
+*/
+:root {
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --surface-base: #f8fafc;
+  --surface-raised: #ffffff;
+  --surface-ink: #0f172a;
+  --accent: #059669;
+  --accent-bright: #10b981;
+  --border: #e2e8f0;
+}
+
 @layer base {
   body {
-    background-color: #f8fafc;
-    color: #0f172a;
+    background-color: var(--surface-base);
+    color: var(--text-primary);
   }
 
   ::selection {
