@@ -73,6 +73,7 @@ const configured = !!(
           <p id="pf-card-level" class="font-mono text-[10px] tracking-widest uppercase text-emerald-600 hidden"></p>
           <p id="pf-card-rank" class="font-mono text-[10px] tracking-widest uppercase text-slate-400 hidden mt-1.5"></p>
           <p id="pf-card-founder" class="font-mono text-[10px] tracking-widest uppercase text-amber-600 hidden mt-1">Founder · XNLAB Studio</p>
+          <p id="pf-card-elephant" class="font-mono text-[10px] tracking-widest uppercase hidden mt-0.5" style="color:#92400e">Elephant · Founder Archetype</p>
         </div>
       </div>
 
@@ -318,6 +319,7 @@ const configured = !!(
         );
         if (prof.founder_badge) {
           document.getElementById('pf-card-founder')?.classList.remove('hidden');
+          document.getElementById('pf-card-elephant')?.classList.remove('hidden');
         }
 
         const nickInput  = document.getElementById('pf-nickname')  as HTMLInputElement  | null;
