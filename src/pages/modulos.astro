@@ -577,20 +577,26 @@ Sé específico. No generalices.`;
     </div>
   </section>
 
-  <!-- COMPLETION SECTION -->
+  <!-- COMPLETION SECTION — proof submission -->
   <div id="completar-n1" class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-7 mt-4 scroll-mt-28">
-    <span class="label block mb-2">NIVEL 1 — CHECKLIST DE FINALIZACIÓN</span>
-    <p class="text-slate-600 text-sm leading-relaxed mb-6">Asegúrate de haber completado y entregado estos 8 puntos antes de marcar el nivel:</p>
-    <ul class="space-y-2.5 mb-8">
+    <div class="flex items-center justify-between gap-3 mb-2">
+      <span class="label">NIVEL 1 — ENTREGA TU PRUEBA</span>
+      <span id="proof-status" class="font-mono text-[10px] tracking-widest uppercase px-2.5 py-1 rounded-lg bg-amber-100 text-amber-700">Pendiente de prueba</span>
+    </div>
+    <p class="text-slate-700 text-sm leading-relaxed mb-1 font-semibold">Nivel 1 no se completa por ver contenido. Se completa entregando evidencia pública.</p>
+    <p class="text-slate-600 text-sm leading-relaxed mb-6">Tu prueba final es <strong>un repo público + una URL viva</strong>. Todos los entregables (contexto, CLAUDE.md, prompts, mapa de automatización, mejoras) viven en un único repositorio: <code class="bg-white border border-emerald-200 px-1.5 py-0.5 rounded font-mono text-emerald-700 text-xs">operador-practica</code>.</p>
+
+    <p class="text-xs font-mono text-emerald-600 uppercase tracking-widest mb-3">Antes de entregar, asegúrate de:</p>
+    <ul class="space-y-2.5 mb-7">
       {[
-        'mi-contexto.md creado con información real y útil',
-        'Terminal y VS Code funcionando con carpeta operador-practica',
-        'Claude Code instalado y README.md generado y revisado',
-        'Repositorio en GitHub con .gitignore y al menos 1 commit',
-        'CLAUDE.md creado en tu proyecto con commit',
-        'Prompt operativo propio que produce resultado usable',
-        'Mapa de automatización de una tarea real con etiquetas',
-        'URL pública activa y mejoras-v2.md con 3+ puntos',
+        'mi-contexto.md en el repo operador-practica',
+        'README.md generado con Claude Code y revisado por ti',
+        'CLAUDE.md commiteado en el repo',
+        '.gitignore y al menos 1 commit (sin secretos)',
+        'Prompt operativo propio guardado en el repo',
+        'Mapa de automatización de una tarea real',
+        'mejoras-v2.md con 3+ puntos concretos',
+        'El proyecto desplegado en una URL pública viva',
       ].map(item => (
         <li class="flex items-start gap-3 text-sm text-slate-600">
           <span class="text-emerald-500 font-mono shrink-0 mt-0.5 text-base leading-4">✓</span>
@@ -599,24 +605,50 @@ Sé específico. No generalices.`;
       ))}
     </ul>
 
-    <button
-      id="btn-complete-l1"
-      class="w-full font-mono text-sm font-semibold text-white bg-emerald-500 px-6 py-4 rounded-xl hover:bg-emerald-600 transition-colors cursor-pointer border-0"
-    >
-      Marcar Nivel 1 como completado →
-    </button>
+    <!-- Pending state: submission form -->
+    <div id="proof-form">
+      <div class="space-y-4 mb-5">
+        <div>
+          <label for="proof-repo" class="block font-mono text-xs text-slate-600 mb-1.5">Repo público de GitHub</label>
+          <input id="proof-repo" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://github.com/tu-usuario/operador-practica" class="w-full font-mono text-sm bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-400 transition-colors" />
+        </div>
+        <div>
+          <label for="proof-url" class="block font-mono text-xs text-slate-600 mb-1.5">URL viva del proyecto desplegado</label>
+          <input id="proof-url" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://operador-practica.pages.dev" class="w-full font-mono text-sm bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-400 transition-colors" />
+        </div>
+      </div>
+      <p id="proof-error" class="hidden text-sm text-rose-600 font-mono mb-4"></p>
+      <button
+        id="btn-submit-proof"
+        class="w-full font-mono text-sm font-semibold text-white bg-emerald-500 px-6 py-4 rounded-xl hover:bg-emerald-600 transition-colors cursor-pointer border-0"
+      >
+        Entregar prueba N1 →
+      </button>
+    </div>
 
-    <div id="msg-complete-l1" class="hidden">
+    <!-- Delivered state -->
+    <div id="proof-delivered" class="hidden">
       <div class="bg-emerald-500 text-white rounded-xl px-6 py-5 text-center mb-4">
-        <p class="font-mono text-xs tracking-widest uppercase mb-1.5 opacity-80">NIVEL 1 COMPLETADO</p>
+        <p class="font-mono text-xs tracking-widest uppercase mb-1.5 opacity-80">PRUEBA N1 ENTREGADA</p>
         <p class="font-semibold text-base">Nivel 2 desbloqueado: Advanced Operator Playbook</p>
       </div>
-      <a
-        href="/advanced"
-        class="block w-full text-center font-mono text-sm font-semibold text-violet-700 border-2 border-violet-300 bg-violet-50 px-6 py-4 rounded-xl hover:bg-violet-100 transition-colors"
-      >
-        Ir a Nivel 2 — Advanced Operator Playbook →
-      </a>
+      <div class="space-y-2 mb-4">
+        <a id="proof-repo-link" href="#" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 bg-white border border-emerald-200 rounded-xl px-4 py-3 font-mono text-xs text-slate-700 hover:border-emerald-400 transition-colors break-all">
+          <span class="text-emerald-600 shrink-0">repo →</span><span id="proof-repo-text"></span>
+        </a>
+        <a id="proof-url-link" href="#" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 bg-white border border-emerald-200 rounded-xl px-4 py-3 font-mono text-xs text-slate-700 hover:border-emerald-400 transition-colors break-all">
+          <span class="text-emerald-600 shrink-0">live →</span><span id="proof-url-text"></span>
+        </a>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <a
+          href="/advanced"
+          class="flex-1 text-center font-mono text-sm font-semibold text-violet-700 border-2 border-violet-300 bg-violet-50 px-6 py-3.5 rounded-xl hover:bg-violet-100 transition-colors"
+        >
+          Ir a Nivel 2 →
+        </a>
+        <button id="btn-edit-proof" class="font-mono text-xs text-slate-500 hover:text-slate-700 px-4 py-3.5 transition-colors cursor-pointer border-0 bg-transparent">Editar enlaces</button>
+      </div>
     </div>
   </div>
 
@@ -657,21 +689,92 @@ Sé específico. No generalices.`;
       });
     });
 
-    // Level completion
-    var l1done = localStorage.getItem('moonkey_level_1_completed') === 'true';
-    function showDone() {
-      var b = document.getElementById('btn-complete-l1');
-      if (b) b.style.display = 'none';
-      var m = document.getElementById('msg-complete-l1');
-      if (m) m.classList.remove('hidden');
+    // ── Level 1 proof submission ──
+    var REPO_KEY = 'moonkey_level_1_proof_repo';
+    var URL_KEY = 'moonkey_level_1_proof_url';
+    var DONE_KEY = 'moonkey_level_1_completed';
+
+    var formEl = document.getElementById('proof-form');
+    var deliveredEl = document.getElementById('proof-delivered');
+    var statusEl = document.getElementById('proof-status');
+    var repoInput = document.getElementById('proof-repo');
+    var urlInput = document.getElementById('proof-url');
+    var errEl = document.getElementById('proof-error');
+    var submitBtn = document.getElementById('btn-submit-proof');
+    var editBtn = document.getElementById('btn-edit-proof');
+
+    function lsGet(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
+    function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+    function isGithubRepo(v) {
+      // https://github.com/<owner>/<repo>  (path beyond the host required)
+      return /^https:\/\/github\.com\/[^/\s]+\/[^/\s]+/i.test(v.trim());
     }
-    if (l1done) showDone();
-    var complBtn = document.getElementById('btn-complete-l1');
-    if (complBtn) {
-      complBtn.addEventListener('click', function() {
-        localStorage.setItem('moonkey_level_1_completed', 'true');
-        showDone();
+    function isLiveUrl(v) {
+      return /^https?:\/\/[^\s.]+\.[^\s]+/i.test(v.trim());
+    }
+
+    function showDelivered() {
+      var repo = lsGet(REPO_KEY), url = lsGet(URL_KEY);
+      if (formEl) formEl.classList.add('hidden');
+      if (deliveredEl) deliveredEl.classList.remove('hidden');
+      if (statusEl) {
+        statusEl.textContent = 'Prueba N1 entregada';
+        statusEl.className = 'font-mono text-[10px] tracking-widest uppercase px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-700';
+      }
+      var rl = document.getElementById('proof-repo-link');
+      var ul = document.getElementById('proof-url-link');
+      if (rl) { rl.href = repo; }
+      if (ul) { ul.href = url; }
+      var rt = document.getElementById('proof-repo-text'); if (rt) rt.textContent = repo;
+      var ut = document.getElementById('proof-url-text'); if (ut) ut.textContent = url;
+    }
+
+    function showForm() {
+      if (deliveredEl) deliveredEl.classList.add('hidden');
+      if (formEl) formEl.classList.remove('hidden');
+      if (statusEl) {
+        statusEl.textContent = 'Pendiente de prueba';
+        statusEl.className = 'font-mono text-[10px] tracking-widest uppercase px-2.5 py-1 rounded-lg bg-amber-100 text-amber-700';
+      }
+      if (repoInput) repoInput.value = lsGet(REPO_KEY);
+      if (urlInput) urlInput.value = lsGet(URL_KEY);
+    }
+
+    // Initial state: delivered only if both proof links exist and validate.
+    var savedRepo = lsGet(REPO_KEY), savedUrl = lsGet(URL_KEY);
+    if (savedRepo && savedUrl && isGithubRepo(savedRepo) && isLiveUrl(savedUrl)) {
+      showDelivered();
+    } else {
+      showForm();
+    }
+
+    if (submitBtn) {
+      submitBtn.addEventListener('click', function() {
+        var repo = (repoInput && repoInput.value || '').trim();
+        var url = (urlInput && urlInput.value || '').trim();
+        var problems = [];
+        if (!repo) problems.push('Falta la URL del repo de GitHub.');
+        else if (!isGithubRepo(repo)) problems.push('El repo debe ser https://github.com/usuario/proyecto');
+        if (!url) problems.push('Falta la URL viva del proyecto.');
+        else if (!isLiveUrl(url)) problems.push('La URL viva debe empezar por http:// o https://');
+
+        if (problems.length) {
+          if (errEl) { errEl.textContent = problems.join(' '); errEl.classList.remove('hidden'); }
+          return;
+        }
+        if (errEl) errEl.classList.add('hidden');
+
+        // Persist proof + mark N1 complete (only when both links pass validation).
+        lsSet(REPO_KEY, repo);
+        lsSet(URL_KEY, url);
+        lsSet(DONE_KEY, 'true');
+        showDelivered();
       });
+    }
+
+    if (editBtn) {
+      editBtn.addEventListener('click', function() { showForm(); });
     }
   })();
 </script>
