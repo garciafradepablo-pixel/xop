@@ -69,7 +69,7 @@ const rankDefs = [
   <!-- Hero -->
   <section class="pb-12 border-b border-slate-200">
     <span class="label block mb-6">THE MONKEY LAB</span>
-    <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-5">
+    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 leading-tight mb-5">
       Bienvenido al Lab.<br/>
       <span class="text-emerald-600">Monkeys en formación.</span>
     </h1>
@@ -506,10 +506,10 @@ const rankDefs = [
           ? '<span class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700">Founder · XNLAB Studio</span>'
           : '';
 
-        return `<div class="bg-white border border-slate-200 rounded-xl px-5 py-3.5">
-          <div class="flex flex-wrap items-center gap-2 mb-0.5">
-            <span class="text-sm font-medium text-slate-900">${display}</span>
-            <span class="font-mono text-[10px] px-2 py-0.5 rounded-full border ${rank.borderCls} ${rank.textCls}">${esc(rank.label)}</span>
+        return `<div class="bg-white border border-slate-200 rounded-xl px-5 py-4 hover:border-slate-300 hover:shadow-sm transition-all">
+          <div class="flex flex-wrap items-center gap-2 mb-1">
+            <span class="text-sm font-semibold text-slate-900">${display}</span>
+            <span class="font-mono text-[10px] px-2.5 py-0.5 rounded-full border font-medium ${rank.borderCls} ${rank.textCls}">${esc(rank.label)}</span>
             ${founderBadge}
           </div>
           ${goalHtml}

@@ -63,14 +63,17 @@ const configured = !!(
     <section id="monkey-profile-section" class="py-10 border-b border-slate-200 hidden">
       <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-5">PERFIL MONKEY</p>
 
-      <div class="bg-white border border-slate-200 rounded-xl px-5 py-5 max-w-sm mb-6 shadow-sm">
-        <p class="font-mono text-[10px] tracking-widest text-emerald-600 uppercase mb-3">MONKEY ID</p>
-        <p id="pf-card-email" class="text-xs font-mono text-slate-500 mb-1"></p>
-        <p id="pf-card-nickname" class="text-sm font-bold text-slate-900 hidden mb-1"></p>
-        <p id="pf-card-goal" class="text-xs text-slate-500 hidden mb-2"></p>
-        <p id="pf-card-level" class="font-mono text-[10px] tracking-widest uppercase text-emerald-600 hidden"></p>
-        <p id="pf-card-rank" class="font-mono text-[10px] tracking-widest uppercase text-slate-400 hidden mt-1.5"></p>
-        <p id="pf-card-founder" class="font-mono text-[10px] tracking-widest uppercase text-amber-600 hidden mt-1">Founder · XNLAB Studio</p>
+      <div class="max-w-sm mb-6">
+        <div class="h-1 bg-emerald-400 rounded-t-xl"></div>
+        <div class="bg-white border border-t-0 border-slate-200 rounded-b-xl px-5 py-5 shadow-sm">
+          <p class="font-mono text-[10px] tracking-widest text-emerald-600 uppercase mb-3">MONKEY ID</p>
+          <p id="pf-card-email" class="text-xs font-mono text-slate-500 mb-1"></p>
+          <p id="pf-card-nickname" class="text-sm font-bold text-slate-900 hidden mb-1"></p>
+          <p id="pf-card-goal" class="text-xs text-slate-500 hidden mb-2"></p>
+          <p id="pf-card-level" class="font-mono text-[10px] tracking-widest uppercase text-emerald-600 hidden"></p>
+          <p id="pf-card-rank" class="font-mono text-[10px] tracking-widest uppercase text-slate-400 hidden mt-1.5"></p>
+          <p id="pf-card-founder" class="font-mono text-[10px] tracking-widest uppercase text-amber-600 hidden mt-1">Founder · XNLAB Studio</p>
+        </div>
       </div>
 
       <!-- Posición en la jungla — filled by script -->
@@ -172,14 +175,33 @@ const configured = !!(
     </section>
   )}
 
-  <!-- CTA -->
+  <!-- Qué hacer ahora -->
   <section class="py-10">
-    <div class="flex flex-wrap gap-3">
-      <a href="/modulos" class="inline-block font-mono text-sm font-medium text-white bg-emerald-500 px-5 py-2.5 rounded-xl hover:bg-emerald-600 transition-colors">
-        Ir a Nivel 1 →
+    <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-5">QUÉ HACER AHORA</p>
+    <div class="space-y-3 max-w-lg">
+      <a href="/modulos" class="flex items-start gap-4 bg-white border border-slate-200 rounded-xl px-5 py-4 hover:border-emerald-300 hover:shadow-sm transition-all group">
+        <span class="font-mono text-[10px] tracking-widest text-emerald-500 uppercase mt-0.5 shrink-0">01</span>
+        <div class="flex-1">
+          <p class="text-sm font-semibold text-slate-900 group-hover:text-emerald-700 transition-colors mb-0.5">Empieza el Nivel 1</p>
+          <p class="text-xs text-slate-500 leading-relaxed">Operator Foundations. 8 módulos. Sin código requerido.</p>
+        </div>
+        <span class="text-slate-300 group-hover:text-emerald-400 transition-colors font-mono text-sm shrink-0 mt-0.5">→</span>
       </a>
-      <a href="/planes" class="inline-block font-mono text-sm text-slate-600 border border-slate-200 px-5 py-2.5 rounded-xl hover:bg-slate-50 transition-colors">
-        Ver planes
+      <a href="/prueba-operador" class="flex items-start gap-4 bg-white border border-slate-200 rounded-xl px-5 py-4 hover:border-sky-300 hover:shadow-sm transition-all group">
+        <span class="font-mono text-[10px] tracking-widest text-sky-500 uppercase mt-0.5 shrink-0">02</span>
+        <div class="flex-1">
+          <p class="text-sm font-semibold text-slate-900 group-hover:text-sky-700 transition-colors mb-0.5">Test de Operador</p>
+          <p class="text-xs text-slate-500 leading-relaxed">60 minutos. Un entregable real. Descubre dónde estás.</p>
+        </div>
+        <span class="text-slate-300 group-hover:text-sky-400 transition-colors font-mono text-sm shrink-0 mt-0.5">→</span>
+      </a>
+      <a href="/monkeys" class="flex items-start gap-4 bg-white border border-slate-200 rounded-xl px-5 py-4 hover:border-violet-300 hover:shadow-sm transition-all group">
+        <span class="font-mono text-[10px] tracking-widest text-violet-500 uppercase mt-0.5 shrink-0">03</span>
+        <div class="flex-1">
+          <p class="text-sm font-semibold text-slate-900 group-hover:text-violet-700 transition-colors mb-0.5">Explorar la jungla</p>
+          <p class="text-xs text-slate-500 leading-relaxed">Ve quién forma parte del programa piloto y dónde estás.</p>
+        </div>
+        <span class="text-slate-300 group-hover:text-violet-400 transition-colors font-mono text-sm shrink-0 mt-0.5">→</span>
       </a>
     </div>
   </section>
