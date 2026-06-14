@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Header from './Header.astro';
 import LanguageBar from './LanguageBar.astro';
+import { getLocaleFromPath, localizedPath } from '../i18n/utils';
 
 interface Props {
   title: string;
@@ -9,16 +10,24 @@ interface Props {
 }
 
 const { title, description = 'Escuela modular para aprender a operar IA, automatizaciones y sistemas creativos.' } = Astro.props;
+
+const pathname = Astro.url.pathname;
+const locale = getLocaleFromPath(pathname);
+const esHref = localizedPath(pathname, 'es');
+const enHref = localizedPath(pathname, 'en');
 ---
 
 <!DOCTYPE html>
-<html lang="es">
+<html lang={locale}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <title>{title} — MOONKEY LAB</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" hreflang="es" href={esHref} />
+    <link rel="alternate" hreflang="en" href={enHref} />
+    <link rel="alternate" hreflang="x-default" href={esHref} />
   </head>
   <body class="min-h-screen antialiased bg-[#f8fafc] text-slate-900">
     <Header />

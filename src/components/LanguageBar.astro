@@ -1,24 +1,66 @@
 ---
-// Visual-only language indicator. ES active, EN upcoming.
+// Real bilingual switcher. ES at root, EN under /en/.
+// Maps the current page to its equivalent locale and persists the choice.
+import { getLocaleFromPath, localizedPath, useTranslations } from '../i18n/utils';
+import { LOCALE_STORAGE_KEY } from '../i18n/config';
+
 interface Props {
   subtle?: boolean; // smaller/footer variant
 }
 const { subtle = false } = Astro.props;
+
+const pathname = Astro.url.pathname;
+const current = getLocaleFromPath(pathname);
+const esHref = localizedPath(pathname, 'es');
+const enHref = localizedPath(pathname, 'en');
+const t = useTranslations(current);
+
+const activeCls = 'font-bold text-emerald-600';
+const idleCls = 'text-slate-400 hover:text-slate-600 transition-colors';
 ---
 
-{subtle ? (
-  <div class="flex items-center gap-2.5 flex-wrap">
-    <span class="font-mono text-xs font-bold text-emerald-600">ES</span>
-    <span class="font-mono text-xs text-slate-400 opacity-50">EN <span class="text-[10px]">próximamente</span></span>
-  </div>
-) : (
-  <div class="flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[11px] text-slate-400">
-    <span class="font-medium text-slate-500">ES</span>
-    <span class="text-slate-300" aria-hidden="true">·</span>
-    <span>EN próximamente</span>
-    <span class="hidden sm:inline text-slate-300" aria-hidden="true">·</span>
-    <span class="hidden sm:inline">Traducción con sentido, no literal</span>
-    <span class="hidden md:inline text-slate-300" aria-hidden="true">·</span>
-    <span class="hidden md:inline">Monkey, Moonkey, Keys y Operator Path no se traducen</span>
-  </div>
-)}
+<div class="flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[11px] text-slate-400" data-lang-switcher>
+  <a href={esHref} data-locale="es" aria-current={current === 'es' ? 'true' : undefined}
+     class={`text-xs ${current === 'es' ? activeCls : idleCls}`}>ES</a>
+  <span class="text-slate-300" aria-hidden="true">/</span>
+  <a href={enHref} data-locale="en" aria-current={current === 'en' ? 'true' : undefined}
+     class={`text-xs ${current === 'en' ? activeCls : idleCls}`}>EN</a>
+
+  {!subtle && (
+    <>
+      <span class="hidden sm:inline text-slate-300" aria-hidden="true">·</span>
+      <span class="hidden sm:inline">{t('switcher.note')}</span>
+      <span class="hidden md:inline text-slate-300" aria-hidden="true">·</span>
+      <span class="hidden md:inline">{t('switcher.terms')}</span>
+    </>
+  )}
+</div>
+
+<script is:inline define:vars={{ KEY: LOCALE_STORAGE_KEY }}>
+  (function () {
+    // Real locale from the live URL — corrects fallback /en/ pages that are
+    // byte-copies of the ES render (so their baked lang/active state is "es").
+    var seg = location.pathname.split('/').filter(Boolean)[0];
+    var loc = seg === 'en' ? 'en' : 'es';
+    try { document.documentElement.lang = loc; } catch (e) {}
+
+    var ACTIVE = ['font-bold', 'text-emerald-600'];
+    var IDLE = ['text-slate-400', 'hover:text-slate-600', 'transition-colors'];
+    document.querySelectorAll('[data-lang-switcher] a[data-locale]').forEach(function (a) {
+      var on = a.getAttribute('data-locale') === loc;
+      ACTIVE.forEach(function (c) { a.classList.toggle(c, on); });
+      IDLE.forEach(function (c) { a.classList.toggle(c, !on); });
+      if (on) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+    });
+
+    // Persist the chosen locale on click. Guard so it binds once per page.
+    if (!window.__mkLangSwitcher) {
+      window.__mkLangSwitcher = true;
+      document.addEventListener('click', function (e) {
+        var a = e.target instanceof Element ? e.target.closest('[data-lang-switcher] a[data-locale]') : null;
+        if (!a) return;
+        try { localStorage.setItem(KEY, a.getAttribute('data-locale')); } catch (err) {}
+      });
+    }
+  })();
+</script>

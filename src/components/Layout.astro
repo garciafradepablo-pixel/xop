@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Header from './Header.astro';
 import LanguageBar from './LanguageBar.astro';
+import { getLocaleFromPath, localizedPath } from '../i18n/utils';
 
 interface Props {
   title: string;
@@ -9,10 +10,15 @@ interface Props {
 }
 
 const { title, description = 'MOONKEY LAB by XNLAB Studio — escuela modular para aprender a operar IA, automatizaciones y sistemas de trabajo.' } = Astro.props;
+
+const pathname = Astro.url.pathname;
+const locale = getLocaleFromPath(pathname);
+const esHref = localizedPath(pathname, 'es');
+const enHref = localizedPath(pathname, 'en');
 ---
 
 <!DOCTYPE html>
-<html lang="es">
+<html lang={locale}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -22,6 +28,10 @@ const { title, description = 'MOONKEY LAB by XNLAB Studio — escuela modular pa
     <meta property="og:description" content={description} />
     <title>{title} — MOONKEY LAB</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- i18n foundation: locale alternates -->
+    <link rel="alternate" hreflang="es" href={esHref} />
+    <link rel="alternate" hreflang="en" href={enHref} />
+    <link rel="alternate" hreflang="x-default" href={esHref} />
   </head>
   <body class="min-h-screen antialiased bg-[#f8fafc] text-slate-900">
     <Header />
@@ -64,5 +74,32 @@ const { title, description = 'MOONKEY LAB by XNLAB Studio — escuela modular pa
 
       </div>
     </footer>
+
+    <!-- Invite capture — first-touch: store ?ref in localStorage, never overwrite -->
+    <script is:inline>
+      (function () {
+        try {
+          var ref = new URLSearchParams(window.location.search).get('ref');
+          if (!ref) return;
+          ref = ref.trim().toUpperCase();
+          if (/^[A-Z0-9]{4,32}$/.test(ref) && !localStorage.getItem('moonkey_ref')) {
+            localStorage.setItem('moonkey_ref', ref);
+          }
+        } catch (e) {}
+      })();
+    </script>
+
+    <!-- Locale detection (non-destructive): record a default preference on first visit.
+         No forced redirect in Phase 0 — switching is explicit via the language switcher. -->
+    <script is:inline>
+      (function () {
+        try {
+          if (!localStorage.getItem('moonkey_lang')) {
+            var nav = (navigator.language || 'es').toLowerCase();
+            localStorage.setItem('moonkey_lang', nav.indexOf('en') === 0 ? 'en' : 'es');
+          }
+        } catch (e) {}
+      })();
+    </script>
   </body>
 </html>
