@@ -61,3 +61,83 @@
     @apply bg-white rounded-xl border border-slate-200 p-4 text-center shadow-sm;
   }
 }
+
+/* ─── Motion system ──────────────────────────────────────────────
+   Scroll-reveal: opacity + translate-Y, triggered by IntersectionObserver.
+   Variants: [data-reveal="fade"] · [data-reveal="scale"] · [data-reveal="left"]
+   Stagger via data-delay="0..500" (ms, handled in JS setTimeout).
+   Hero entrance: CSS-only, fires on page load above the fold.
+──────────────────────────────────────────────────────────────── */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity  0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+[data-reveal="fade"] {
+  transform: none;
+}
+[data-reveal="fade"].is-visible {
+  opacity: 1;
+}
+[data-reveal="scale"] {
+  transform: scale(0.96) translateY(20px);
+  transition:
+    opacity  0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-reveal="scale"].is-visible {
+  transform: scale(1) translateY(0);
+}
+[data-reveal="left"] {
+  transform: translateX(-24px);
+}
+[data-reveal="left"].is-visible {
+  transform: translateX(0);
+}
+
+/* Hero — above-fold entrance, plays once on load */
+@keyframes mk-enter-up {
+  from { opacity: 0; transform: translateY(36px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+@keyframes mk-enter-scale {
+  from { opacity: 0; transform: scale(0.97) translateY(20px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+.hero-enter {
+  animation: mk-enter-up 0.95s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.hero-enter-img {
+  animation: mk-enter-scale 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.18s both;
+}
+
+/* Hover lift — interactive cards */
+.card-hover {
+  transition:
+    transform     0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow    0.28s ease,
+    border-color  0.28s ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08);
+}
+
+/* Honour motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal],
+  .hero-enter,
+  .hero-enter-img {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}
