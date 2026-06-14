@@ -1,32 +1,72 @@
 ---
 import Layout from '../components/Layout.astro';
+import { resolveLocale, localizedPath, useTranslations } from '../i18n/utils';
 
 const configured = !!(
   import.meta.env.PUBLIC_SUPABASE_URL &&
   import.meta.env.PUBLIC_SUPABASE_ANON_KEY
 );
+
+const locale = resolveLocale(Astro.currentLocale, Astro.url.pathname);
+const t = useTranslations(locale);
 ---
 
 <Layout
-  title="Mi cuenta"
-  description="Estado de tu cuenta y progreso en MOONKEY LAB."
+  title={t('cuenta.meta.title')}
+  description={t('cuenta.meta.desc')}
 >
   <section class="pb-10 border-b border-slate-200">
-    <span class="label block mb-3">CUENTA</span>
-    <h1 class="text-2xl font-bold text-slate-900 mb-3">Tu progreso y acceso.</h1>
+    <span class="label block mb-3">{t('cuenta.label')}</span>
+    <h1 class="text-2xl font-bold text-slate-900 mb-3">{t('cuenta.h1')}</h1>
     <p class="text-slate-500 text-sm leading-relaxed max-w-md">
-      El progreso local siempre se guarda en este dispositivo. Si tienes cuenta, se sincroniza en la nube.
+      {t('cuenta.intro')}
     </p>
+  </section>
+
+  <!-- Welcome panel — shown by JS only on the post-registration redirect -->
+  <section id="welcome-panel" class="hidden py-6">
+    <div class="rounded-2xl overflow-hidden max-w-md" style="background:linear-gradient(160deg,#030b05 0%,#06140b 55%,#0a1a0c 100%);border:1px solid rgba(52,211,153,0.16);box-shadow:0 0 44px rgba(52,211,153,0.05)">
+      <div class="px-6 sm:px-7 py-7">
+        <p class="font-mono text-[9px] tracking-[0.4em] uppercase font-bold mb-4" style="color:rgba(52,211,153,0.5)">◆ MOONKEY LAB</p>
+        <h2 class="text-2xl font-bold mb-3" style="color:#f0fdf4">{t('acct.welcome.title')}</h2>
+        <p class="text-sm leading-relaxed mb-2" style="color:rgba(226,232,240,0.85)">{t('acct.welcome.line1')}</p>
+        <p class="text-sm leading-relaxed mb-1" style="color:rgba(148,163,184,0.8)">{t('acct.welcome.line2')}</p>
+        <p class="text-base font-semibold mb-5" style="color:#34d399">{t('acct.welcome.line3')}</p>
+        <div class="flex gap-2">
+          <button
+            id="welcome-copy"
+            class="flex-1 font-mono text-xs font-medium text-white bg-emerald-500 px-4 py-2.5 rounded-xl hover:bg-emerald-600 transition-colors"
+          >
+            {t('acct.welcome.copy')}
+          </button>
+          <button
+            id="welcome-share"
+            class="flex-1 font-mono text-xs font-medium px-4 py-2.5 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5"
+            style="color:#34d399;border:1px solid rgba(52,211,153,0.35);background:rgba(52,211,153,0.06)"
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+            {t('acct.welcome.share')}
+          </button>
+        </div>
+        <div id="welcome-reinforcement" class="hidden mt-3">
+          <p class="text-sm font-semibold" style="color:#34d399">{t('acct.reinforce.1')}</p>
+          <p class="text-xs mt-0.5" style="color:rgba(148,163,184,0.7)">{t('acct.reinforce.2')}</p>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- Auth state — filled by script -->
   <section class="py-10 border-b border-slate-200">
-    <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-4">ESTADO DE CUENTA</p>
+    <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-4">{t('cuenta.status.label')}</p>
 
     {!configured && (
       <div class="bg-amber-50 border border-amber-200 rounded-xl px-5 py-4 max-w-sm">
-        <p class="text-sm font-medium text-amber-800 mb-1">Registro pendiente de activación</p>
-        <p class="text-xs text-slate-500 leading-relaxed">El sistema de cuentas aún no está activo. Tu progreso se guarda localmente en este navegador.</p>
+        <p class="text-sm font-medium text-amber-800 mb-1">{t('cuenta.status.pending.title')}</p>
+        <p class="text-xs text-slate-500 leading-relaxed">{t('cuenta.status.pending.desc')}</p>
       </div>
     )}
 
@@ -143,57 +183,138 @@ const configured = !!(
     </section>
   )}
 
-  <!-- Invitar operador — shown by script when session is active -->
-  {configured && (
-    <section id="invite-section" class="py-10 border-b border-slate-200 hidden">
-      <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-3">INVITAR OPERADOR</p>
-      <div class="max-w-md">
-        <p class="text-slate-600 text-sm leading-relaxed mb-5">
-          Comparte Moonkey con alguien que no solo quiera aprender IA, sino demostrar lo que puede construir.
-        </p>
-        <label for="invite-link" class="block font-mono text-xs text-slate-500 mb-1.5">Tu enlace de invitación</label>
-        <div class="flex gap-2 mb-2">
-          <input
-            id="invite-link" type="text" readonly value=""
-            class="flex-1 font-mono text-xs bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-          />
+  <!-- Invitar operador — always visible; auth state managed by JS -->
+  <section id="invite-section" class="py-10 border-b border-slate-200">
+    <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-3">{t('acct.invite.label')}</p>
+    <div class="max-w-md">
+      <p class="text-slate-600 text-sm leading-relaxed mb-5">
+        {t('acct.invite.desc')}
+      </p>
+      <!-- Static fallback when auth not configured -->
+      {!configured && (
+        <div class="bg-slate-50 border border-slate-200 rounded-xl px-5 py-4 mb-3">
+          <p class="text-sm font-medium text-slate-700 mb-1">Activa tu cuenta para generar tu enlace.</p>
+          <p class="text-xs text-slate-400 font-mono mb-4">El enlace personal aparece al iniciar sesión.</p>
+          <a href={localizedPath('/modulos', locale)} class="inline-block font-mono text-xs font-medium text-emerald-600 border border-emerald-300 px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-colors">
+            Entrar al Nivel 1 →
+          </a>
+        </div>
+      )}
+      <!-- Not logged in: show login prompt (hidden, shown by JS) -->
+      {configured && (
+        <div id="invite-login-prompt" class="hidden">
+          <div class="bg-slate-50 border border-slate-200 rounded-xl px-5 py-4 mb-3">
+            <p class="text-sm font-medium text-slate-700 mb-1">Activa tu cuenta para generar tu enlace.</p>
+            <p class="text-xs text-slate-400 font-mono mb-4">El enlace personal aparece al iniciar sesión.</p>
+            <a href={localizedPath('/login', locale)} class="inline-block font-mono text-xs font-medium text-emerald-600 border border-emerald-300 px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-colors">
+              {t('acct.invite.login.cta')}
+            </a>
+            <a href={localizedPath('/modulos', locale)} class="inline-block font-mono text-xs text-slate-400 hover:text-slate-600 ml-3 transition-colors">
+              Entrar al Nivel 1 →
+            </a>
+          </div>
+        </div>
+      )}
+      <!-- Logged in: invite link area (hidden, shown by JS) -->
+      <div id="invite-link-area" class="hidden">
+        <label for="invite-link" class="block font-mono text-xs text-slate-500 mb-1.5">{t('acct.invite.link.label')}</label>
+        <input
+          id="invite-link" type="text" readonly value=""
+          class="w-full font-mono text-xs bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-400 mb-2"
+        />
+        <div class="flex gap-2">
           <button
             id="invite-copy"
-            class="font-mono text-xs font-medium text-white bg-emerald-500 px-4 py-2.5 rounded-xl hover:bg-emerald-600 transition-colors shrink-0"
+            class="flex-1 font-mono text-xs font-medium text-white bg-emerald-500 px-4 py-2.5 rounded-xl hover:bg-emerald-600 transition-colors"
           >
-            Copiar
+            {t('acct.invite.copy')}
+          </button>
+          <button
+            id="invite-share"
+            class="flex-1 font-mono text-xs font-medium text-emerald-700 bg-white border border-emerald-300 px-4 py-2.5 rounded-xl hover:bg-emerald-50 transition-colors inline-flex items-center justify-center gap-1.5"
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+            {t('acct.invite.share')}
           </button>
         </div>
-        <p id="invite-copied" class="hidden text-xs font-mono text-emerald-700 mb-2">✓ Enlace copiado</p>
-        <p class="text-xs text-slate-400 leading-relaxed mt-3">
-          Texto para compartir:
-          <span class="text-slate-500">«Comparte Moonkey con alguien que construiría de verdad.»</span>
-        </p>
+        <div id="invite-reinforcement" class="hidden mt-3">
+          <p class="text-sm font-semibold text-slate-800">{t('acct.reinforce.1')}</p>
+          <p class="text-xs text-slate-500 mt-0.5">{t('acct.reinforce.2')}</p>
+        </div>
+        <div class="mt-4 pt-3 border-t border-slate-100">
+          <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-1">{t('acct.invite.count.label')}</p>
+          <p id="invite-count" class="font-mono text-2xl font-bold text-slate-900 mb-3">0</p>
+          <p class="font-mono text-[10px] text-slate-400 leading-relaxed">
+            {t('acct.invite.privacy1')}<br />{t('acct.invite.privacy2')}
+          </p>
+        </div>
       </div>
-    </section>
-  )}
+    </div>
+  </section>
+
+  <!-- Referral dashboard — shown by JS when logged in (PARTS 2 + 4) -->
+  <section id="referral-section" class="py-10 border-b border-slate-200 hidden">
+    <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-4">{t('acct.ref.label')}</p>
+
+    <!--
+      TODO PART 3 — future data model (no implementation yet):
+      invited_users    → COUNT(*) FROM auth.users WHERE raw_user_meta_data->>'referred_by' = myCode
+      registered_users → subset of above who completed ≥1 module (join progress table)
+      completed_proofs → subset who completed a full level proof (join proofs table)
+      When implemented, update #ref-sent, #ref-registered, #ref-proofs via JS.
+    -->
+    <div class="max-w-sm mb-8">
+      <div class="bg-white border border-slate-200 rounded-xl overflow-hidden divide-y divide-slate-100">
+        <div class="flex items-center justify-between px-5 py-3.5">
+          <p class="text-sm text-slate-600">{t('acct.ref.sent')}</p>
+          <p id="ref-sent" class="font-mono text-base font-bold text-slate-900">0</p>
+        </div>
+        <div class="flex items-center justify-between px-5 py-3.5">
+          <p class="text-sm text-slate-600">{t('acct.ref.registered')}</p>
+          <p id="ref-registered" class="font-mono text-base font-bold text-slate-900">0</p>
+        </div>
+        <div class="flex items-center justify-between px-5 py-3.5">
+          <p class="text-sm text-slate-600">{t('acct.ref.proofs')}</p>
+          <p id="ref-proofs" class="font-mono text-base font-bold text-slate-900">0</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMERALD connection (PART 4) — no CTA, no page, no signup -->
+    <div class="max-w-sm rounded-2xl overflow-hidden" style="background:linear-gradient(160deg,#030712 0%,#040d0d 55%,#030712 100%);border:1px solid rgba(52,211,153,0.12);">
+      <div class="px-5 py-6">
+        <p class="font-mono text-[9px] tracking-[0.35em] uppercase font-bold mb-4" style="color:rgba(52,211,153,0.5)">◆ {t('acct.emerald.label')}</p>
+        <p class="text-sm leading-relaxed mb-1" style="color:rgba(226,232,240,0.8)">{t('acct.emerald.line1')}</p>
+        <p class="text-sm leading-relaxed mb-5" style="color:rgba(226,232,240,0.8)">{t('acct.emerald.line2')}</p>
+        <p class="font-mono text-[10px] tracking-widest uppercase" style="color:rgba(148,163,184,0.4)">{t('acct.emerald.soon')}</p>
+      </div>
+    </div>
+  </section>
 
   <!-- Local progress summary -->
   <section class="py-10 border-b border-slate-200">
-    <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-5">PROGRESO LOCAL</p>
+    <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-5">{t('cuenta.progress.label')}</p>
     <div class="grid sm:grid-cols-3 gap-3 max-w-lg" id="progress-summary">
       <div class="bg-white border border-slate-200 rounded-xl px-4 py-4 shadow-sm text-center">
         <p class="font-mono text-[10px] text-emerald-600 uppercase tracking-widest mb-1">KEY 1</p>
         <p id="l1-count" class="text-xl font-bold text-slate-900 font-mono">—/8</p>
-        <p class="text-[11px] text-slate-400">módulos</p>
+        <p class="text-[11px] text-slate-400">{t('cuenta.progress.modules')}</p>
       </div>
       <div class="bg-white border border-slate-200 rounded-xl px-4 py-4 shadow-sm text-center">
         <p class="font-mono text-[10px] text-violet-600 uppercase tracking-widest mb-1">KEY 2</p>
         <p id="l2-count" class="text-xl font-bold text-slate-900 font-mono">—/10</p>
-        <p class="text-[11px] text-slate-400">módulos</p>
+        <p class="text-[11px] text-slate-400">{t('cuenta.progress.modules')}</p>
       </div>
       <div class="bg-white border border-slate-200 rounded-xl px-4 py-4 shadow-sm text-center">
         <p class="font-mono text-[10px] text-amber-600 uppercase tracking-widest mb-1">KEY 3</p>
         <p id="l3-count" class="text-xl font-bold text-slate-900 font-mono">—/8</p>
-        <p class="text-[11px] text-slate-400">secciones</p>
+        <p class="text-[11px] text-slate-400">{t('cuenta.progress.sections')}</p>
       </div>
     </div>
-    <p class="text-[11px] text-slate-400 font-mono mt-4">Progreso guardado en este navegador.</p>
+    <p class="text-[11px] text-slate-400 font-mono mt-4">{t('cuenta.progress.note')}</p>
   </section>
 
   <!-- Cloud sync note -->
@@ -217,35 +338,43 @@ const configured = !!(
 
   <!-- Qué hacer ahora -->
   <section class="py-10">
-    <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-5">QUÉ HACER AHORA</p>
+    <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-5">{t('cuenta.next.label')}</p>
     <div class="space-y-3 max-w-lg">
-      <a href="/modulos" class="flex items-start gap-4 bg-white border border-slate-200 rounded-xl px-5 py-4 hover:border-emerald-300 hover:shadow-sm transition-all group">
+      <a href={localizedPath('/modulos', locale)} class="flex items-start gap-4 bg-white border border-slate-200 rounded-xl px-5 py-4 hover:border-emerald-300 hover:shadow-sm transition-all group">
         <span class="font-mono text-[10px] tracking-widest text-emerald-500 uppercase mt-0.5 shrink-0">01</span>
         <div class="flex-1">
-          <p class="text-sm font-semibold text-slate-900 group-hover:text-emerald-700 transition-colors mb-0.5">Empieza el Nivel 1</p>
-          <p class="text-xs text-slate-500 leading-relaxed">Operator Foundations. 8 módulos. Sin código requerido.</p>
+          <p class="text-sm font-semibold text-slate-900 group-hover:text-emerald-700 transition-colors mb-0.5">{t('cuenta.next.1.title')}</p>
+          <p class="text-xs text-slate-500 leading-relaxed">{t('cuenta.next.1.desc')}</p>
         </div>
         <span class="text-slate-300 group-hover:text-emerald-400 transition-colors font-mono text-sm shrink-0 mt-0.5">→</span>
       </a>
-      <a href="/prueba-operador" class="flex items-start gap-4 bg-white border border-slate-200 rounded-xl px-5 py-4 hover:border-sky-300 hover:shadow-sm transition-all group">
+      <a href={localizedPath('/prueba-operador', locale)} class="flex items-start gap-4 bg-white border border-slate-200 rounded-xl px-5 py-4 hover:border-sky-300 hover:shadow-sm transition-all group">
         <span class="font-mono text-[10px] tracking-widest text-sky-500 uppercase mt-0.5 shrink-0">02</span>
         <div class="flex-1">
-          <p class="text-sm font-semibold text-slate-900 group-hover:text-sky-700 transition-colors mb-0.5">Test de Operador</p>
-          <p class="text-xs text-slate-500 leading-relaxed">60 minutos. Un entregable real. Descubre dónde estás.</p>
+          <p class="text-sm font-semibold text-slate-900 group-hover:text-sky-700 transition-colors mb-0.5">{t('cuenta.next.2.title')}</p>
+          <p class="text-xs text-slate-500 leading-relaxed">{t('cuenta.next.2.desc')}</p>
         </div>
         <span class="text-slate-300 group-hover:text-sky-400 transition-colors font-mono text-sm shrink-0 mt-0.5">→</span>
       </a>
-      <a href="/monkeys" class="flex items-start gap-4 bg-white border border-slate-200 rounded-xl px-5 py-4 hover:border-violet-300 hover:shadow-sm transition-all group">
+      <a href={localizedPath('/monkeys', locale)} class="flex items-start gap-4 bg-white border border-slate-200 rounded-xl px-5 py-4 hover:border-violet-300 hover:shadow-sm transition-all group">
         <span class="font-mono text-[10px] tracking-widest text-violet-500 uppercase mt-0.5 shrink-0">03</span>
         <div class="flex-1">
-          <p class="text-sm font-semibold text-slate-900 group-hover:text-violet-700 transition-colors mb-0.5">Explorar la jungla</p>
-          <p class="text-xs text-slate-500 leading-relaxed">Ve quién forma parte del programa piloto y dónde estás.</p>
+          <p class="text-sm font-semibold text-slate-900 group-hover:text-violet-700 transition-colors mb-0.5">{t('cuenta.next.3.title')}</p>
+          <p class="text-xs text-slate-500 leading-relaxed">{t('cuenta.next.3.desc')}</p>
         </div>
         <span class="text-slate-300 group-hover:text-violet-400 transition-colors font-mono text-sm shrink-0 mt-0.5">→</span>
       </a>
     </div>
   </section>
 </Layout>
+
+<!-- Capture the post-registration redirect synchronously, before Supabase
+     consumes and clears the auth hash. Used to show the welcome panel once. -->
+<script is:inline>
+  window.__mkFreshAuth = /[#&?]type=(signup|invite)/.test(
+    (location.hash || '') + (location.search || '')
+  );
+</script>
 
 <script>
   // Read local progress
@@ -254,12 +383,25 @@ const configured = !!(
     const l2c = Array.from({ length: 10 }, (_, i) => localStorage.getItem(`moonkey_level_2_module_${i + 1}`) === 'true').filter(Boolean).length;
     const l3c = Array.from({ length: 8 }, (_, i) => localStorage.getItem(`moonkey_level_3_section_${i + 1}`) === 'true').filter(Boolean).length;
 
+    const l1done = localStorage.getItem('moonkey_level_1_completed') === 'true';
+    const l2done = localStorage.getItem('moonkey_level_2_completed') === 'true';
+    const l3done = localStorage.getItem('moonkey_level_3_completed') === 'true';
+
     const el1 = document.getElementById('l1-count');
     const el2 = document.getElementById('l2-count');
     const el3 = document.getElementById('l3-count');
-    if (el1) el1.textContent = `${l1c}/8`;
-    if (el2) el2.textContent = `${l2c}/10`;
-    if (el3) el3.textContent = `${l3c}/8`;
+    if (el1) {
+      el1.textContent = l1done ? '✓ Completo' : `${l1c}/8`;
+      if (l1done) el1.classList.add('text-emerald-600', 'text-base');
+    }
+    if (el2) {
+      el2.textContent = l2done ? '✓ Completo' : `${l2c}/10`;
+      if (l2done) el2.classList.add('text-emerald-600', 'text-base');
+    }
+    if (el3) {
+      el3.textContent = l3done ? '✓ Completo' : `${l3c}/8`;
+      if (l3done) el3.classList.add('text-emerald-600', 'text-base');
+    }
   })();
 </script>
 
@@ -333,19 +475,73 @@ const configured = !!(
       const inviteLink = `${location.origin}/?ref=${myCode}`;
       const inviteInput = document.getElementById('invite-link') as HTMLInputElement | null;
       if (inviteInput) inviteInput.value = inviteLink;
-      document.getElementById('invite-section')?.classList.remove('hidden');
+      document.getElementById('invite-login-prompt')?.classList.add('hidden');
+      document.getElementById('invite-link-area')?.classList.remove('hidden');
 
-      const inviteCopyBtn = document.getElementById('invite-copy');
-      const inviteCopied  = document.getElementById('invite-copied');
-      inviteCopyBtn?.addEventListener('click', async () => {
+      // Show referral dashboard (counts default to 0; TODO PART 3 will populate real values)
+      document.getElementById('referral-section')?.classList.remove('hidden');
+
+      // Pre-filled share message — picked at runtime by the active locale.
+      const SHARE_MSG: Record<string, string> = {
+        es: 'He estado usando Moonkey Lab.\n\nNo es un curso.\nEs un campo de pruebas para operadores IA.\n\nSi te gusta construir más que consumir:\n\n' + inviteLink,
+        en: "I've been using Moonkey Lab.\n\nIt's not a course.\nIt's a proving ground for AI operators.\n\nIf you enjoy building more than consuming:\n\n" + inviteLink,
+      };
+      const lang = (document.documentElement.lang === 'en') ? 'en' : 'es';
+
+      // PART 5 — share reinforcement: fade-out after 3 s
+      function showReinforcement(el: Element | null) {
+        if (!el) return;
+        const htmlEl = el as HTMLElement;
+        htmlEl.classList.remove('hidden');
+        htmlEl.style.opacity = '1';
+        htmlEl.style.transition = '';
+        setTimeout(() => {
+          htmlEl.style.transition = 'opacity 0.6s ease';
+          htmlEl.style.opacity = '0';
+          setTimeout(() => {
+            htmlEl.classList.add('hidden');
+            htmlEl.style.opacity = '';
+            htmlEl.style.transition = '';
+          }, 600);
+        }, 3000);
+      }
+      async function copyInvite(reinforcement: Element | null) {
         try {
           await navigator.clipboard.writeText(inviteLink);
         } catch (e) {
           if (inviteInput) { inviteInput.select(); document.execCommand('copy'); }
         }
-        inviteCopied?.classList.remove('hidden');
-        setTimeout(() => inviteCopied?.classList.add('hidden'), 2000);
-      });
+        showReinforcement(reinforcement);
+      }
+      // Native share when available (WhatsApp / Telegram / iMessage / share sheet);
+      // otherwise fall back to copying the invite link.
+      async function shareInvite(reinforcement: Element | null) {
+        const text = SHARE_MSG[lang];
+        if (navigator.share) {
+          try {
+            await navigator.share({ title: 'MOONKEY LAB', text });
+            showReinforcement(reinforcement);
+            return;
+          } catch (e) {
+            // user cancelled — no feedback
+            if ((e as DOMException)?.name === 'AbortError') return;
+          }
+        }
+        await copyInvite(reinforcement);
+      }
+
+      const inviteReinforcement = document.getElementById('invite-reinforcement');
+      document.getElementById('invite-copy')?.addEventListener('click', () => copyInvite(inviteReinforcement));
+      document.getElementById('invite-share')?.addEventListener('click', () => shareInvite(inviteReinforcement));
+
+      // ── Welcome panel — only on the post-registration redirect ──
+      if ((window as any).__mkFreshAuth) {
+        const welcomePanel          = document.getElementById('welcome-panel');
+        const welcomeReinforcement  = document.getElementById('welcome-reinforcement');
+        welcomePanel?.classList.remove('hidden');
+        document.getElementById('welcome-copy')?.addEventListener('click', () => copyInvite(welcomeReinforcement));
+        document.getElementById('welcome-share')?.addEventListener('click', () => shareInvite(welcomeReinforcement));
+      }
 
       // First-touch attribution: persist captured ref into auth user_metadata
       // (no schema change). Skip self-referral and never overwrite an existing one.
@@ -503,6 +699,7 @@ const configured = !!(
 
     } else {
       loggedOutEl?.classList.remove('hidden');
+      document.getElementById('invite-login-prompt')?.classList.remove('hidden');
     }
 
     logoutBtn?.addEventListener('click', async () => {
