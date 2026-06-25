@@ -2,7 +2,8 @@
 import '../styles/global.css';
 import Header from './Header.astro';
 import LanguageBar from './LanguageBar.astro';
-import { getLocaleFromPath, localizedPath } from '../i18n/utils';
+import MoonkeyLogo from './MoonkeyLogo.astro';
+import { resolveLocale, localizedPath } from '../i18n/utils';
 
 interface Props {
   title: string;
@@ -11,10 +12,12 @@ interface Props {
 
 const { title, description = 'MOONKEY LAB by XNLAB Studio — escuela modular para aprender a operar IA, automatizaciones y sistemas de trabajo.' } = Astro.props;
 
+import { LOCALES, PREFIX_LOCALES } from '../i18n/config';
+
 const pathname = Astro.url.pathname;
-const locale = getLocaleFromPath(pathname);
+const locale = resolveLocale(Astro.currentLocale, pathname);
+const alternates = LOCALES.map((l) => ({ code: l, href: localizedPath(pathname, l) }));
 const esHref = localizedPath(pathname, 'es');
-const enHref = localizedPath(pathname, 'en');
 ---
 
 <!DOCTYPE html>
@@ -28,52 +31,172 @@ const enHref = localizedPath(pathname, 'en');
     <meta property="og:description" content={description} />
     <title>{title} — MOONKEY LAB</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Typography — Space Grotesk (display) · Inter (body) · JetBrains Mono (labels) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    />
     <!-- i18n foundation: locale alternates -->
-    <link rel="alternate" hreflang="es" href={esHref} />
-    <link rel="alternate" hreflang="en" href={enHref} />
+    {alternates.map((a) => (
+      <link rel="alternate" hreflang={a.code === 'ch' ? 'de-CH' : a.code} href={a.href} />
+    ))}
     <link rel="alternate" hreflang="x-default" href={esHref} />
   </head>
-  <body class="min-h-screen antialiased bg-[#f8fafc] text-slate-900">
+  <body class="min-h-screen antialiased text-slate-900">
+    <!-- Abstract animated colour field behind everything -->
+    <div class="mk-bg" aria-hidden="true">
+      <span class="mk-blob mk-blob-1"></span>
+      <span class="mk-blob mk-blob-2"></span>
+      <span class="mk-blob mk-blob-3"></span>
+    </div>
+
+    <!-- Reading progress — thin emerald bar at the very top -->
+    <div id="mk-progress" class="fixed top-0 left-0 right-0 h-[2px] z-[60] pointer-events-none">
+      <div id="mk-progress-fill" class="h-full w-0 origin-left bg-gradient-to-r from-emerald-500 to-emerald-300" style="transform:scaleX(0)"></div>
+    </div>
+
     <Header />
     <main class="max-w-5xl mx-auto px-6 py-12">
       <slot />
     </main>
-    <footer class="border-t border-slate-200 bg-white mt-24 py-12">
-      <div class="max-w-3xl mx-auto px-6">
+    <footer class="border-t border-slate-200 bg-white mt-24">
+      <div class="max-w-6xl mx-auto px-6 py-16">
+        <div class="grid gap-10 sm:gap-8 grid-cols-2 lg:grid-cols-12">
 
-        <!-- Brand + tagline -->
-        <div class="text-center mb-8">
-          <p class="font-mono text-xs tracking-widest text-slate-400 mb-2">MOONKEY LAB — MMXXVI</p>
-          <p class="text-xs text-slate-400 leading-relaxed">Aprende, desbloquea Keys y convierte IA en sistemas reales de trabajo.</p>
+          <!-- Brand block -->
+          <div class="col-span-2 lg:col-span-5">
+            <MoonkeyLogo variant="horizontal" size="md" />
+            <p class="text-sm text-slate-500 leading-relaxed mt-5 max-w-xs">
+              Aprende, desbloquea Keys y convierte la IA en sistemas reales de trabajo.
+            </p>
+            <a href="https://xnlab.io" target="_blank" rel="noopener noreferrer"
+               class="inline-flex items-center gap-1.5 mt-5 font-mono text-[11px] tracking-wide text-slate-400 hover:text-emerald-600 transition-colors">
+              <span class="w-1 h-1 rounded-full bg-emerald-500"></span>
+              Un laboratorio de XNLAB Studio
+              <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+
+          <!-- Operator Path -->
+          <nav class="lg:col-span-3" aria-label="Operator Path">
+            <p class="font-mono text-[10px] tracking-widest uppercase text-slate-400 mb-4">Operator Path</p>
+            <ul class="space-y-2.5 text-sm">
+              <li><a href={localizedPath('/modulos', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Nivel 1 · Foundations</a></li>
+              <li><a href={localizedPath('/advanced', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Nivel 2 · Builder</a></li>
+              <li><a href={localizedPath('/migrador', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Nivel 3 · Mastery</a></li>
+              <li><a href={localizedPath('/prueba-operador', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Test de Operador</a></li>
+              <li><a href={localizedPath('/prompts', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Arsenal de prompts</a></li>
+            </ul>
+          </nav>
+
+          <!-- Ecosystem -->
+          <nav class="lg:col-span-2" aria-label="Ecosistema">
+            <p class="font-mono text-[10px] tracking-widest uppercase text-slate-400 mb-4">Ecosistema</p>
+            <ul class="space-y-2.5 text-sm">
+              <li><a href={localizedPath('/manifiesto', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Manifiesto</a></li>
+              <li><a href={localizedPath('/monkeys', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Monkeys</a></li>
+              <li><a href={localizedPath('/planes', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Planes</a></li>
+              <li><a href={localizedPath('/info', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Info</a></li>
+              <li><a href={localizedPath('/glosario', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Glosario</a></li>
+            </ul>
+          </nav>
+
+          <!-- Account / support -->
+          <nav class="lg:col-span-2" aria-label="Cuenta y soporte">
+            <p class="font-mono text-[10px] tracking-widest uppercase text-slate-400 mb-4">Cuenta</p>
+            <ul class="space-y-2.5 text-sm">
+              <li><a href={localizedPath('/cuenta', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Mi cuenta</a></li>
+              <li><a href={localizedPath('/login', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Entrar</a></li>
+              <li><a href={localizedPath('/soporte', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Soporte</a></li>
+              <li><a href={localizedPath('/privacidad', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Privacidad</a></li>
+            </ul>
+          </nav>
         </div>
 
-        <!-- Nav links -->
-        <nav class="flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs font-mono mb-8">
-          <a href="/manifiesto" class="text-slate-400 hover:text-emerald-600 transition-colors">Manifiesto</a>
-          <a href="/info" class="text-slate-400 hover:text-emerald-600 transition-colors">Info</a>
-          <a href="/monkeys" class="text-slate-400 hover:text-emerald-600 transition-colors">Monkeys</a>
-          <a href="/planes" class="text-slate-400 hover:text-emerald-600 transition-colors">Planes</a>
-          <a href="/soporte" class="text-slate-400 hover:text-emerald-600 transition-colors">Soporte</a>
-          <a href="/prueba-operador" class="text-slate-400 hover:text-emerald-600 transition-colors">Test de Operador</a>
-          <a href="/glosario" class="text-slate-400 hover:text-emerald-600 transition-colors">Glosario</a>
-          <a href="/cuenta" class="text-slate-400 hover:text-emerald-600 transition-colors">Cuenta</a>
-          <a href="/privacidad" class="text-slate-400 hover:text-emerald-600 transition-colors">Privacidad</a>
-        </nav>
-
-        <!-- Divider -->
-        <div class="border-t border-slate-100 mb-6"></div>
-
-        <div class="text-center mb-6">
-          <p class="text-xs text-slate-400 font-mono">Operator Path construido sobre XN y Connect.</p>
+        <!-- Bottom bar -->
+        <div class="mt-14 pt-7 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-5">
+          <p class="font-mono text-[11px] tracking-widest text-slate-400 order-2 sm:order-1">
+            MOONKEY LAB · MMXXVI — Operator Path sobre XN &amp; Connect
+          </p>
+          <div class="order-1 sm:order-2">
+            <LanguageBar drop="up" />
+          </div>
         </div>
-
-        <!-- Language bar -->
-        <div class="flex justify-center">
-          <LanguageBar subtle={true} />
-        </div>
-
       </div>
     </footer>
+
+    <!-- Back to top — appears after scrolling, smooth return -->
+    <button
+      id="mk-top"
+      type="button"
+      aria-label="Volver arriba"
+      class="fixed bottom-5 right-5 z-50 w-11 h-11 rounded-full bg-slate-900 text-white shadow-lg shadow-slate-900/20 flex items-center justify-center opacity-0 translate-y-3 pointer-events-none transition-all duration-300 hover:bg-emerald-600"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
+    </button>
+
+    <!-- UI behaviours — scroll progress, header shadow on scroll, back-to-top -->
+    <script is:inline>
+      (function () {
+        var fill = document.getElementById('mk-progress-fill');
+        var topBtn = document.getElementById('mk-top');
+        var header = document.querySelector('header');
+        var ticking = false;
+
+        function update() {
+          ticking = false;
+          var doc = document.documentElement;
+          var scrollTop = doc.scrollTop || document.body.scrollTop;
+          var height = doc.scrollHeight - doc.clientHeight;
+          var ratio = height > 0 ? scrollTop / height : 0;
+          if (fill) fill.style.transform = 'scaleX(' + ratio.toFixed(4) + ')';
+
+          if (header) {
+            if (scrollTop > 4) header.classList.add('mk-header-scrolled');
+            else header.classList.remove('mk-header-scrolled');
+          }
+          if (topBtn) {
+            var show = scrollTop > 600;
+            topBtn.classList.toggle('opacity-0', !show);
+            topBtn.classList.toggle('translate-y-3', !show);
+            topBtn.classList.toggle('pointer-events-none', !show);
+          }
+        }
+        function onScroll() {
+          if (!ticking) { ticking = true; requestAnimationFrame(update); }
+        }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll, { passive: true });
+        if (topBtn) {
+          topBtn.addEventListener('click', function () {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
+        }
+        update();
+      })();
+    </script>
+
+    <!-- Cursor spotlight — feed pointer position into hovered cards -->
+    <script is:inline>
+      (function () {
+        if (window.matchMedia('(pointer: coarse)').matches) return; // skip touch
+        var raf = 0, lastCard = null, lx = 0, ly = 0;
+        document.addEventListener('pointermove', function (e) {
+          var card = e.target instanceof Element ? e.target.closest('.card-hover') : null;
+          if (!card) { lastCard = null; return; }
+          lastCard = card; lx = e.clientX; ly = e.clientY;
+          if (!raf) raf = requestAnimationFrame(function () {
+            raf = 0;
+            if (!lastCard) return;
+            var r = lastCard.getBoundingClientRect();
+            lastCard.style.setProperty('--mx', (lx - r.left) + 'px');
+            lastCard.style.setProperty('--my', (ly - r.top) + 'px');
+          });
+        }, { passive: true });
+      })();
+    </script>
 
     <!-- Invite capture — first-touch: store ?ref in localStorage, never overwrite -->
     <script is:inline>
@@ -89,14 +212,38 @@ const enHref = localizedPath(pathname, 'en');
       })();
     </script>
 
-    <!-- Locale detection (non-destructive): record a default preference on first visit.
-         No forced redirect in Phase 0 — switching is explicit via the language switcher. -->
-    <script is:inline>
+    <!-- Locale detection: record browser preference on first visit, then route the
+         visitor to their language on every visit. Any shared link lands in the
+         visitor's own language without them touching the switcher. -->
+    <script is:inline define:vars={{ PREFIXES: PREFIX_LOCALES }}>
       (function () {
         try {
           if (!localStorage.getItem('moonkey_lang')) {
             var nav = (navigator.language || 'es').toLowerCase();
-            localStorage.setItem('moonkey_lang', nav.indexOf('en') === 0 ? 'en' : 'es');
+            // Map the browser language to one of our locales. 'ch' = de-CH (German).
+            var detected =
+              nav.startsWith('th') ? 'th' :
+              nav.startsWith('fr') ? 'fr' :
+              nav.startsWith('it') ? 'it' :
+              nav.startsWith('de') ? 'ch' :
+              nav.startsWith('en') ? 'en' : 'es';
+            localStorage.setItem('moonkey_lang', detected);
+          }
+          var stored = localStorage.getItem('moonkey_lang');
+          var seg = location.pathname.split('/').filter(Boolean)[0];
+          var onPrefix = PREFIXES.indexOf(seg) !== -1; // already on a /xx/ page
+          // Strip any existing locale prefix to get the bare path.
+          var rest = onPrefix ? (location.pathname.slice(seg.length + 1) || '/') : location.pathname;
+          if (rest.charAt(0) !== '/') rest = '/' + rest;
+
+          if (stored && stored !== 'es' && PREFIXES.indexOf(stored) !== -1) {
+            // Non-default language chosen: ensure we're on its prefix.
+            if (seg !== stored) {
+              location.replace(rest === '/' ? '/' + stored + '/' : '/' + stored + rest);
+            }
+          } else if (stored === 'es' && onPrefix) {
+            // Spanish chosen but sitting on a prefixed page: drop to root locale.
+            location.replace(rest);
           }
         } catch (e) {}
       })();

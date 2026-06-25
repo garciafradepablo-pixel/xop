@@ -1,6 +1,10 @@
 ---
 import Layout from '../components/Layout.astro';
-import LanguageBar from '../components/LanguageBar.astro';
+import AnimalIcon from '../components/AnimalIcon.astro';
+import { resolveLocale, localizedPath, useTranslations } from '../i18n/utils';
+
+const locale = resolveLocale(Astro.currentLocale, Astro.url.pathname);
+const t = useTranslations(locale);
 
 const level1Outcomes = [
   'Terminal, VS Code y Claude Code operativos',
@@ -30,60 +34,85 @@ const level3Outcomes = [
 ];
 
 const servicios = [
-  { label: 'Escuela interna de IA para equipos',          color: 'text-emerald-600' },
-  { label: 'Sistema de prompts y SOPs operativos',        color: 'text-sky-600'     },
-  { label: 'Migración ChatGPT → Claude',                  color: 'text-violet-600'  },
-  { label: 'Automatización de workflows de trabajo',      color: 'text-amber-600'   },
-  { label: 'Documentación operativa de procesos',         color: 'text-rose-600'    },
-  { label: 'Portal interno de formación personalizado',   color: 'text-teal-600'    },
+  { label: t('s.1'), color: 'text-emerald-600' },
+  { label: t('s.2'), color: 'text-sky-600'     },
+  { label: t('s.3'), color: 'text-violet-600'  },
+  { label: t('s.4'), color: 'text-amber-600'   },
+  { label: t('s.5'), color: 'text-rose-600'    },
+  { label: t('s.6'), color: 'text-teal-600'    },
 ];
 
 // El ecosistema — tres capas: entidad, laboratorio, metodología
 const ecosistema = [
-  { layer: 'Entidad',      name: 'XNLAB Studio',  desc: 'Diseñamos sistemas, operadores y laboratorios de IA.', dot: 'bg-slate-900',  lbl: 'text-slate-400'  },
-  { layer: 'Laboratorio',  name: 'MOONKEY LAB',   desc: 'El entorno de formación para operadores de IA.',       dot: 'bg-emerald-500', lbl: 'text-emerald-500' },
-  { layer: 'Metodología',  name: 'Operator Path', desc: 'El método para pasar de usuario a constructor.',        dot: 'bg-slate-400',  lbl: 'text-slate-400'  },
+  { layer: t('eco.entity.layer'), name: 'XNLAB Studio',  desc: t('eco.entity.desc'), dot: 'bg-slate-900',   lbl: 'text-slate-400'   },
+  { layer: t('eco.lab.layer'),    name: 'MOONKEY LAB',   desc: t('eco.lab.desc'),    dot: 'bg-emerald-500', lbl: 'text-emerald-500' },
+  { layer: t('eco.method.layer'), name: 'Operator Path', desc: t('eco.method.desc'), dot: 'bg-slate-400',   lbl: 'text-slate-400'   },
 ];
 
 // ¿Para quién es?
 const audiencia = [
-  { tag: '01', title: 'Operadores IA',              desc: 'Ya usas IA a diario y quieres convertir ese uso en sistemas que no dependan de recordar el prompt correcto.' },
-  { tag: '02', title: 'Freelancers',                desc: 'Buscas entregar más rápido y con más criterio, automatizando lo repetitivo sin perder el control.' },
-  { tag: '03', title: 'Fundadores',                 desc: 'Necesitas que tu equipo opere IA con método, no con improvisación dispersa entre chats.' },
-  { tag: '04', title: 'Constructores de sistemas',  desc: 'Piensas en procesos, no en respuestas sueltas. Quieres infraestructura operativa propia.' },
+  { tag: '01', title: t('aud.1.title'), desc: t('aud.1.desc') },
+  { tag: '02', title: t('aud.2.title'), desc: t('aud.2.desc') },
+  { tag: '03', title: t('aud.3.title'), desc: t('aud.3.desc') },
+  { tag: '04', title: t('aud.4.title'), desc: t('aud.4.desc') },
+];
+
+// Elige tu camino
+const caminos = [
+  {
+    tag: t('c.0.tag'), who: t('c.0.who'), desc: t('c.0.desc'), cta: t('c.0.cta'),
+    href: localizedPath('/modulos', locale),
+    bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-700',
+    lbl: 'text-emerald-500', btn: 'bg-emerald-500 text-white hover:bg-emerald-600',
+  },
+  {
+    tag: t('c.1.tag'), who: t('c.1.who'), desc: t('c.1.desc'), cta: t('c.1.cta'),
+    href: localizedPath('/prueba-operador', locale),
+    bg: 'bg-sky-50', border: 'border-sky-200', text: 'text-sky-700',
+    lbl: 'text-sky-500', btn: 'bg-sky-500 text-white hover:bg-sky-600',
+  },
+  {
+    tag: t('c.2.tag'), who: t('c.2.who'), desc: t('c.2.desc'), cta: t('c.2.cta'),
+    href: localizedPath('/planes', locale),
+    bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700',
+    lbl: 'text-amber-500', btn: 'bg-amber-500 text-white hover:bg-amber-600',
+  },
 ];
 ---
 
 <Layout title="Inicio" description="MOONKEY LAB by XNLAB Studio — Aprende a operar IA de forma sistemática. Sin código. Sin teoría infinita.">
 
   <!-- Hero — Light Premium / Integrated Scene -->
-  <section class="relative overflow-hidden flex items-center min-h-[80vh] lg:min-h-[86vh]" style="margin-left:calc(-50vw + 50%);width:100vw;background:radial-gradient(120% 95% at 80% 28%,rgba(16,185,129,0.10) 0%,transparent 55%),linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%)">
+  <section id="mk-hero" class="relative overflow-hidden flex items-center min-h-[80vh] lg:min-h-[86vh]" style="margin-left:calc(-50vw + 50%);width:100vw;background:radial-gradient(120% 95% at 80% 28%,rgba(16,185,129,0.10) 0%,transparent 55%),linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%)">
+
+    <!-- Interactive cursor glow — follows the pointer across the hero -->
+    <div id="mk-hero-glow" aria-hidden="true" class="pointer-events-none absolute rounded-full hidden lg:block" style="z-index:0;width:560px;height:560px;left:0;top:0;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(16,185,129,0.20),rgba(56,189,248,0.10) 45%,transparent 65%);filter:blur(30px);opacity:0;transition:opacity .5s ease"></div>
 
     <div class="relative w-full max-w-screen-xl mx-auto px-6 sm:px-10 lg:px-16 py-10 lg:py-0 flex flex-col lg:flex-row items-center gap-8 lg:gap-6" style="z-index:1">
 
       <!-- LEFT — text column -->
       <div class="flex-1 max-w-[600px] text-center lg:text-left order-last lg:order-first hero-enter" style="animation-delay:0.05s">
-        <p class="font-mono text-[10px] tracking-[0.38em] uppercase mb-5" style="color:#059669">THE MONKEY LAB</p>
+        <p class="font-mono text-[10px] tracking-[0.38em] uppercase mb-5" style="color:#059669">{t('hero.label')}</p>
         <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.06] tracking-tight mb-5" style="color:#0f172a">
-          De prompt<br/>a operador.<br/>
-          <span style="background:linear-gradient(90deg,#059669 0%,#34d399 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">En tres niveles.</span>
+          {t('hero.h1.a')}<br/>{t('hero.h1.b')}<br/>
+          <span style="background:linear-gradient(90deg,#059669 0%,#34d399 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">{t('hero.h1.c')}</span>
         </h1>
         <p class="text-base leading-relaxed max-w-lg mb-2 mx-auto lg:mx-0" style="color:#475569">
-          Sistema de formación para operadores IA. Tres niveles progresivos, módulos prácticos, entregables reales desde el primer día.
+          {t('hero.sub1')}
         </p>
         <p class="text-sm leading-relaxed max-w-lg mb-7 mx-auto lg:mx-0" style="color:#64748b">
-          Para freelancers, fundadores y operadores que ya usan IA a diario.
+          {t('hero.sub2')}
         </p>
         <div class="flex flex-wrap gap-3 justify-center lg:justify-start">
-          <a href="/modulos" class="inline-flex items-center gap-2 font-mono text-sm font-semibold px-6 py-3 rounded-xl transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2" style="background:#059669;color:#ffffff">
+          <a href={localizedPath('/modulos', locale)} class="inline-flex items-center gap-2 font-mono text-sm font-semibold px-6 py-3 rounded-xl transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2" style="background:#059669;color:#ffffff">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            Empezar Nivel 1
+            {t('hero.cta.primary')}
           </a>
-          <a href="/monkeys" class="inline-flex items-center gap-2 font-mono text-sm px-6 py-3 rounded-xl transition-all duration-300 ease-out hover:border-emerald-400 hover:text-emerald-700 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2" style="color:#0f172a;border:1px solid #cbd5e1">
-            Entrar al Lab →
+          <a href={localizedPath('/monkeys', locale)} class="inline-flex items-center gap-2 font-mono text-sm px-6 py-3 rounded-xl transition-all duration-300 ease-out hover:border-emerald-400 hover:text-emerald-700 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2" style="color:#0f172a;border:1px solid #cbd5e1">
+            {t('hero.cta.secondary')} →
           </a>
         </div>
-        <p class="font-mono text-[10px] tracking-wide mt-4 mx-auto lg:mx-0" style="color:#64748b">Sin registro · Empieza gratis · 10–15 min al día</p>
+        <p class="font-mono text-[10px] tracking-wide mt-4 mx-auto lg:mx-0" style="color:#64748b">{t('hero.disclaimer')}</p>
       </div>
 
       <!-- RIGHT — soft-alpha scene floating on the hero background: no panel, no canvas edge -->
@@ -109,20 +138,20 @@ const audiencia = [
     </div>
   </section>
 
-  <!-- Language bar — utilitarian, low prominence -->
-  <div class="pt-4">
-    <LanguageBar />
-  </div>
-
-  <!-- Product system strip — three keys, light premium -->
-  <div class="pt-6 pb-2">
+  <!-- Product system strip — three Keys, each with its animal -->
+  <div class="pt-8 pb-2">
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
 
       <!-- KEY 1 — available -->
-      <a href="/modulos" class="group block bg-white rounded-2xl border border-slate-200 p-5 transition-all duration-300 hover:border-emerald-300 hover:shadow-sm card-hover" data-reveal data-delay="0">
-        <div class="flex items-center justify-between mb-3">
-          <span class="font-mono text-[10px] tracking-widest uppercase font-semibold text-emerald-600">KEY 1 · N1</span>
-          <span id="hero-l1-progress" class="font-mono text-[10px] text-slate-400">0/8</span>
+      <a href={localizedPath('/modulos', locale)} class="group block glass rounded-2xl p-5 transition-all duration-300 hover:shadow-md card-hover" data-reveal data-delay="0">
+        <div class="flex items-center gap-3 mb-3.5">
+          <span class="w-9 h-9 rounded-full flex items-center justify-center shrink-0 ring-1 ring-slate-900/5" style="background:#1e293b">
+            <AnimalIcon name="monkey" color="#94a3b8" bg="#1e293b" size={18} />
+          </span>
+          <div class="flex-1 flex items-center justify-between">
+            <span class="font-mono text-[10px] tracking-widest uppercase font-semibold text-emerald-600">KEY 1 · N1</span>
+            <span id="hero-l1-progress" class="font-mono text-[10px] text-slate-400">0/8</span>
+          </div>
         </div>
         <p class="text-sm font-semibold text-slate-900 mb-1 group-hover:text-emerald-700 transition-colors">Foundations</p>
         <p class="font-mono text-[11px] text-slate-500 mb-4">Terminal · Claude · GitHub · Prompts</p>
@@ -132,20 +161,30 @@ const audiencia = [
       </a>
 
       <!-- KEY 2 — locked -->
-      <div id="hero-n2-col" class="bg-white rounded-2xl border border-slate-200 p-5 transition-opacity" style="opacity:0.72" data-reveal data-delay="120">
-        <div class="flex items-center justify-between mb-3">
-          <span class="font-mono text-[10px] tracking-widest uppercase font-semibold text-violet-500">KEY 2 · N2</span>
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <div id="hero-n2-col" class="glass rounded-2xl p-5 transition-opacity" style="opacity:0.78" data-reveal data-delay="120">
+        <div class="flex items-center gap-3 mb-3.5">
+          <span class="w-9 h-9 rounded-full flex items-center justify-center shrink-0 ring-1 ring-slate-900/5" style="background:#1e1b4b">
+            <AnimalIcon name="gorilla" color="#a78bfa" bg="#1e1b4b" size={18} />
+          </span>
+          <div class="flex-1 flex items-center justify-between">
+            <span class="font-mono text-[10px] tracking-widest uppercase font-semibold text-violet-500">KEY 2 · N2</span>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
         </div>
         <p class="text-sm font-semibold text-slate-700 mb-1">Builder</p>
         <p class="font-mono text-[11px] text-slate-500">Arquitectura · Debug · Deploy · MCPs</p>
       </div>
 
       <!-- KEY 3 — locked -->
-      <div class="bg-white rounded-2xl border border-slate-200 p-5" style="opacity:0.72" data-reveal data-delay="240">
-        <div class="flex items-center justify-between mb-3">
-          <span class="font-mono text-[10px] tracking-widest uppercase font-semibold text-amber-500">KEY 3 · N3</span>
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <div class="glass rounded-2xl p-5" style="opacity:0.78" data-reveal data-delay="240">
+        <div class="flex items-center gap-3 mb-3.5">
+          <span class="w-9 h-9 rounded-full flex items-center justify-center shrink-0 ring-1 ring-slate-900/5" style="background:#022c22">
+            <AnimalIcon name="panda" color="#34d399" bg="#022c22" size={18} />
+          </span>
+          <div class="flex-1 flex items-center justify-between">
+            <span class="font-mono text-[10px] tracking-widest uppercase font-semibold text-amber-500">KEY 3 · N3</span>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
         </div>
         <p class="text-sm font-semibold text-slate-700 mb-1">Mastery</p>
         <p class="font-mono text-[11px] text-slate-500">Contexto · SOPs · Workflows · Sistema</p>
@@ -154,63 +193,67 @@ const audiencia = [
     </div>
   </div>
 
-  <!-- El ecosistema -->
-  <section class="py-24 border-b border-slate-200">
-    <span class="label block mb-3" data-reveal>EL ECOSISTEMA</span>
-    <p class="text-slate-500 text-sm leading-relaxed max-w-xl mb-10" data-reveal data-delay="80">
-      Tres capas. Una entidad que diseña, un laboratorio que forma, una metodología que estructura el camino.
-    </p>
-    <div class="relative">
-      {ecosistema.map((e, i) => (
-        <div class={`relative pl-8 ${i < ecosistema.length - 1 ? 'pb-9 border-l-2 border-slate-200' : 'border-l-2 border-transparent'}`} data-reveal data-delay={i * 180}>
-          <span class={`absolute -left-[7px] top-1 w-3 h-3 rounded-full ${e.dot} ring-4 ring-[#f8fafc]`}></span>
-          <p class={`font-mono text-[10px] tracking-widest uppercase mb-1.5 ${e.lbl}`}>{e.layer}</p>
-          <h3 class="text-xl font-bold text-slate-900 mb-1.5">{e.name}</h3>
-          <p class="text-slate-500 text-sm leading-relaxed max-w-md">{e.desc}</p>
-        </div>
-      ))}
+  <!-- El ecosistema — full-bleed emerald band -->
+  <section class="relative py-24" style="margin-left:calc(-50vw + 50%);width:100vw;background:radial-gradient(70% 120% at 12% 0%,rgba(16,185,129,0.14),transparent 55%),linear-gradient(180deg,rgba(209,250,229,0.5),rgba(248,250,252,0) 88%)">
+    <div class="max-w-5xl mx-auto px-6">
+      <span class="label block mb-3" data-reveal>{t('label.ecosystem')}</span>
+      <p class="text-slate-600 text-sm leading-relaxed max-w-xl mb-10" data-reveal data-delay="80">
+        {t('eco.desc')}
+      </p>
+      <div class="relative">
+        {ecosistema.map((e, i) => (
+          <div class={`relative pl-8 ${i < ecosistema.length - 1 ? 'pb-9 border-l-2 border-emerald-200/70' : 'border-l-2 border-transparent'}`} data-reveal data-delay={i * 180}>
+            <span class={`absolute -left-[7px] top-1 w-3 h-3 rounded-full ${e.dot} ring-4 ring-white`}></span>
+            <p class={`font-mono text-[10px] tracking-widest uppercase mb-1.5 ${e.lbl}`}>{e.layer}</p>
+            <h3 class="text-xl font-bold text-slate-900 mb-1.5">{e.name}</h3>
+            <p class="text-slate-500 text-sm leading-relaxed max-w-md">{e.desc}</p>
+          </div>
+        ))}
+      </div>
     </div>
   </section>
 
   <!-- No somos una escuela -->
   <section class="py-24 border-b border-slate-200">
-    <span class="label block mb-8" data-reveal>NO SOMOS UNA ESCUELA</span>
+    <span class="label block mb-8" data-reveal>{t('label.notschool')}</span>
     <div class="space-y-4 max-w-2xl">
       <p class="text-2xl sm:text-3xl font-bold text-slate-300 leading-snug tracking-tight" data-reveal data-delay="100">
-        La mayoría de cursos enseñan herramientas.
+        {t('contrast.tool')}
       </p>
       <p class="text-2xl sm:text-3xl font-bold text-slate-900 leading-snug tracking-tight" data-reveal data-delay="240">
-        MOONKEY LAB enseña a construir sistemas.
+        {t('contrast.systems')}
       </p>
     </div>
     <div class="mt-12 pt-8 border-t border-slate-200 max-w-2xl" data-reveal data-delay="380">
-      <p class="text-base text-slate-500 leading-relaxed mb-1.5">El objetivo no es consumir contenido.</p>
-      <p class="text-base text-slate-900 font-semibold leading-relaxed">El objetivo es desarrollar criterio operativo.</p>
+      <p class="text-base text-slate-500 leading-relaxed mb-1.5">{t('contrast.goal.not')}</p>
+      <p class="text-base text-slate-900 font-semibold leading-relaxed">{t('contrast.goal.yes')}</p>
     </div>
   </section>
 
-  <!-- Para quién es -->
-  <section class="py-24 border-b border-slate-200">
-    <span class="label block mb-3" data-reveal>¿PARA QUIÉN ES?</span>
-    <p class="text-slate-500 text-sm leading-relaxed max-w-xl mb-8" data-reveal data-delay="80">
-      Para quien quiere dejar de usar IA por impulso y empezar a operarla con criterio.
+  <!-- Para quién es — full-bleed violet band -->
+  <section class="relative py-24" style="margin-left:calc(-50vw + 50%);width:100vw;background:radial-gradient(70% 120% at 88% 0%,rgba(139,92,246,0.14),transparent 55%),linear-gradient(180deg,rgba(237,233,254,0.5),rgba(248,250,252,0) 88%)">
+    <div class="max-w-5xl mx-auto px-6">
+    <span class="label block mb-3" data-reveal style="color:#7c3aed">{t('label.forwhom')}</span>
+    <p class="text-slate-600 text-sm leading-relaxed max-w-xl mb-8" data-reveal data-delay="80">
+      {t('forwhom.desc')}
     </p>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {audiencia.map((a, i) => (
-        <div class="bg-white border border-slate-200 rounded-2xl p-6 hover:border-slate-300 transition-colors card-hover" data-reveal data-delay={i * 110}>
+        <div class="glass rounded-2xl p-6 hover:shadow-md transition-all card-hover" data-reveal data-delay={i * 110}>
           <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-3">{a.tag}</p>
           <h3 class="text-base font-bold text-slate-900 mb-1.5">{a.title}</h3>
           <p class="text-slate-500 text-sm leading-relaxed">{a.desc}</p>
         </div>
       ))}
     </div>
+    </div>
   </section>
 
   <!-- Progreso global -->
   <section class="py-20 border-b border-slate-200" data-reveal>
     <div class="flex items-center justify-between mb-4">
-      <span class="label">TU PROGRESO</span>
-      <span class="font-mono text-xs text-slate-500"><span id="progress-count">0</span>/3 niveles completados</span>
+      <span class="label">{t('label.progress')}</span>
+      <span class="font-mono text-xs text-slate-500"><span id="progress-count">0</span>/3 {t('progress.levels')}</span>
     </div>
     <div class="flex gap-3 mb-1.5">
       <div class="flex-1 h-2 rounded-full bg-slate-100 overflow-hidden">
@@ -228,42 +271,63 @@ const audiencia = [
       <span class="flex-1 font-mono text-[10px] text-slate-500 text-center">Key 2</span>
       <span class="flex-1 font-mono text-[10px] text-slate-500 text-center">Key 3</span>
     </div>
-    <a href="/cuenta" class="font-mono text-xs text-slate-500 hover:text-emerald-600 transition-colors">Sincronizar progreso en la nube →</a>
+    <a href={localizedPath('/cuenta', locale)} class="font-mono text-xs text-slate-500 hover:text-emerald-600 transition-colors">{t('progress.sync')}</a>
   </section>
 
   <!-- Operator Path dark block -->
   <section class="py-20 border-b border-slate-200">
     <div class="bg-slate-900 rounded-2xl overflow-hidden" data-reveal="scale">
       <div class="px-7 sm:px-9 py-8">
-        <span class="font-mono text-[10px] tracking-widest text-emerald-400 uppercase block mb-3">OPERATOR PATH — METODOLOGÍA MOONKEY XN</span>
-        <h2 class="text-xl font-bold text-white mb-2 leading-snug">De aprendiz a operador.</h2>
-        <p class="text-slate-400 text-sm leading-relaxed mb-7 max-w-lg">Tres Keys. Cada una desbloquea la siguiente. Un sistema que no desaparece cuando cierras el chat.</p>
+        <span class="font-mono text-[10px] tracking-widest text-emerald-400 uppercase block mb-3">{t('label.op')}</span>
+        <h2 class="text-xl font-bold text-white mb-2 leading-snug">{t('op.h1')}</h2>
+        <p class="text-slate-400 text-sm leading-relaxed mb-7 max-w-lg">{t('op.sub')}</p>
         <div class="grid sm:grid-cols-3 gap-px bg-white/[0.06] rounded-xl overflow-hidden mb-5">
           <div class="bg-slate-800/70 px-5 py-5" data-reveal data-delay="120">
             <span class="font-mono text-[10px] text-emerald-400 tracking-widest uppercase block mb-2">KEY 1</span>
             <p class="text-white text-sm font-semibold mb-1.5">Operator Foundations</p>
-            <p class="text-slate-400 text-xs leading-relaxed">Terminal, GitHub, CLAUDE.md, prompts y primera automatización.</p>
+            <p class="text-slate-400 text-xs leading-relaxed">{t('op.key1.desc')}</p>
           </div>
           <div class="bg-slate-800/70 px-5 py-5 border-t sm:border-t-0 sm:border-l border-white/[0.06]" data-reveal data-delay="240">
             <span class="font-mono text-[10px] text-violet-400 tracking-widest uppercase block mb-2">KEY 2</span>
             <p class="text-white text-sm font-semibold mb-1.5">Advanced Operator</p>
-            <p class="text-slate-400 text-xs leading-relaxed">Arquitectura, debugging, refactors, MCPs y documentación operativa.</p>
+            <p class="text-slate-400 text-xs leading-relaxed">{t('op.key2.desc')}</p>
           </div>
           <div class="bg-slate-800/70 px-5 py-5 border-t sm:border-t-0 sm:border-l border-white/[0.06]" data-reveal data-delay="360">
             <span class="font-mono text-[10px] text-amber-400 tracking-widest uppercase block mb-2">KEY 3</span>
             <p class="text-white text-sm font-semibold mb-1.5">Migration Master</p>
-            <p class="text-slate-400 text-xs leading-relaxed">Contexto migrado, sistema de prompts propio y workflows documentados.</p>
+            <p class="text-slate-400 text-xs leading-relaxed">{t('op.key3.desc')}</p>
           </div>
         </div>
-        <p class="text-slate-500 text-xs font-mono">Moonkey — operador que ha completado las 3 Keys. Moon + Monkey + Key.</p>
+        <p class="text-slate-500 text-xs font-mono">{t('op.footer')}</p>
       </div>
     </div>
   </section>
 
-  <!-- La evolución -->
-  <section class="py-24 border-b border-slate-200">
-    <span class="label block mb-2" data-reveal>LA EVOLUCIÓN</span>
-    <p class="font-mono text-xs text-slate-500 mb-10" data-reveal data-delay="80">De aprendiz a ecosistema. El camino no termina en el tercer nivel.</p>
+  <!-- EMERALD teaser — atmospheric, no CTA, generates curiosity -->
+  <section class="py-10 border-b border-slate-200" data-reveal="scale">
+    <div class="rounded-2xl overflow-hidden" style="background:linear-gradient(160deg,#030712 0%,#0a0a14 60%,#030b05 100%);border:1px solid rgba(52,211,153,0.10)">
+      <div class="px-7 sm:px-10 py-9">
+        <div class="flex items-center gap-2.5 mb-5">
+          <span class="font-mono text-[9px] tracking-[0.5em] uppercase font-bold" style="color:rgba(52,211,153,0.45)">◆ {t('label.emerald')}</span>
+        </div>
+        <p class="text-lg sm:text-xl font-semibold text-white mb-4 max-w-lg leading-snug">
+          {t('emerald.desc')}
+        </p>
+        <div class="flex flex-wrap gap-x-5 gap-y-1 font-mono text-xs mb-6" style="color:rgba(148,163,184,0.45)">
+          <span>{t('emerald.no1')}</span>
+          <span>{t('emerald.no2')}</span>
+          <span>{t('emerald.no3')}</span>
+        </div>
+        <p class="font-mono text-[10px] tracking-widest uppercase" style="color:rgba(52,211,153,0.3)">{t('emerald.soon')}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- La evolución — full-bleed amber band -->
+  <section class="relative py-24" style="margin-left:calc(-50vw + 50%);width:100vw;background:radial-gradient(70% 120% at 50% 0%,rgba(245,158,11,0.12),transparent 55%),linear-gradient(180deg,rgba(254,243,199,0.45),rgba(248,250,252,0) 88%)">
+    <div class="max-w-5xl mx-auto px-6">
+    <span class="label block mb-2" data-reveal style="color:#d97706">{t('label.evolution')}</span>
+    <p class="font-mono text-xs text-slate-500 mb-10" data-reveal data-delay="80">{t('evo.desc')}</p>
     <div class="relative">
       <!-- Gradient connector line — desktop only -->
       <div class="hidden sm:block absolute left-[44px] right-[44px] pointer-events-none" style="top:22px;height:1px;background:linear-gradient(to right,rgba(148,163,184,0.3),rgba(139,92,246,0.4) 30%,rgba(16,185,129,0.4) 55%,rgba(245,158,11,0.3) 75%,rgba(6,78,59,0.2) 100%)"></div>
@@ -272,94 +336,89 @@ const audiencia = [
         <!-- 01 Monkey -->
         <div class="flex flex-col items-center text-center" data-reveal data-delay="0">
           <div class="relative z-10 w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center mb-3 shrink-0" style="background:#1e293b;border:2px solid rgba(148,163,184,0.35)">
-            <svg width="15" height="15" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-              <defs><mask id="ev-mk"><rect width="20" height="20" fill="white"/><circle cx="13" cy="6" r="6" fill="black"/></mask></defs>
-              <circle cx="9" cy="8" r="7" fill="#94a3b8" mask="url(#ev-mk)"/>
-            </svg>
+            <AnimalIcon name="monkey" color="#94a3b8" bg="#1e293b" size={22} />
           </div>
           <p class="font-mono text-[8px] font-bold text-slate-400 uppercase mb-0.5">01</p>
           <p class="font-mono text-[10px] sm:text-xs font-bold text-slate-700 mb-0.5">Monkey</p>
-          <p class="font-mono text-[8px] text-slate-500 leading-tight hidden sm:block">en formación</p>
+          <p class="font-mono text-[8px] text-slate-500 leading-tight hidden sm:block">{t('evo.01.sub')}</p>
           <span class="font-mono text-[8px] mt-1" style="color:#34d399">KEY 1</span>
         </div>
 
         <!-- 02 Gorilla -->
         <div class="flex flex-col items-center text-center" data-reveal data-delay="110">
           <div class="relative z-10 w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center mb-3 shrink-0" style="background:#1e1b4b;border:2px solid rgba(139,92,246,0.45)">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <AnimalIcon name="gorilla" color="#a78bfa" bg="#1e1b4b" size={22} />
           </div>
           <p class="font-mono text-[8px] font-bold text-violet-400 uppercase mb-0.5">02</p>
           <p class="font-mono text-[10px] sm:text-xs font-bold text-violet-700 mb-0.5">Gorilla</p>
-          <p class="font-mono text-[8px] text-slate-500 leading-tight hidden sm:block">ejecuta con fuerza</p>
+          <p class="font-mono text-[8px] text-slate-500 leading-tight hidden sm:block">{t('evo.02.sub')}</p>
           <span class="font-mono text-[8px] mt-1" style="color:#a78bfa">KEY 2</span>
         </div>
 
-        <!-- 03 Eagle -->
+        <!-- 03 Panda -->
         <div class="flex flex-col items-center text-center" data-reveal data-delay="220">
           <div class="relative z-10 w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center mb-3 shrink-0" style="background:#022c22;border:2px solid rgba(52,211,153,0.45)">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <AnimalIcon name="panda" color="#34d399" bg="#022c22" size={22} />
           </div>
           <p class="font-mono text-[8px] font-bold text-emerald-500 uppercase mb-0.5">03</p>
-          <p class="font-mono text-[10px] sm:text-xs font-bold text-emerald-700 mb-0.5">Eagle</p>
-          <p class="font-mono text-[8px] text-slate-500 leading-tight hidden sm:block">vuela solo</p>
+          <p class="font-mono text-[10px] sm:text-xs font-bold text-emerald-700 mb-0.5">Panda</p>
+          <p class="font-mono text-[8px] text-slate-500 leading-tight hidden sm:block">{t('evo.03.sub')}</p>
           <span class="font-mono text-[8px] mt-1" style="color:#34d399">KEY 3</span>
         </div>
 
         <!-- 04 Lion -->
         <div class="flex flex-col items-center text-center" style="opacity:0.58" data-reveal data-delay="330">
           <div class="relative z-10 w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center mb-3 shrink-0" style="background:#1c0a03;border:2px dashed rgba(251,191,36,0.3)">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/></svg>
+            <AnimalIcon name="lion" color="#fbbf24" bg="#1c0a03" size={22} />
           </div>
           <p class="font-mono text-[8px] font-bold text-amber-400 uppercase mb-0.5">04</p>
           <p class="font-mono text-[10px] sm:text-xs font-bold text-amber-700 mb-0.5">Lion</p>
-          <p class="font-mono text-[8px] text-slate-500 leading-tight hidden sm:block">lidera</p>
-          <span class="font-mono text-[8px] mt-1" style="color:rgba(251,191,36,0.55)">Más allá</span>
+          <p class="font-mono text-[8px] text-slate-500 leading-tight hidden sm:block">{t('evo.04.sub')}</p>
+          <span class="font-mono text-[8px] mt-1" style="color:rgba(251,191,36,0.55)">{t('evo.beyond')}</span>
         </div>
 
         <!-- 05 Elephant -->
         <div class="flex flex-col items-center text-center" style="opacity:0.32" data-reveal data-delay="440">
           <div class="relative z-10 w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center mb-3 shrink-0" style="background:#030b05;border:2px dashed rgba(52,211,153,0.18)">
-            <svg width="14" height="14" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-              <defs><mask id="ev-el"><rect width="20" height="20" fill="white"/><circle cx="14" cy="5" r="6" fill="black"/></mask></defs>
-              <circle cx="8" cy="8" r="7" fill="#34d399" mask="url(#ev-el)" opacity="0.65"/>
-            </svg>
+            <AnimalIcon name="elephant" color="#34d399" bg="#030b05" size={22} />
           </div>
           <p class="font-mono text-[8px] font-bold uppercase mb-0.5" style="color:rgba(52,211,153,0.5)">∞</p>
           <p class="font-mono text-[10px] sm:text-xs font-bold mb-0.5" style="color:#1a4a2a">Elephant</p>
-          <p class="font-mono text-[8px] text-slate-500 leading-tight hidden sm:block">recuerda</p>
-          <span class="font-mono text-[8px] mt-1" style="color:rgba(52,211,153,0.35)">Fundador</span>
+          <p class="font-mono text-[8px] text-slate-500 leading-tight hidden sm:block">{t('evo.05.sub')}</p>
+          <span class="font-mono text-[8px] mt-1" style="color:rgba(52,211,153,0.35)">{t('evo.founder')}</span>
         </div>
 
       </div>
+    </div>
     </div>
   </section>
 
   <!-- La jungla — visión / filosofía -->
   <section class="py-24 border-b border-slate-200">
     <div class="bg-slate-900 rounded-2xl px-8 sm:px-10 py-12" data-reveal="scale">
-      <span class="font-mono text-[10px] tracking-widest text-emerald-400 uppercase block mb-6">LA JUNGLA</span>
+      <span class="font-mono text-[10px] tracking-widest text-emerald-400 uppercase block mb-6">{t('label.jungle')}</span>
       <p class="text-2xl sm:text-3xl font-bold text-white leading-snug tracking-tight">
-        No completas módulos.
+        {t('jungle.h1')}
       </p>
       <p class="text-2xl sm:text-3xl font-bold text-emerald-400 leading-snug tracking-tight mb-7">
-        Evolucionas dentro de la jungla.
+        {t('jungle.h2')}
       </p>
       <p class="text-slate-400 text-sm leading-relaxed max-w-lg mb-9">
-        MOONKEY LAB no es una colección de lecciones. Es un sistema vivo: cada operador que avanza deja el camino más claro para el siguiente.
+        {t('jungle.desc')}
       </p>
       <div class="flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-xs">
-        <span class="text-white">Aprendes</span>
+        <span class="text-white">{t('jungle.flow.a')}</span>
         <span class="text-emerald-400">→</span>
-        <span class="text-white">construyes</span>
+        <span class="text-white">{t('jungle.flow.b')}</span>
         <span class="text-emerald-400">→</span>
-        <span class="text-white">compartes</span>
+        <span class="text-white">{t('jungle.flow.c')}</span>
         <span class="text-emerald-400">→</span>
-        <span class="text-white">otros aprenden</span>
+        <span class="text-white">{t('jungle.flow.d')}</span>
         <span class="text-emerald-400">→</span>
-        <span class="text-emerald-400 font-semibold">la jungla crece</span>
+        <span class="text-emerald-400 font-semibold">{t('jungle.flow.e')}</span>
       </div>
       <p class="font-mono text-[10px] text-slate-500 leading-relaxed mt-5 max-w-lg">
-        La jungla necesita Monkeys que aprenden, Gorillas que ejecutan, Eagles que vuelan, Lions que lideran y Elephants que recuerdan la arquitectura.
+        {t('jungle.footer')}
       </p>
     </div>
   </section>
@@ -379,12 +438,12 @@ const audiencia = [
 
           <!-- Left: heading -->
           <div class="lg:w-64 shrink-0" data-reveal="left">
-            <span class="font-mono text-[10px] tracking-widest text-emerald-400 uppercase block mb-3">EL CAMINO</span>
-            <h2 class="text-2xl sm:text-3xl font-bold text-white leading-snug mb-4">Tres niveles para convertirte en un operador completo.</h2>
-            <p class="text-slate-400 text-sm leading-relaxed mb-6">Cada nivel deja una huella. Cada huella te hace libre.</p>
-            <a href="/info" class="inline-flex items-center gap-2 font-mono text-xs text-emerald-400 border border-emerald-800/60 px-4 py-2 rounded-xl hover:bg-emerald-900/30 transition-colors">
+            <span class="font-mono text-[10px] tracking-widest text-emerald-400 uppercase block mb-3">{t('label.path')}</span>
+            <h2 class="text-2xl sm:text-3xl font-bold text-white leading-snug mb-4">{t('path.h1')}</h2>
+            <p class="text-slate-400 text-sm leading-relaxed mb-6">{t('path.sub')}</p>
+            <a href={localizedPath('/info', locale)} class="inline-flex items-center gap-2 font-mono text-xs text-emerald-400 border border-emerald-800/60 px-4 py-2 rounded-xl hover:bg-emerald-900/30 transition-colors">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              Cómo funciona
+              {t('path.cta')}
             </a>
           </div>
 
@@ -402,17 +461,17 @@ const audiencia = [
                     </svg>
                   </div>
                   <div>
-                    <span class="font-mono text-[9px] tracking-widest text-emerald-400 uppercase block leading-none mb-0.5">NIVEL 1</span>
-                    <span class="font-mono text-xs text-white font-semibold">Fundamentos</span>
+                    <span class="font-mono text-[9px] tracking-widest text-emerald-400 uppercase block leading-none mb-0.5">{t('l1.label')}</span>
+                    <span class="font-mono text-xs text-white font-semibold">{t('l1.title')}</span>
                   </div>
                 </div>
                 <div class="flex items-center gap-2">
                   <span id="l1-progress" class="font-mono text-[10px] text-slate-500">0/8</span>
                   <span id="l1-completed-badge" class="hidden font-mono text-[10px] px-2 py-0.5 rounded-lg" style="background:rgba(16,185,129,0.18);color:#6ee7b7;border:1px solid rgba(52,211,153,0.25)">✓ Completado</span>
-                  <span id="l1-status" class="font-mono text-[10px] text-emerald-400 font-semibold">Disponible</span>
+                  <span id="l1-status" class="font-mono text-[10px] text-emerald-400 font-semibold">{t('l1.available')}</span>
                 </div>
               </div>
-              <p class="text-slate-400 text-xs leading-relaxed mb-3">La base para operar Claude Code, GitHub, automatizaciones y sistemas IA. 8 módulos prácticos con ejercicios reales.</p>
+              <p class="text-slate-400 text-xs leading-relaxed mb-3">{t('l1.desc')}</p>
               <ul class="space-y-1.5 mb-4">
                 {level1Outcomes.map(o => (
                   <li class="flex items-center gap-2 text-xs text-slate-500">
@@ -421,8 +480,8 @@ const audiencia = [
                   </li>
                 ))}
               </ul>
-              <a href="/modulos" class="block w-full text-center font-mono text-xs font-semibold px-4 py-2.5 rounded-xl transition-colors" style="background:#34d399;color:#022c22">
-                Empezar Nivel 1 →
+              <a href={localizedPath('/modulos', locale)} class="block w-full text-center font-mono text-xs font-semibold px-4 py-2.5 rounded-xl transition-colors" style="background:#34d399;color:#022c22">
+                {t('l1.cta')}
               </a>
             </div>
 
@@ -430,9 +489,9 @@ const audiencia = [
             <div class="relative rounded-2xl overflow-hidden p-5" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06)" data-reveal data-delay="200">
               <div id="l2-lock" class="absolute inset-0 rounded-2xl flex flex-col items-center justify-center z-10 gap-2.5" style="background:rgba(7,12,22,0.84);backdrop-filter:blur(4px)">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                <span class="font-mono text-[10px] text-slate-500 tracking-widest uppercase">Bloqueado</span>
-                <p class="text-slate-500 text-[10px] text-center leading-relaxed" style="max-width:160px">Completa Nivel 1 para desbloquear</p>
-                <a href="/modulos" class="font-mono text-[10px] text-violet-400 border border-violet-800/60 px-3 py-1 rounded-lg hover:bg-violet-900/30 transition-colors">Ir a Nivel 1 →</a>
+                <span class="font-mono text-[10px] text-slate-500 tracking-widest uppercase">{t('locked')}</span>
+                <p class="text-slate-500 text-[10px] text-center leading-relaxed" style="max-width:160px">{t('unlock.n1')}</p>
+                <a href={localizedPath('/modulos', locale)} class="font-mono text-[10px] text-violet-400 border border-violet-800/60 px-3 py-1 rounded-lg hover:bg-violet-900/30 transition-colors">{t('go.n1')}</a>
               </div>
               <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-3">
@@ -443,17 +502,17 @@ const audiencia = [
                     </svg>
                   </div>
                   <div>
-                    <span class="font-mono text-[9px] tracking-widest text-violet-400 uppercase block leading-none mb-0.5">NIVEL 2</span>
-                    <span class="font-mono text-xs text-white font-semibold">Construcción</span>
+                    <span class="font-mono text-[9px] tracking-widest text-violet-400 uppercase block leading-none mb-0.5">{t('l2.label')}</span>
+                    <span class="font-mono text-xs text-white font-semibold">{t('l2.title')}</span>
                   </div>
                 </div>
                 <div class="flex items-center gap-2">
                   <span id="l2-progress" class="font-mono text-[10px] text-slate-500">0/10</span>
                   <span id="l2-completed-badge" class="hidden font-mono text-[10px] px-2 py-0.5 rounded-lg" style="background:rgba(139,92,246,0.18);color:#c4b5fd;border:1px solid rgba(139,92,246,0.25)">✓ Completado</span>
-                  <span id="l2-status" class="font-mono text-[10px] text-slate-500">Bloqueado</span>
+                  <span id="l2-status" class="font-mono text-[10px] text-slate-500">{t('locked')}</span>
                 </div>
               </div>
-              <p class="text-slate-500 text-xs leading-relaxed mb-3">Claude Code como sistema profesional. Arquitectura, debugging, refactors, MCPs y documentación operativa avanzada.</p>
+              <p class="text-slate-500 text-xs leading-relaxed mb-3">{t('l2.desc')}</p>
               <ul class="space-y-1.5 mb-4">
                 {level2Outcomes.map(o => (
                   <li class="flex items-center gap-2 text-xs text-slate-600">
@@ -463,10 +522,10 @@ const audiencia = [
                 ))}
               </ul>
               <div id="l2-cta-locked" class="block w-full text-center font-mono text-xs font-medium text-slate-600 px-4 py-2.5 rounded-xl cursor-not-allowed" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07)">
-                Bloqueado — completa Nivel 1
+                {t('locked.cta.n1')}
               </div>
-              <a id="l2-cta-unlocked" href="/advanced" class="hidden block w-full text-center font-mono text-xs font-semibold px-4 py-2.5 rounded-xl transition-colors" style="background:#a78bfa;color:#1e1b4b">
-                Empezar Nivel 2 →
+              <a id="l2-cta-unlocked" href={localizedPath('/advanced', locale)} class="hidden block w-full text-center font-mono text-xs font-semibold px-4 py-2.5 rounded-xl transition-colors" style="background:#a78bfa;color:#1e1b4b">
+                {t('l2.cta')}
               </a>
             </div>
 
@@ -474,9 +533,9 @@ const audiencia = [
             <div class="relative rounded-2xl overflow-hidden p-5" style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05)" data-reveal data-delay="320">
               <div id="l3-lock" class="absolute inset-0 rounded-2xl flex flex-col items-center justify-center z-10 gap-2.5" style="background:rgba(7,12,22,0.84);backdrop-filter:blur(4px)">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                <span class="font-mono text-[10px] text-slate-500 tracking-widest uppercase">Bloqueado</span>
-                <p class="text-slate-500 text-[10px] text-center leading-relaxed" style="max-width:160px">Completa Nivel 2 para desbloquear</p>
-                <a href="/advanced" class="font-mono text-[10px] text-amber-400 border border-amber-800/60 px-3 py-1 rounded-lg hover:bg-amber-900/30 transition-colors">Ir a Nivel 2 →</a>
+                <span class="font-mono text-[10px] text-slate-500 tracking-widest uppercase">{t('locked')}</span>
+                <p class="text-slate-500 text-[10px] text-center leading-relaxed" style="max-width:160px">{t('unlock.n2')}</p>
+                <a href={localizedPath('/advanced', locale)} class="font-mono text-[10px] text-amber-400 border border-amber-800/60 px-3 py-1 rounded-lg hover:bg-amber-900/30 transition-colors">{t('go.n2')}</a>
               </div>
               <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-3">
@@ -484,17 +543,17 @@ const audiencia = [
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                   </div>
                   <div>
-                    <span class="font-mono text-[9px] tracking-widest text-amber-400 uppercase block leading-none mb-0.5">NIVEL 3</span>
-                    <span class="font-mono text-xs text-white font-semibold">Maestría</span>
+                    <span class="font-mono text-[9px] tracking-widest text-amber-400 uppercase block leading-none mb-0.5">{t('l3.label')}</span>
+                    <span class="font-mono text-xs text-white font-semibold">{t('l3.title')}</span>
                   </div>
                 </div>
                 <div class="flex items-center gap-2">
                   <span id="l3-progress" class="font-mono text-[10px] text-slate-500">0/8</span>
                   <span id="l3-completed-badge" class="hidden font-mono text-[10px] px-2 py-0.5 rounded-lg" style="background:rgba(245,158,11,0.18);color:#fcd34d;border:1px solid rgba(245,158,11,0.25)">✓ Completado</span>
-                  <span id="l3-status" class="font-mono text-[10px] text-slate-500">Bloqueado</span>
+                  <span id="l3-status" class="font-mono text-[10px] text-slate-500">{t('locked')}</span>
                 </div>
               </div>
-              <p class="text-slate-500 text-xs leading-relaxed mb-3">Convierte conversaciones, prompts y workflows dispersos en un sistema operativo propio para Claude Code.</p>
+              <p class="text-slate-500 text-xs leading-relaxed mb-3">{t('l3.desc')}</p>
               <ul class="space-y-1.5 mb-4">
                 {level3Outcomes.map(o => (
                   <li class="flex items-center gap-2 text-xs text-slate-600">
@@ -504,10 +563,10 @@ const audiencia = [
                 ))}
               </ul>
               <div id="l3-cta-locked" class="block w-full text-center font-mono text-xs font-medium text-slate-600 px-4 py-2.5 rounded-xl cursor-not-allowed" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07)">
-                Bloqueado — completa Nivel 2
+                {t('locked.cta.n2')}
               </div>
-              <a id="l3-cta-unlocked" href="/migrador" class="hidden block w-full text-center font-mono text-xs font-semibold px-4 py-2.5 rounded-xl transition-colors" style="background:#fbbf24;color:#451a03">
-                Empezar Nivel 3 →
+              <a id="l3-cta-unlocked" href={localizedPath('/migrador', locale)} class="hidden block w-full text-center font-mono text-xs font-semibold px-4 py-2.5 rounded-xl transition-colors" style="background:#fbbf24;color:#451a03">
+                {t('l3.cta')}
               </a>
             </div>
 
@@ -526,8 +585,8 @@ const audiencia = [
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           </div>
           <div>
-            <p class="font-mono text-xs text-white font-semibold leading-snug mb-0.5">Sin academias vacías</p>
-            <p class="font-mono text-[10px] text-slate-500 leading-snug">Aprendizaje real.</p>
+            <p class="font-mono text-xs text-white font-semibold leading-snug mb-0.5">{t('p.1.title')}</p>
+            <p class="font-mono text-[10px] text-slate-500 leading-snug">{t('p.1.desc')}</p>
           </div>
         </div>
         <div class="flex items-start gap-3" data-reveal data-delay="100">
@@ -535,8 +594,8 @@ const audiencia = [
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
           </div>
           <div>
-            <p class="font-mono text-xs text-white font-semibold leading-snug mb-0.5">Sin humo</p>
-            <p class="font-mono text-[10px] text-slate-500 leading-snug">Resultados verificables.</p>
+            <p class="font-mono text-xs text-white font-semibold leading-snug mb-0.5">{t('p.2.title')}</p>
+            <p class="font-mono text-[10px] text-slate-500 leading-snug">{t('p.2.desc')}</p>
           </div>
         </div>
         <div class="flex items-start gap-3" data-reveal data-delay="200">
@@ -544,8 +603,8 @@ const audiencia = [
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
           </div>
           <div>
-            <p class="font-mono text-xs text-white font-semibold leading-snug mb-0.5">Sin límites</p>
-            <p class="font-mono text-[10px] text-slate-500 leading-snug">Aprende a tu ritmo.</p>
+            <p class="font-mono text-xs text-white font-semibold leading-snug mb-0.5">{t('p.3.title')}</p>
+            <p class="font-mono text-[10px] text-slate-500 leading-snug">{t('p.3.desc')}</p>
           </div>
         </div>
         <div class="flex items-start gap-3" data-reveal data-delay="300">
@@ -553,8 +612,8 @@ const audiencia = [
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           </div>
           <div>
-            <p class="font-mono text-xs text-white font-semibold leading-snug mb-0.5">Con jungla</p>
-            <p class="font-mono text-[10px] text-slate-500 leading-snug">Nunca construyes solo.</p>
+            <p class="font-mono text-xs text-white font-semibold leading-snug mb-0.5">{t('p.4.title')}</p>
+            <p class="font-mono text-[10px] text-slate-500 leading-snug">{t('p.4.desc')}</p>
           </div>
         </div>
       </div>
@@ -563,49 +622,12 @@ const audiencia = [
 
   <!-- Elige tu camino -->
   <section class="py-24 border-t border-slate-200">
-    <span class="label block mb-2" data-reveal>ELIGE TU CAMINO</span>
+    <span class="label block mb-2" data-reveal>{t('label.choose')}</span>
     <p class="text-slate-500 text-sm leading-relaxed max-w-xl mb-8" data-reveal data-delay="80">
-      MOONKEY LAB es el punto de entrada al Operator Path. Tres rutas según dónde estés.
+      {t('choose.desc')}
     </p>
     <div class="grid sm:grid-cols-3 gap-5">
-      {[
-        {
-          tag: 'Aprender',
-          who: 'Quiero aprender como Monkey',
-          desc: 'Empieza el Operator Path. Sin registro, sin código previo. Nivel 1 disponible ahora.',
-          cta: 'Empezar Nivel 1 →',
-          href: '/modulos',
-          bg: 'bg-emerald-50',
-          border: 'border-emerald-200',
-          text: 'text-emerald-700',
-          lbl: 'text-emerald-500',
-          btn: 'bg-emerald-500 text-white hover:bg-emerald-600',
-        },
-        {
-          tag: 'Evaluar',
-          who: 'Probar si estoy listo',
-          desc: '60 minutos. Una tarea real. Un entregable concreto. Para detectar si tienes criterio de operador.',
-          cta: 'Hacer Test de Operador →',
-          href: '/prueba-operador',
-          bg: 'bg-sky-50',
-          border: 'border-sky-200',
-          text: 'text-sky-700',
-          lbl: 'text-sky-500',
-          btn: 'bg-sky-500 text-white hover:bg-sky-600',
-        },
-        {
-          tag: 'Implementar',
-          who: 'Implementar en mi equipo',
-          desc: 'Escuela interna, sistema de prompts y SOPs. Implementación del Operator Path a medida.',
-          cta: 'Ver planes de equipo →',
-          href: '/planes',
-          bg: 'bg-amber-50',
-          border: 'border-amber-200',
-          text: 'text-amber-700',
-          lbl: 'text-amber-500',
-          btn: 'bg-amber-500 text-white hover:bg-amber-600',
-        },
-      ].map((c, i) => (
+      {caminos.map((c, i) => (
         <div class={`${c.bg} border ${c.border} rounded-2xl p-6 flex flex-col gap-3 card-hover`} data-reveal data-delay={i * 130}>
           <span class={`font-mono text-[10px] tracking-widest font-bold uppercase ${c.lbl}`}>{c.tag}</span>
           <h3 class={`font-semibold text-sm ${c.text}`}>{c.who}</h3>
@@ -621,12 +643,12 @@ const audiencia = [
     <div class="bg-slate-900 rounded-2xl px-8 sm:px-10 py-10" data-reveal="scale">
       <div class="flex flex-wrap items-start justify-between gap-6 mb-8">
         <div>
-          <span class="font-mono text-[10px] tracking-widest uppercase text-emerald-400 block mb-3">SERVICIOS — XN TEAM SYSTEM</span>
+          <span class="font-mono text-[10px] tracking-widest uppercase text-emerald-400 block mb-3">{t('label.services')}</span>
           <h2 class="text-2xl sm:text-3xl font-bold text-white mb-3 leading-snug">
-            También podemos construir<br/>esto para tu equipo.
+            {t('services.h1.a')}<br/>{t('services.h1.b')}
           </h2>
           <p class="text-slate-400 text-sm leading-relaxed max-w-lg">
-            Lo que enseña esta escuela también lo construimos como sistema interno. Desde un portal de formación hasta un sistema completo de prompts, SOPs y automatizaciones operativas.
+            {t('services.desc')}
           </p>
         </div>
       </div>
@@ -639,11 +661,11 @@ const audiencia = [
         ))}
       </div>
       <div class="flex flex-wrap gap-3 items-center">
-        <a href="/onboarding" class="inline-block font-mono text-sm font-medium text-slate-900 bg-emerald-400 px-6 py-3 rounded-xl hover:bg-emerald-300 transition-colors">
-          Ver proceso de colaboración →
+        <a href={localizedPath('/onboarding', locale)} class="inline-block font-mono text-sm font-medium text-slate-900 bg-emerald-400 px-6 py-3 rounded-xl hover:bg-emerald-300 transition-colors">
+          {t('services.cta.1')}
         </a>
-        <a href="/planes" class="inline-block font-mono text-sm text-slate-400 border border-slate-600 px-5 py-3 rounded-xl hover:border-slate-400 transition-colors">
-          Ver planes de acceso
+        <a href={localizedPath('/planes', locale)} class="inline-block font-mono text-sm text-slate-400 border border-slate-600 px-5 py-3 rounded-xl hover:border-slate-400 transition-colors">
+          {t('services.cta.2')}
         </a>
       </div>
     </div>
@@ -844,5 +866,27 @@ const audiencia = [
     }
     window.addEventListener('scroll', sweepVisible, { passive: true });
     setTimeout(sweepVisible, 120);
+  })();
+</script>
+
+<script is:inline>
+  /* Hero cursor glow — follows the pointer, fades out when it leaves the hero */
+  (function () {
+    if (window.matchMedia('(pointer: coarse)').matches) return;
+    var hero = document.getElementById('mk-hero');
+    var glow = document.getElementById('mk-hero-glow');
+    if (!hero || !glow) return;
+    var raf = 0, x = 0, y = 0;
+    hero.addEventListener('pointermove', function (e) {
+      var r = hero.getBoundingClientRect();
+      x = e.clientX - r.left; y = e.clientY - r.top;
+      glow.style.opacity = '1';
+      if (!raf) raf = requestAnimationFrame(function () {
+        raf = 0;
+        glow.style.left = x + 'px';
+        glow.style.top = y + 'px';
+      });
+    }, { passive: true });
+    hero.addEventListener('pointerleave', function () { glow.style.opacity = '0'; });
   })();
 </script>

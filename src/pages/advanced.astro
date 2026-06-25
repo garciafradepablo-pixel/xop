@@ -2,6 +2,7 @@
 import LayoutLevel from '../components/LayoutLevel.astro';
 import PromptBlock from '../components/PromptBlock.astro';
 import FlowDiagram from '../components/FlowDiagram.astro';
+import AnimalIcon from '../components/AnimalIcon.astro';
 
 const promptArquitectura = `Actúa como arquitecto de software senior.
 
@@ -217,11 +218,16 @@ const erroresAvanzados = [
 
   <!-- PREVIEW (always visible) -->
   <section class="pb-12 border-b border-slate-200">
-    <span class="font-mono text-xs text-violet-600 tracking-widest uppercase block mb-2">NIVEL 2 · MOONKEY LAB</span>
-    <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-4">
+    <div class="flex items-center gap-3 mb-5">
+      <span class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 ring-1 ring-slate-900/5" style="background:#1e1b4b">
+        <AnimalIcon name="gorilla" color="#a78bfa" bg="#1e1b4b" size={22} />
+      </span>
+      <span class="font-mono text-xs text-violet-600 tracking-widest uppercase">NIVEL 2 · MOONKEY LAB</span>
+    </div>
+    <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 leading-[1.04] tracking-tight mb-4">
       Advanced Operator<br/>Playbook
     </h1>
-    <p class="text-slate-600 text-base leading-relaxed max-w-xl mb-8">
+    <p class="text-slate-600 text-lg leading-relaxed max-w-xl mb-8">
       Claude Code como sistema profesional de trabajo. 10 módulos para construir, depurar, refactorizar, automatizar, documentar y colaborar sin perder el control del proyecto.
     </p>
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
@@ -231,8 +237,8 @@ const erroresAvanzados = [
         { value: 'N1', label: 'prerequisito', cls: 'text-slate-500' },
         { value: '10', label: 'entregables', cls: 'text-violet-600' },
       ].map(s => (
-        <div class="bg-white rounded-xl border border-slate-200 p-4 text-center shadow-sm">
-          <div class={`text-2xl font-semibold mb-1 ${s.cls}`}>{s.value}</div>
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 text-center shadow-sm">
+          <div class={`text-3xl font-bold mb-1 font-display ${s.cls}`}>{s.value}</div>
           <div class="text-xs text-slate-500 font-mono">{s.label}</div>
         </div>
       ))}
@@ -292,7 +298,7 @@ const erroresAvanzados = [
           <div id={`adv-m${i+1}`} class="bg-white border border-violet-100 rounded-2xl p-6 scroll-mt-20">
             <div class="flex items-start gap-4 mb-4">
               <span class="bg-violet-100 text-violet-700 font-mono text-sm font-bold rounded-lg px-3 py-1.5 shrink-0 tabular-nums">{m.num}</span>
-              <h3 class="text-slate-900 font-semibold text-base leading-snug pt-1.5">{m.title}</h3>
+              <h3 class="text-slate-900 font-bold text-lg tracking-tight leading-snug pt-1">{m.title}</h3>
             </div>
             <div class="grid sm:grid-cols-2 gap-4 mb-4">
               <div>

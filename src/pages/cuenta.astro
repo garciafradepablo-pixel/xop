@@ -1,5 +1,6 @@
 ---
 import Layout from '../components/Layout.astro';
+import AnimalIcon from '../components/AnimalIcon.astro';
 import { resolveLocale, localizedPath, useTranslations } from '../i18n/utils';
 
 const configured = !!(
@@ -16,9 +17,9 @@ const t = useTranslations(locale);
   description={t('cuenta.meta.desc')}
 >
   <section class="pb-10 border-b border-slate-200">
-    <span class="label block mb-3">{t('cuenta.label')}</span>
-    <h1 class="text-2xl font-bold text-slate-900 mb-3">{t('cuenta.h1')}</h1>
-    <p class="text-slate-500 text-sm leading-relaxed max-w-md">
+    <span class="label block mb-4">{t('cuenta.label')}</span>
+    <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-4">{t('cuenta.h1')}</h1>
+    <p class="text-slate-600 text-base leading-relaxed max-w-md">
       {t('cuenta.intro')}
     </p>
   </section>
@@ -192,35 +193,40 @@ const t = useTranslations(locale);
       </p>
       <!-- Static fallback when auth not configured -->
       {!configured && (
-        <div class="bg-slate-50 border border-slate-200 rounded-xl px-5 py-4 mb-3">
-          <p class="text-sm font-medium text-slate-700 mb-1">Activa tu cuenta para generar tu enlace.</p>
-          <p class="text-xs text-slate-400 font-mono mb-4">El enlace personal aparece al iniciar sesión.</p>
-          <a href={localizedPath('/modulos', locale)} class="inline-block font-mono text-xs font-medium text-emerald-600 border border-emerald-300 px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-colors">
-            Entrar al Nivel 1 →
+        <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-5 mb-3">
+          <a
+            href={localizedPath('/', locale)}
+            class="inline-flex items-center gap-2 font-mono text-sm font-medium text-white bg-emerald-500 px-5 py-2.5 rounded-xl hover:bg-emerald-600 transition-colors"
+          >
+            Compartir Moonkey →
           </a>
+          <p class="font-mono text-[11px] text-emerald-700 opacity-60 mt-4">
+            Tu enlace personal aparecerá al iniciar sesión.
+          </p>
         </div>
       )}
       <!-- Not logged in: show login prompt (hidden, shown by JS) -->
       {configured && (
         <div id="invite-login-prompt" class="hidden">
-          <div class="bg-slate-50 border border-slate-200 rounded-xl px-5 py-4 mb-3">
-            <p class="text-sm font-medium text-slate-700 mb-1">Activa tu cuenta para generar tu enlace.</p>
-            <p class="text-xs text-slate-400 font-mono mb-4">El enlace personal aparece al iniciar sesión.</p>
-            <a href={localizedPath('/login', locale)} class="inline-block font-mono text-xs font-medium text-emerald-600 border border-emerald-300 px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-colors">
-              {t('acct.invite.login.cta')}
+          <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-5 mb-3">
+            <a
+              href={localizedPath('/', locale)}
+              class="inline-flex items-center gap-2 font-mono text-sm font-medium text-white bg-emerald-500 px-5 py-2.5 rounded-xl hover:bg-emerald-600 transition-colors"
+            >
+              Compartir Moonkey →
             </a>
-            <a href={localizedPath('/modulos', locale)} class="inline-block font-mono text-xs text-slate-400 hover:text-slate-600 ml-3 transition-colors">
-              Entrar al Nivel 1 →
-            </a>
+            <p class="font-mono text-[11px] text-emerald-700 opacity-60 mt-4">
+              Tu enlace personal aparecerá al iniciar sesión.
+            </p>
           </div>
         </div>
       )}
       <!-- Logged in: invite link area (hidden, shown by JS) -->
       <div id="invite-link-area" class="hidden">
-        <label for="invite-link" class="block font-mono text-xs text-slate-500 mb-1.5">{t('acct.invite.link.label')}</label>
+        <label for="invite-link" class="block font-mono text-xs text-emerald-600 uppercase tracking-widest mb-1.5">Tu enlace</label>
         <input
           id="invite-link" type="text" readonly value=""
-          class="w-full font-mono text-xs bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-400 mb-2"
+          class="w-full font-mono text-xs bg-emerald-50 border border-emerald-300 rounded-xl px-4 py-2.5 text-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-400 mb-2"
         />
         <div class="flex gap-2">
           <button
@@ -297,20 +303,35 @@ const t = useTranslations(locale);
   <!-- Local progress summary -->
   <section class="py-10 border-b border-slate-200">
     <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-5">{t('cuenta.progress.label')}</p>
-    <div class="grid sm:grid-cols-3 gap-3 max-w-lg" id="progress-summary">
-      <div class="bg-white border border-slate-200 rounded-xl px-4 py-4 shadow-sm text-center">
-        <p class="font-mono text-[10px] text-emerald-600 uppercase tracking-widest mb-1">KEY 1</p>
-        <p id="l1-count" class="text-xl font-bold text-slate-900 font-mono">—/8</p>
+    <div class="grid sm:grid-cols-3 gap-3 max-w-2xl" id="progress-summary">
+      <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+        <div class="flex items-center gap-2.5 mb-3">
+          <span class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 ring-1 ring-slate-900/5" style="background:#1e293b">
+            <AnimalIcon name="monkey" color="#94a3b8" bg="#1e293b" size={16} />
+          </span>
+          <p class="font-mono text-[10px] text-emerald-600 uppercase tracking-widest">KEY 1</p>
+        </div>
+        <p id="l1-count" class="text-2xl font-bold text-slate-900 font-display">—/8</p>
         <p class="text-[11px] text-slate-400">{t('cuenta.progress.modules')}</p>
       </div>
-      <div class="bg-white border border-slate-200 rounded-xl px-4 py-4 shadow-sm text-center">
-        <p class="font-mono text-[10px] text-violet-600 uppercase tracking-widest mb-1">KEY 2</p>
-        <p id="l2-count" class="text-xl font-bold text-slate-900 font-mono">—/10</p>
+      <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+        <div class="flex items-center gap-2.5 mb-3">
+          <span class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 ring-1 ring-slate-900/5" style="background:#1e1b4b">
+            <AnimalIcon name="gorilla" color="#a78bfa" bg="#1e1b4b" size={16} />
+          </span>
+          <p class="font-mono text-[10px] text-violet-600 uppercase tracking-widest">KEY 2</p>
+        </div>
+        <p id="l2-count" class="text-2xl font-bold text-slate-900 font-display">—/10</p>
         <p class="text-[11px] text-slate-400">{t('cuenta.progress.modules')}</p>
       </div>
-      <div class="bg-white border border-slate-200 rounded-xl px-4 py-4 shadow-sm text-center">
-        <p class="font-mono text-[10px] text-amber-600 uppercase tracking-widest mb-1">KEY 3</p>
-        <p id="l3-count" class="text-xl font-bold text-slate-900 font-mono">—/8</p>
+      <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+        <div class="flex items-center gap-2.5 mb-3">
+          <span class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 ring-1 ring-slate-900/5" style="background:#022c22">
+            <AnimalIcon name="panda" color="#34d399" bg="#022c22" size={16} />
+          </span>
+          <p class="font-mono text-[10px] text-amber-600 uppercase tracking-widest">KEY 3</p>
+        </div>
+        <p id="l3-count" class="text-2xl font-bold text-slate-900 font-display">—/8</p>
         <p class="text-[11px] text-slate-400">{t('cuenta.progress.sections')}</p>
       </div>
     </div>
@@ -420,7 +441,7 @@ const t = useTranslations(locale);
   const RANK_DESC: Record<string, string> = {
     monkey:  'Monkey · en formación',
     gorilla: 'Gorilla · ejecuta con fuerza',
-    eagle:   'Eagle · puede volar solo',
+    eagle:   'Panda · domina su sistema',
   };
 
   async function doSync(userId: string) {
@@ -485,8 +506,13 @@ const t = useTranslations(locale);
       const SHARE_MSG: Record<string, string> = {
         es: 'He estado usando Moonkey Lab.\n\nNo es un curso.\nEs un campo de pruebas para operadores IA.\n\nSi te gusta construir más que consumir:\n\n' + inviteLink,
         en: "I've been using Moonkey Lab.\n\nIt's not a course.\nIt's a proving ground for AI operators.\n\nIf you enjoy building more than consuming:\n\n" + inviteLink,
+        th: 'ผมใช้ Moonkey Lab อยู่\n\nไม่ใช่คอร์ส\nมันคือสนามพิสูจน์ความสามารถของ AI operator\n\nถ้าคุณชอบสร้างมากกว่าบริโภค:\n\n' + inviteLink,
+        fr: "J'utilise Moonkey Lab.\n\nCe n'est pas un cours.\nC'est un terrain de preuve pour opérateurs IA.\n\nSi tu aimes construire plus que consommer :\n\n" + inviteLink,
+        it: 'Sto usando Moonkey Lab.\n\nNon è un corso.\nÈ un campo di prova per operatori IA.\n\nSe ti piace costruire più che consumare:\n\n' + inviteLink,
+        ch: 'Ich nutze Moonkey Lab.\n\nKein Kurs.\nEin Prüffeld für KI-Operatoren.\n\nWenn du lieber baust als konsumierst:\n\n' + inviteLink,
       };
-      const lang = (document.documentElement.lang === 'en') ? 'en' : 'es';
+      const htmlLang = document.documentElement.lang;
+      const lang = ['en', 'th', 'fr', 'it', 'ch'].includes(htmlLang) ? htmlLang : 'es';
 
       // PART 5 — share reinforcement: fade-out after 3 s
       function showReinforcement(el: Element | null) {
@@ -603,13 +629,13 @@ const t = useTranslations(locale);
         const rank = prof?.operator_rank ?? 'monkey';
         const JUNGLE_NEXT: Record<string, string> = {
           monkey:  'próximo: Gorilla',
-          gorilla: 'próximo: Eagle',
+          gorilla: 'próximo: Panda',
           eagle:   'próximo: Mentor / Network',
         };
         const JUNGLE_DESC: Record<string, string> = {
           monkey:  'Estás en formación. Cada módulo que completas es una señal para el siguiente operador.',
           gorilla: 'Ejecutas con fuerza. Ya tienes sistemas reales funcionando.',
-          eagle:   'Puedes volar solo. El siguiente paso es transmitir lo aprendido.',
+          eagle:   'Dominas tu sistema. El siguiente paso es transmitir lo aprendido.',
         };
         const JUNGLE_CLS: Record<string, string> = {
           monkey:  'text-slate-700 border-slate-300',

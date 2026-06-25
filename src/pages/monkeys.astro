@@ -60,7 +60,7 @@ const moduleStats = [
 const rankDefs = [
   { rank: 'Monkey',  desc: 'en formación',        textCls: 'text-slate-700',  bg: 'bg-white',      border: 'border-slate-200'  },
   { rank: 'Gorilla', desc: 'ejecuta con fuerza',  textCls: 'text-violet-700', bg: 'bg-violet-50',  border: 'border-violet-200' },
-  { rank: 'Eagle',   desc: 'puede volar solo',    textCls: 'text-emerald-700',bg: 'bg-emerald-50', border: 'border-emerald-200'},
+  { rank: 'Panda',   desc: 'domina su sistema',   textCls: 'text-emerald-700',bg: 'bg-emerald-50', border: 'border-emerald-200'},
 ];
 ---
 
@@ -149,7 +149,7 @@ const rankDefs = [
       </div>
       <div class="bg-white border border-emerald-200 rounded-xl p-4 text-center shadow-sm">
         <p id="stat-eagle" class="text-2xl font-bold font-mono text-emerald-600 mb-1">—</p>
-        <p class="text-[10px] font-mono text-slate-400 uppercase tracking-wide">Eagle</p>
+        <p class="text-[10px] font-mono text-slate-400 uppercase tracking-wide">Panda</p>
       </div>
       <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center shadow-sm">
         <p id="stat-founder" class="text-2xl font-bold font-mono text-amber-700 mb-1">—</p>
@@ -174,8 +174,8 @@ const rankDefs = [
         <p class="text-xs text-slate-500 leading-relaxed">Opera sistemas complejos. Arquitectura, debugging, deploy sin supervisión.</p>
       </div>
       <div class="bg-emerald-50 border-2 border-emerald-200 rounded-xl p-5 shadow-sm">
-        <p class="font-mono text-xs font-bold text-emerald-700 mb-1">Eagle</p>
-        <p class="text-sm font-semibold text-slate-900 mb-2">Puede volar solo</p>
+        <p class="font-mono text-xs font-bold text-emerald-700 mb-1">Panda</p>
+        <p class="text-sm font-semibold text-slate-900 mb-2">Domina su sistema</p>
         <p class="text-xs text-slate-500 leading-relaxed">Autonomía total. Sistema de prompts propio, workflows delegables.</p>
       </div>
     </div>
@@ -432,7 +432,7 @@ const rankDefs = [
   const RANK: Record<string, { label: string; textCls: string; borderCls: string }> = {
     monkey:  { label: 'Monkey · en formación',        textCls: 'text-slate-600',   borderCls: 'border-slate-200'  },
     gorilla: { label: 'Gorilla · ejecuta con fuerza', textCls: 'text-violet-600',  borderCls: 'border-violet-200' },
-    eagle:   { label: 'Eagle · puede volar solo',     textCls: 'text-emerald-600', borderCls: 'border-emerald-300' },
+    eagle:   { label: 'Panda · domina su sistema',     textCls: 'text-emerald-600', borderCls: 'border-emerald-300' },
   };
 
   function esc(s: string | null | undefined): string {

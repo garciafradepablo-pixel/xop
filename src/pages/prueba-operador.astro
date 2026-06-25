@@ -1,22 +1,28 @@
 ---
 import Layout from '../components/Layout.astro';
 
+const meta = [
+  { k: '60', v: 'minutos, de inicio a entrega' },
+  { k: '1', v: 'entregable real, no un test' },
+  { k: '0', v: 'requisitos técnicos previos' },
+];
+
 const entregables = [
-  'Descripción del problema que elegiste resolver.',
-  'Prompt exacto que usaste con Claude.',
-  'Resultado generado (texto, archivo, proceso documentado).',
-  'Checklist del proceso que seguiste paso a paso.',
-  'Qué cambiarías o mejorarías en una segunda versión.',
+  { t: 'El problema', d: 'La tarea repetitiva que elegiste resolver, en una frase.' },
+  { t: 'El prompt', d: 'El prompt exacto que le diste a Claude. Sin maquillar.' },
+  { t: 'El resultado', d: 'El output generado: texto, archivo o proceso documentado.' },
+  { t: 'El proceso', d: 'El checklist de pasos que seguiste, en orden.' },
+  { t: 'La segunda versión', d: 'Qué cambiarías o mejorarías si lo hicieras de nuevo.' },
 ];
 
 const criterios = [
-  { label: 'Claridad',           desc: 'Lo que entregas se entiende sin explicación adicional.',        color: 'text-emerald-700' },
-  { label: 'Autonomía',          desc: 'Tomaste decisiones sin esperar que te dijeran cómo hacerlo.',   color: 'text-sky-700'     },
-  { label: 'Orden',              desc: 'El entregable tiene estructura lógica, no es un volcado de texto.', color: 'text-violet-700' },
-  { label: 'Documentación',      desc: 'Dejaste registro de lo que hiciste y cómo, no solo del resultado.', color: 'text-amber-700'  },
-  { label: 'Uso inteligente de IA', desc: 'Usaste la IA como herramienta, no como muleta. Revisaste el output.', color: 'text-rose-700' },
-  { label: 'No inventar',        desc: 'No rellenas con texto vacío cuando no sabes algo. Dices que no sabes.', color: 'text-teal-700'  },
-  { label: 'No depender',        desc: 'Intentaste resolver antes de preguntar. Preguntaste una vez, bien.', color: 'text-orange-700' },
+  { label: 'Claridad',            desc: 'Lo que entregas se entiende sin explicación adicional.',             dot: 'bg-emerald-500' },
+  { label: 'Autonomía',           desc: 'Decidiste sin esperar a que te dijeran cómo hacerlo.',                dot: 'bg-sky-500'     },
+  { label: 'Orden',               desc: 'El entregable tiene estructura lógica, no es un volcado de texto.',   dot: 'bg-violet-500'  },
+  { label: 'Documentación',       desc: 'Dejaste registro de qué hiciste y cómo, no solo del resultado.',      dot: 'bg-amber-500'   },
+  { label: 'Uso inteligente de IA', desc: 'Usaste la IA como herramienta, no como muleta. Revisaste el output.', dot: 'bg-rose-500'  },
+  { label: 'Honestidad',          desc: 'Cuando no sabes algo, lo dices. No rellenas con texto vacío.',         dot: 'bg-teal-500'    },
+  { label: 'Independencia',       desc: 'Intentaste resolver antes de preguntar. Preguntaste una vez, bien.',   dot: 'bg-orange-500'  },
 ];
 
 const senalesPositivas = [
@@ -32,64 +38,16 @@ const senalesNegativas = [
   'No lee las instrucciones completas antes de empezar.',
   'Entrega un caos de notas sin estructura.',
   'Pega el output de la IA sin revisarlo ni adaptarlo.',
-  'No documenta lo que hizo, solo el resultado.',
+  'Documenta el resultado, pero no cómo llegó a él.',
   'Se bloquea ante la primera ambigüedad en lugar de decidir.',
   'Pide que le hagan parte del trabajo.',
-  'Usa el tiempo en preguntar en lugar de en ejecutar.',
+  'Gasta el tiempo preguntando en vez de ejecutando.',
 ];
----
 
-<Layout title="Prueba de Operador IA" description="Evaluación práctica de 60 minutos para detectar operadores IA dentro del ecosistema MOONKEY XN.">
-
-  <!-- Header -->
-  <div class="pb-12 border-b border-slate-200">
-    <span class="label block mb-6">EVALUACIÓN</span>
-    <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-4">Prueba de Operador IA</h1>
-    <p class="text-slate-600 text-base leading-relaxed max-w-lg">
-      Esta prueba sirve para detectar si una persona puede aprender, ejecutar y trabajar dentro del ecosistema MOONKEY XN. No mide conocimiento previo. Mide criterio, autonomía y capacidad de entregar algo real en tiempo limitado.
-    </p>
-  </div>
-
-  <!-- Reto -->
-  <section class="py-12 border-b border-slate-200">
-    <span class="label block mb-6">EL RETO — 60 MINUTOS</span>
-    <div class="bg-slate-900 rounded-2xl p-6 mb-6">
-      <p class="text-white text-sm leading-relaxed mb-4">
-        Elige una tarea repetitiva que hagas en tu trabajo o en tu vida y conviértela en un mini sistema documentado usando Claude.
-      </p>
-      <p class="text-slate-400 text-sm leading-relaxed mb-4">
-        Puede ser cualquier cosa: responder un tipo de email siempre igual, organizar archivos, resumir reuniones, generar informes, clasificar tareas, escribir descripciones de producto. Lo que sea que repitas y que quieras dejar de hacer manualmente.
-      </p>
-      <p class="text-emerald-400 text-xs leading-relaxed font-mono">
-        Tiempo límite: 60 minutos desde que empiezas hasta que entregas.
-      </p>
-    </div>
-    <p class="text-slate-500 text-sm leading-relaxed">
-      No hace falta que el sistema sea perfecto. Hace falta que funcione, que esté documentado y que otra persona pueda usarlo sin preguntarte cómo.
-    </p>
-  </section>
-
-  <!-- Entregables -->
-  <section class="py-12 border-b border-slate-200">
-    <span class="label block mb-6">ENTREGABLES</span>
-    <p class="text-slate-500 text-sm leading-relaxed mb-8">
-      Al terminar los 60 minutos, entrega un documento Markdown (o texto plano) con estas cinco partes:
-    </p>
-    <ol class="space-y-3 mb-10">
-      {entregables.map((e, i) => (
-        <li class="flex items-start gap-4 bg-white border border-slate-200 rounded-xl px-5 py-4 shadow-sm">
-          <span class="font-mono text-xs text-emerald-600 font-bold shrink-0 pt-0.5">{String(i + 1).padStart(2, '0')}</span>
-          <span class="text-slate-700 text-sm leading-relaxed">{e}</span>
-        </li>
-      ))}
-    </ol>
-
-    <div class="bg-slate-900 rounded-2xl p-6">
-      <span class="font-mono text-xs text-emerald-400 tracking-widest uppercase block mb-4">FORMATO DE ENTREGA</span>
-      <pre class="text-slate-300 text-sm leading-relaxed font-mono whitespace-pre-wrap"># Prueba Operador IA — [Tu nombre]
+const TEMPLATE = `# Prueba Operador IA — [Tu nombre]
 
 ## 1. Problema
-[Una descripción breve de la tarea repetitiva elegida]
+[La tarea repetitiva que elegiste, en una frase]
 
 ## 2. Prompt usado
 [El prompt exacto que le diste a Claude]
@@ -103,63 +61,196 @@ const senalesNegativas = [
 - [ ] ...
 
 ## 5. Segunda versión
-[Qué cambiarías si lo hicieras de nuevo]</pre>
+[Qué cambiarías si lo hicieras de nuevo]`;
+---
+
+<Layout title="Test de Operador IA" description="Evaluación práctica de 60 minutos para detectar operadores IA dentro del ecosistema MOONKEY XN.">
+
+  <!-- Hero -->
+  <section class="pb-12 border-b border-slate-200">
+    <span class="label block mb-4">EVALUACIÓN · 60 MIN</span>
+    <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 leading-[1.05] tracking-tight mb-5">
+      Test de Operador IA
+    </h1>
+    <p class="text-slate-600 text-lg leading-relaxed max-w-xl mb-8">
+      No mide lo que ya sabes. Mide criterio, autonomía y tu capacidad de entregar
+      algo real en tiempo limitado. Una hora, una tarea, un entregable.
+    </p>
+    <div class="grid grid-cols-3 gap-3 max-w-xl">
+      {meta.map(m => (
+        <div class="bg-white border border-slate-200 rounded-xl px-4 py-4 shadow-sm">
+          <div class="text-2xl font-bold text-emerald-600 mb-0.5 font-display">{m.k}</div>
+          <div class="text-[11px] text-slate-500 leading-snug">{m.v}</div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- El reto -->
+  <section class="py-14 border-b border-slate-200">
+    <span class="label block mb-6">EL RETO</span>
+    <div class="rounded-2xl overflow-hidden" style="background:linear-gradient(150deg,#0b1220 0%,#0f172a 55%,#071a12 100%)">
+      <div class="px-7 sm:px-9 py-9">
+        <div class="flex items-center gap-2.5 mb-5">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="font-mono text-[10px] tracking-widest uppercase text-emerald-400">Cronómetro: 60 minutos</span>
+        </div>
+        <p class="text-white text-xl sm:text-2xl font-semibold leading-snug max-w-xl mb-5 font-display tracking-tight">
+          Coge una tarea repetitiva de tu trabajo y conviértela en un mini sistema
+          documentado usando Claude.
+        </p>
+        <p class="text-slate-400 text-sm leading-relaxed max-w-xl mb-6">
+          Responder un tipo de email siempre igual, organizar archivos, resumir reuniones,
+          generar informes, clasificar tareas, escribir descripciones de producto. Lo que sea
+          que repitas y quieras dejar de hacer a mano.
+        </p>
+        <div class="flex items-start gap-3 border-t border-white/10 pt-5">
+          <svg class="shrink-0 mt-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            No tiene que ser perfecto. Tiene que <strong class="text-white font-semibold">funcionar</strong>,
+            estar <strong class="text-white font-semibold">documentado</strong> y que otra persona
+            pueda usarlo sin preguntarte cómo.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Entregables -->
+  <section class="py-14 border-b border-slate-200">
+    <span class="label block mb-3">QUÉ ENTREGAS</span>
+    <p class="text-slate-500 text-sm leading-relaxed mb-8 max-w-lg">
+      Al terminar, un único documento Markdown (o texto plano) con cinco partes.
+    </p>
+    <ol class="space-y-2.5 mb-10">
+      {entregables.map((e, i) => (
+        <li class="group flex items-start gap-4 bg-white border border-slate-200 rounded-xl px-5 py-4 shadow-sm hover:border-emerald-300 transition-colors">
+          <span class="font-mono text-xs text-emerald-600 font-bold shrink-0 mt-0.5 w-6 h-6 rounded-lg bg-emerald-50 flex items-center justify-center">{String(i + 1).padStart(2, '0')}</span>
+          <div class="flex-1">
+            <p class="text-sm font-semibold text-slate-900 mb-0.5">{e.t}</p>
+            <p class="text-sm text-slate-500 leading-relaxed">{e.d}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+
+    <div class="rounded-2xl overflow-hidden bg-slate-900">
+      <div class="flex items-center justify-between px-6 pt-5 pb-3 border-b border-white/10">
+        <span class="font-mono text-xs text-emerald-400 tracking-widest uppercase">Plantilla de entrega</span>
+        <button id="copy-template" type="button" class="font-mono text-[11px] text-slate-300 border border-white/15 rounded-lg px-3 py-1.5 hover:border-emerald-400 hover:text-emerald-300 transition-colors inline-flex items-center gap-1.5">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <span id="copy-template-label">Copiar</span>
+        </button>
+      </div>
+      <pre class="text-slate-300 text-[13px] leading-relaxed font-mono whitespace-pre-wrap px-6 py-5 m-0">{TEMPLATE}</pre>
     </div>
   </section>
 
   <!-- Criterios -->
-  <section class="py-12 border-b border-slate-200">
-    <span class="label block mb-6">CRITERIOS DE EVALUACIÓN</span>
-    <p class="text-slate-500 text-sm leading-relaxed mb-8">
-      No hay puntuación numérica. Se evalúa el patrón completo del entregable.
+  <section class="py-14 border-b border-slate-200">
+    <span class="label block mb-3">CÓMO SE EVALÚA</span>
+    <p class="text-slate-500 text-sm leading-relaxed mb-8 max-w-lg">
+      No hay puntuación numérica. Se lee el patrón completo del entregable.
     </p>
     <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm divide-y divide-slate-100">
       {criterios.map((c) => (
-        <div class="flex gap-5 items-start px-6 py-4">
-          <span class={`font-mono text-xs font-bold w-36 shrink-0 pt-0.5 ${c.color}`}>{c.label}</span>
+        <div class="flex gap-4 items-start px-6 py-4">
+          <span class={`w-2 h-2 rounded-full shrink-0 mt-2 ${c.dot}`}></span>
+          <span class="font-semibold text-sm text-slate-900 w-40 shrink-0">{c.label}</span>
           <span class="text-slate-500 text-sm leading-relaxed">{c.desc}</span>
         </div>
       ))}
     </div>
   </section>
 
-  <!-- Señales positivas / negativas -->
-  <section class="py-12 border-b border-slate-200">
+  <!-- Señales -->
+  <section class="py-14 border-b border-slate-200">
     <span class="label block mb-8">SEÑALES QUE SE OBSERVAN</span>
-    <div class="grid sm:grid-cols-2 gap-6">
-
-      <div class="bg-white border border-emerald-200 rounded-2xl p-6 shadow-sm">
-        <p class="font-mono text-xs text-emerald-600 mb-5 tracking-widest font-bold">POSITIVAS</p>
-        <ul class="space-y-3">
+    <div class="grid sm:grid-cols-2 gap-5">
+      <div class="bg-emerald-50/60 border border-emerald-200 rounded-2xl p-6">
+        <p class="font-mono text-xs text-emerald-700 mb-5 tracking-widest font-bold">A FAVOR</p>
+        <ul class="space-y-3.5">
           {senalesPositivas.map(s => (
-            <li class="flex items-start gap-3 text-sm text-slate-600">
-              <span class="text-emerald-500 font-mono font-bold shrink-0 mt-0.5">+</span>
+            <li class="flex items-start gap-3 text-sm text-slate-700 leading-relaxed">
+              <svg class="shrink-0 mt-0.5" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
               {s}
             </li>
           ))}
         </ul>
       </div>
-
-      <div class="bg-white border border-rose-200 rounded-2xl p-6 shadow-sm">
-        <p class="font-mono text-xs text-rose-500 mb-5 tracking-widest font-bold">NEGATIVAS</p>
-        <ul class="space-y-3">
+      <div class="bg-rose-50/50 border border-rose-200 rounded-2xl p-6">
+        <p class="font-mono text-xs text-rose-600 mb-5 tracking-widest font-bold">EN CONTRA</p>
+        <ul class="space-y-3.5">
           {senalesNegativas.map(s => (
-            <li class="flex items-start gap-3 text-sm text-slate-500">
-              <span class="text-rose-400 font-mono font-bold shrink-0 mt-0.5">×</span>
+            <li class="flex items-start gap-3 text-sm text-slate-600 leading-relaxed">
+              <svg class="shrink-0 mt-0.5" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
               {s}
             </li>
           ))}
         </ul>
       </div>
-
     </div>
   </section>
 
   <!-- Cierre -->
-  <section class="py-12">
-    <p class="text-slate-500 text-sm leading-relaxed max-w-lg">
-      Esta prueba no requiere conocimiento técnico previo. Requiere actitud, capacidad de aprender rápido y disposición a entregar algo real. Si no tienes seguridad en algún punto, di qué hiciste y por qué tomaste esa decisión. Eso también es parte del criterio.
+  <section class="py-14 border-b border-slate-200">
+    <div class="border-l-4 border-emerald-300 pl-6 max-w-xl">
+      <p class="text-slate-700 text-lg leading-relaxed font-medium">
+        Si dudas en algún punto, di qué hiciste y por qué tomaste esa decisión.
+      </p>
+      <p class="text-slate-500 text-sm leading-relaxed mt-2">
+        Eso también es criterio. Lo que se evalúa no es que lo sepas todo, sino cómo
+        piensas cuando no lo sabes.
+      </p>
+    </div>
+  </section>
+
+  <!-- Siguiente paso -->
+  <section class="py-14">
+    <span class="label block mb-3">SIGUIENTE PASO</span>
+    <p class="text-slate-500 text-sm leading-relaxed mb-6 max-w-lg">
+      Cuando tengas tu entregable, guárdalo. A dónde vas depende de dónde estés:
     </p>
+    <div class="grid sm:grid-cols-2 gap-3">
+      <a href="/modulos" class="flex items-start gap-4 bg-white border border-slate-200 rounded-2xl px-5 py-5 hover:border-emerald-300 hover:shadow-sm transition-all group card-hover">
+        <span class="font-mono text-[10px] tracking-widest text-emerald-500 uppercase mt-0.5 shrink-0">01</span>
+        <div class="flex-1">
+          <p class="text-sm font-semibold text-slate-900 group-hover:text-emerald-700 transition-colors mb-1">Empezar Nivel 1</p>
+          <p class="text-xs text-slate-500 leading-relaxed">Si todavía no eres Monkey, empieza aquí. Este entregable cuenta como práctica inicial.</p>
+        </div>
+        <span class="text-slate-300 group-hover:text-emerald-400 transition-colors font-mono text-sm shrink-0 mt-0.5">→</span>
+      </a>
+      <a href="/onboarding" class="flex items-start gap-4 bg-white border border-slate-200 rounded-2xl px-5 py-5 hover:border-violet-300 hover:shadow-sm transition-all group card-hover">
+        <span class="font-mono text-[10px] tracking-widest text-violet-500 uppercase mt-0.5 shrink-0">02</span>
+        <div class="flex-1">
+          <p class="text-sm font-semibold text-slate-900 group-hover:text-violet-700 transition-colors mb-1">Proceso de colaboración</p>
+          <p class="text-xs text-slate-500 leading-relaxed">Si quieres colaborar en el ecosistema MOONKEY XN, aquí está el onboarding.</p>
+        </div>
+        <span class="text-slate-300 group-hover:text-violet-400 transition-colors font-mono text-sm shrink-0 mt-0.5">→</span>
+      </a>
+    </div>
   </section>
 
 </Layout>
+
+<script is:inline define:vars={{ TEMPLATE }}>
+  (function () {
+    var btn = document.getElementById('copy-template');
+    var label = document.getElementById('copy-template-label');
+    if (!btn || !label) return;
+    btn.addEventListener('click', function () {
+      function done() {
+        label.textContent = 'Copiado ✓';
+        setTimeout(function () { label.textContent = 'Copiar'; }, 1800);
+      }
+      try {
+        navigator.clipboard.writeText(TEMPLATE).then(done, done);
+      } catch (e) {
+        var ta = document.createElement('textarea');
+        ta.value = TEMPLATE; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); } catch (err) {}
+        document.body.removeChild(ta); done();
+      }
+    });
+  })();
+</script>

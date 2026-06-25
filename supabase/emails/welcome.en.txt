@@ -1,0 +1,21 @@
+MOONKEY LAB
+
+Welcome to the Lab.
+
+Most people consume.
+A few build.
+Very few can prove it.
+
+Enter Level 1:
+{{ .ConfirmationURL }}
+
+N1   N2   N3
+
+And then…
+there is still road ahead.
+
+The Lab does not reward activity.
+It rewards proof.
+
+— MOONKEY LAB
+If you did not request this access, ignore this email.

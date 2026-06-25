@@ -1,66 +1,150 @@
 ---
-// Real bilingual switcher. ES at root, EN under /en/.
-// Maps the current page to its equivalent locale and persists the choice.
-import { getLocaleFromPath, localizedPath, useTranslations } from '../i18n/utils';
-import { LOCALE_STORAGE_KEY } from '../i18n/config';
+// Language switcher as a click-to-open dropdown.
+// Trigger shows the current language; the menu lists all locales with their
+// native name. Picking one navigates to the same page in that locale and
+// persists the choice. Data-driven from LOCALES — adding a language is config-only.
+import { resolveLocale, localizedPath } from '../i18n/utils';
+import { LOCALE_STORAGE_KEY, LOCALES, LOCALE_LABELS, LOCALE_NAMES, PREFIX_LOCALES } from '../i18n/config';
 
 interface Props {
-  subtle?: boolean; // smaller/footer variant
+  drop?: 'down' | 'up'; // menu opens below (default) or above (footer)
+  align?: 'left' | 'right';
 }
-const { subtle = false } = Astro.props;
+const { drop = 'down', align = 'right' } = Astro.props;
 
 const pathname = Astro.url.pathname;
-const current = getLocaleFromPath(pathname);
-const esHref = localizedPath(pathname, 'es');
-const enHref = localizedPath(pathname, 'en');
-const t = useTranslations(current);
+const current = resolveLocale(Astro.currentLocale, pathname);
+const links = LOCALES.map((l) => ({
+  code: l,
+  label: LOCALE_LABELS[l],
+  name: LOCALE_NAMES[l],
+  href: localizedPath(pathname, l),
+}));
 
-const activeCls = 'font-bold text-emerald-600';
-const idleCls = 'text-slate-400 hover:text-slate-600 transition-colors';
+const menuPos = [
+  align === 'right' ? 'right-0' : 'left-0',
+  drop === 'up' ? 'bottom-full mb-2' : 'mt-2',
+].join(' ');
 ---
 
-<div class="flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[11px] text-slate-400" data-lang-switcher>
-  <a href={esHref} data-locale="es" aria-current={current === 'es' ? 'true' : undefined}
-     class={`text-xs ${current === 'es' ? activeCls : idleCls}`}>ES</a>
-  <span class="text-slate-300" aria-hidden="true">/</span>
-  <a href={enHref} data-locale="en" aria-current={current === 'en' ? 'true' : undefined}
-     class={`text-xs ${current === 'en' ? activeCls : idleCls}`}>EN</a>
+<div class="relative shrink-0" data-lang-dropdown>
+  <button
+    type="button"
+    data-lang-trigger
+    aria-haspopup="true"
+    aria-expanded="false"
+    aria-label="Cambiar idioma"
+    class="flex items-center gap-1.5 font-mono text-xs px-2.5 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:border-emerald-300 hover:text-emerald-600 transition-colors"
+  >
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+    </svg>
+    <span data-lang-current class="font-semibold">{LOCALE_LABELS[current]}</span>
+    <svg data-lang-chevron width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-50 transition-transform duration-200" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
 
-  {!subtle && (
-    <>
-      <span class="hidden sm:inline text-slate-300" aria-hidden="true">·</span>
-      <span class="hidden sm:inline">{t('switcher.note')}</span>
-      <span class="hidden md:inline text-slate-300" aria-hidden="true">·</span>
-      <span class="hidden md:inline">{t('switcher.terms')}</span>
-    </>
-  )}
+  <div
+    data-lang-menu
+    role="menu"
+    class={`hidden absolute ${menuPos} w-48 bg-white border border-slate-200 rounded-xl shadow-lg shadow-slate-900/[0.08] py-1.5 z-[60] origin-top`}
+  >
+    {links.map((l) => (
+      <a
+        href={l.href}
+        data-locale={l.code}
+        role="menuitem"
+        class="flex items-center justify-between gap-3 px-3.5 py-2 text-sm text-slate-600 hover:bg-slate-50 transition-colors"
+      >
+        <span>{l.name}</span>
+        <span class="flex items-center gap-2">
+          <svg data-lang-check width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="hidden" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+          <span class="font-mono text-[10px] tracking-wide text-slate-400">{l.label}</span>
+        </span>
+      </a>
+    ))}
+  </div>
 </div>
 
-<script is:inline define:vars={{ KEY: LOCALE_STORAGE_KEY }}>
+<script is:inline define:vars={{ KEY: LOCALE_STORAGE_KEY, PREFIXES: PREFIX_LOCALES }}>
   (function () {
-    // Real locale from the live URL — corrects fallback /en/ pages that are
-    // byte-copies of the ES render (so their baked lang/active state is "es").
-    var seg = location.pathname.split('/').filter(Boolean)[0];
-    var loc = seg === 'en' ? 'en' : 'es';
-    try { document.documentElement.lang = loc; } catch (e) {}
+    if (window.__mkLangDD) return;
+    window.__mkLangDD = true;
 
-    var ACTIVE = ['font-bold', 'text-emerald-600'];
-    var IDLE = ['text-slate-400', 'hover:text-slate-600', 'transition-colors'];
-    document.querySelectorAll('[data-lang-switcher] a[data-locale]').forEach(function (a) {
-      var on = a.getAttribute('data-locale') === loc;
-      ACTIVE.forEach(function (c) { a.classList.toggle(c, on); });
-      IDLE.forEach(function (c) { a.classList.toggle(c, !on); });
-      if (on) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
-    });
+    var LABELS = { es: 'ES', en: 'EN', th: 'TH', fr: 'FR', it: 'IT', ch: 'CH' };
 
-    // Persist the chosen locale on click. Guard so it binds once per page.
-    if (!window.__mkLangSwitcher) {
-      window.__mkLangSwitcher = true;
-      document.addEventListener('click', function (e) {
-        var a = e.target instanceof Element ? e.target.closest('[data-lang-switcher] a[data-locale]') : null;
-        if (!a) return;
-        try { localStorage.setItem(KEY, a.getAttribute('data-locale')); } catch (err) {}
+    function init() {
+      // Real locale from the live URL (fallback /xx/ pages bake an "es" render).
+      var seg = location.pathname.split('/').filter(Boolean)[0];
+      var loc = PREFIXES.indexOf(seg) !== -1 ? seg : 'es';
+      try { document.documentElement.lang = loc; } catch (e) {}
+
+      var dropdowns = document.querySelectorAll('[data-lang-dropdown]');
+
+      function closeAll(except) {
+        dropdowns.forEach(function (dd) {
+          if (dd === except) return;
+          var m = dd.querySelector('[data-lang-menu]');
+          var t = dd.querySelector('[data-lang-trigger]');
+          var c = dd.querySelector('[data-lang-chevron]');
+          if (m) m.classList.add('hidden');
+          if (t) t.setAttribute('aria-expanded', 'false');
+          if (c) c.style.transform = '';
+        });
+      }
+
+      dropdowns.forEach(function (dd) {
+        var trigger = dd.querySelector('[data-lang-trigger]');
+        var menu = dd.querySelector('[data-lang-menu]');
+        var chevron = dd.querySelector('[data-lang-chevron]');
+        var currentEl = dd.querySelector('[data-lang-current]');
+        if (currentEl) currentEl.textContent = LABELS[loc] || 'ES';
+
+        // Mark the active locale in the menu.
+        dd.querySelectorAll('a[data-locale]').forEach(function (a) {
+          var on = a.getAttribute('data-locale') === loc;
+          a.classList.toggle('text-emerald-700', on);
+          a.classList.toggle('font-medium', on);
+          a.classList.toggle('bg-emerald-50', on);
+          var check = a.querySelector('[data-lang-check]');
+          if (check) check.classList.toggle('hidden', !on);
+          if (on) a.setAttribute('aria-current', 'true');
+          var codeEl = a.querySelector('.font-mono');
+          if (codeEl && on) codeEl.classList.remove('text-slate-400');
+        });
+
+        trigger.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var isHidden = menu.classList.contains('hidden');
+          closeAll(dd);
+          if (isHidden) {
+            menu.classList.remove('hidden');
+            trigger.setAttribute('aria-expanded', 'true');
+            if (chevron) chevron.style.transform = 'rotate(180deg)';
+          } else {
+            menu.classList.add('hidden');
+            trigger.setAttribute('aria-expanded', 'false');
+            if (chevron) chevron.style.transform = '';
+          }
+        });
+
+        menu.addEventListener('click', function (e) {
+          var a = e.target instanceof Element ? e.target.closest('a[data-locale]') : null;
+          if (!a) return;
+          try { localStorage.setItem(KEY, a.getAttribute('data-locale')); } catch (err) {}
+          // Navigation proceeds via the link href.
+        });
       });
+
+      document.addEventListener('click', function () { closeAll(null); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeAll(null);
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
     }
   })();
 </script>

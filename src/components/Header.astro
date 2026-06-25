@@ -1,65 +1,147 @@
 ---
 import MoonkeyLogo from './MoonkeyLogo.astro';
+import LanguageBar from './LanguageBar.astro';
+import { resolveLocale, localizedPath, useTranslations } from '../i18n/utils';
 
-const navLinks = [
-  { href: '/', label: 'Inicio' },
-  { href: '/modulos', label: 'N1' },
-  { href: '/advanced', label: 'N2' },
-  { href: '/migrador', label: 'N3' },
-  { href: '/prompts', label: 'Arsenal' },
-  { href: '/monkeys', label: 'Monkeys' },
-  { href: '/planes', label: 'Planes' },
-];
 const currentPath = Astro.url.pathname;
+const locale = resolveLocale(Astro.currentLocale, currentPath);
+const t = useTranslations(locale);
 const isRuta = currentPath === '/ruta-7-dias' || currentPath === '/ruta-7-dias/';
 
-const isActive = (href: string) =>
-  currentPath === href ||
-  (href !== '/' && currentPath.startsWith(href)) ||
-  (href === '/modulos' && isRuta);
+const navLinks = [
+  { href: localizedPath('/', locale),         label: t('nav.home'), exact: true },
+  { href: localizedPath('/modulos', locale),  label: 'N1' },
+  { href: localizedPath('/advanced', locale), label: 'N2' },
+  { href: localizedPath('/migrador', locale), label: 'N3' },
+  { href: localizedPath('/prompts', locale),  label: 'Arsenal' },
+  { href: localizedPath('/monkeys', locale),  label: 'Monkeys' },
+  { href: localizedPath('/planes', locale),   label: t('nav.plans') },
+];
+
+const isActive = (href: string, exact?: boolean) => {
+  if (exact) {
+    return currentPath === href || currentPath === href.replace(/\/$/, '') || currentPath === '/';
+  }
+  const base = href.replace(/^\/(en|th|fr|it|ch)/, '') || '/';
+  return (
+    currentPath === href ||
+    (base !== '/' && currentPath.startsWith(base)) ||
+    (href === localizedPath('/modulos', locale) && isRuta)
+  );
+};
+
+const cuentaHref = localizedPath('/cuenta', locale);
+const isCuenta = /^\/(?:en|th|fr|it|ch)?\/?cuenta\/?$/.test(currentPath) || currentPath === '/cuenta' || currentPath === '/cuenta/';
 ---
-<header class="border-b border-slate-200 bg-white/95 backdrop-blur sticky top-0 z-50">
-  <nav aria-label="Navegación principal" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center gap-3">
-    <div class="shrink-0 flex items-center gap-3">
-      <a href="/">
-        <MoonkeyLogo variant="horizontal" size="sm" />
+<header class="border-b border-slate-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+  <nav aria-label="Navegación principal" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center gap-3">
+
+    <!-- Brand -->
+    <a href={localizedPath('/', locale)} class="shrink-0 flex items-center gap-3 rounded-lg focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2">
+      <MoonkeyLogo variant="horizontal" size="sm" />
+      <span class="hidden md:block w-px h-6 bg-slate-200 shrink-0"></span>
+    </a>
+    <a href="https://xnlab.io" target="_blank" rel="noopener noreferrer" class="hidden md:flex shrink-0 -ml-1 font-mono font-bold tracking-[0.12em] uppercase text-[11px] text-slate-900 hover:text-emerald-600 transition-colors">
+      XNLAB.IO
+    </a>
+
+    <!-- Desktop nav -->
+    <ul class="hidden lg:flex items-center gap-x-1 text-[13px] font-mono ml-auto">
+      {navLinks.map(link => {
+        const active = isActive(link.href, link.exact);
+        return (
+          <li>
+            <a
+              href={link.href}
+              aria-current={active ? 'page' : undefined}
+              class={`relative px-3 py-2 rounded-lg transition-colors ${
+                active
+                  ? 'text-slate-900'
+                  : 'text-slate-400 hover:text-slate-900 hover:bg-slate-50'
+              }`}
+            >
+              {link.label}
+              {active && <span class="absolute left-3 right-3 -bottom-px h-0.5 rounded-full bg-emerald-500"></span>}
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+
+    <!-- Right controls — always visible -->
+    <div class="flex items-center gap-2 ml-auto lg:ml-3 shrink-0">
+      <LanguageBar />
+      <a
+        href={cuentaHref}
+        aria-current={isCuenta ? 'page' : undefined}
+        class={`shrink-0 font-mono text-xs px-3 py-1.5 rounded-lg border transition-colors ${
+          isCuenta
+            ? 'text-emerald-700 bg-emerald-50 border-emerald-300 font-medium'
+            : 'text-slate-600 border-slate-200 hover:border-emerald-300 hover:text-emerald-600'
+        }`}
+      >
+        {t('nav.account')}
       </a>
-      <span class="w-px h-6 bg-slate-200 shrink-0"></span>
-      <a href="https://xnlab.io" target="_blank" rel="noopener noreferrer" class="flex flex-col leading-none gap-[3px]">
-        <span class="font-mono font-bold tracking-[0.12em] uppercase text-[11px] text-slate-900">XNLAB.IO</span>
-      </a>
-    </div>
-    <div class="flex-1 min-w-0 overflow-x-auto">
-      <div class="flex items-center justify-end gap-3 min-w-max ml-auto">
-        <ul class="flex items-center gap-x-4 text-xs font-mono">
-          {navLinks.map(link => (
-            <li>
-              <a
-                href={link.href}
-                aria-current={isActive(link.href) ? 'page' : undefined}
-                class={`transition-colors ${
-                  isActive(link.href)
-                    ? 'text-slate-900 font-medium'
-                    : 'text-slate-400 hover:text-slate-700'
-                }`}
-              >
-                {link.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-        <a
-          href="/cuenta"
-          aria-current={currentPath === '/cuenta' || currentPath === '/cuenta/' ? 'page' : undefined}
-          class={`shrink-0 font-mono text-xs px-2.5 py-1 rounded-lg border transition-colors ${
-            currentPath === '/cuenta' || currentPath === '/cuenta/'
-              ? 'text-emerald-700 bg-emerald-50 border-emerald-300 font-medium'
-              : 'text-slate-500 border-slate-200 hover:border-emerald-300 hover:text-emerald-600'
-          }`}
-        >
-          Cuenta
-        </a>
-      </div>
+
+      <!-- Mobile menu toggle -->
+      <button
+        id="mk-menu-btn"
+        type="button"
+        class="lg:hidden shrink-0 w-9 h-9 -mr-1 flex items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:border-emerald-300 hover:text-emerald-600 transition-colors"
+        aria-label="Menú"
+        aria-expanded="false"
+        aria-controls="mk-menu"
+      >
+        <svg class="mk-icon-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg class="mk-icon-close hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
   </nav>
+
+  <!-- Mobile menu panel -->
+  <div id="mk-menu" class="lg:hidden hidden border-t border-slate-100 bg-white">
+    <ul class="max-w-7xl mx-auto px-4 sm:px-6 py-3 grid grid-cols-2 gap-1 text-sm font-mono">
+      {navLinks.map(link => {
+        const active = isActive(link.href, link.exact);
+        return (
+          <li>
+            <a
+              href={link.href}
+              aria-current={active ? 'page' : undefined}
+              class={`flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors ${
+                active ? 'text-emerald-700 bg-emerald-50 font-medium' : 'text-slate-600 hover:bg-slate-50'
+              }`}
+            >
+              {link.label}
+              <span class="text-slate-300" aria-hidden="true">→</span>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
 </header>
+
+<script is:inline>
+  (function () {
+    var btn = document.getElementById('mk-menu-btn');
+    var menu = document.getElementById('mk-menu');
+    if (!btn || !menu) return;
+    var openIcon = btn.querySelector('.mk-icon-open');
+    var closeIcon = btn.querySelector('.mk-icon-close');
+
+    function setOpen(open) {
+      menu.classList.toggle('hidden', !open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (openIcon) openIcon.classList.toggle('hidden', open);
+      if (closeIcon) closeIcon.classList.toggle('hidden', !open);
+    }
+    btn.addEventListener('click', function () {
+      setOpen(menu.classList.contains('hidden'));
+    });
+    // Close on resize to desktop so the panel never sticks open.
+    window.addEventListener('resize', function () {
+      if (window.innerWidth >= 1024) setOpen(false);
+    });
+  })();
+</script>

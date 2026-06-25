@@ -9,17 +9,13 @@ Muy pocos pueden demostrarlo.
 Entrar al Nivel 1:
 {{ .ConfirmationURL }}
 
-(Este enlace es tu entrada.)
+N1   N2   N3
 
-— Operator Path —
-N1 · Foundations
-N2 · Builder
-N3 · Mastery
+Y después…
+todavía queda camino.
 
 El Lab no premia la actividad.
 Premia la prueba.
-
-Demuestra algo.
 
 — MOONKEY LAB
 Si no solicitaste este acceso, ignora este correo.

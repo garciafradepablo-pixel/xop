@@ -9,6 +9,17 @@ export function getLocaleFromPath(pathname: string): Locale {
   return (LOCALES as readonly string[]).includes(seg) ? (seg as Locale) : DEFAULT_LOCALE;
 }
 
+/**
+ * Resolves locale preferring Astro.currentLocale (correct during fallback rewrites)
+ * over pathname-based detection (which loses locale when rewrite changes the URL).
+ */
+export function resolveLocale(currentLocale: string | undefined, pathname: string): Locale {
+  if (currentLocale && (LOCALES as readonly string[]).includes(currentLocale)) {
+    return currentLocale as Locale;
+  }
+  return getLocaleFromPath(pathname);
+}
+
 /** Returns t(key); missing keys in the active locale fall back to ES, then to the key itself. */
 export function useTranslations(locale: Locale) {
   const dict = ui[locale] as Record<string, string>;
@@ -16,11 +27,11 @@ export function useTranslations(locale: Locale) {
   return (key: string): string => dict[key] ?? base[key] ?? key;
 }
 
-/** Maps a pathname to its equivalent in `target` locale (ES at root, EN under /en/). */
+/** Maps a pathname to its equivalent in `target` locale (ES at root, others under /<locale>/). */
 export function localizedPath(pathname: string, target: Locale): string {
   const parts = pathname.split('/').filter(Boolean);
   if ((LOCALES as readonly string[]).includes(parts[0])) parts.shift();
   const rest = parts.length ? '/' + parts.join('/') : '/';
   if (target === DEFAULT_LOCALE) return rest;
-  return rest === '/' ? '/en/' : '/en' + rest;
+  return rest === '/' ? `/${target}/` : `/${target}${rest}`;
 }

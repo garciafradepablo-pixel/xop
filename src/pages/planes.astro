@@ -5,13 +5,14 @@ const planes = [
   {
     nombre: 'Monkey Starter',
     para: 'Para aprender a tu ritmo',
-    estado: 'Programa piloto',
+    estado: 'Disponible · Gratis',
+    featured: true,
     estadoColor: 'text-emerald-700',
     estadoBg: 'bg-emerald-100',
     border: 'border-emerald-300',
     accentBar: 'bg-emerald-500',
-    dash: 'text-emerald-500',
-    cta: 'Empezar gratis →',
+    check: '#10b981',
+    cta: 'Empezar gratis',
     ctaHref: '/modulos',
     ctaStyle: 'bg-emerald-500 text-white hover:bg-emerald-600',
     nota: 'Sin tarjeta. Sin registro.',
@@ -20,58 +21,66 @@ const planes = [
       'Arsenal de Prompts operativos',
       'Glosario de términos clave',
       'Test de Operador',
-      'Progreso por módulos guardado localmente',
+      'Progreso guardado en tu dispositivo',
     ],
   },
   {
     nombre: 'Moonkey Operator',
     para: 'Para completar la escuela',
     estado: 'Próximamente',
+    featured: false,
     estadoColor: 'text-violet-700',
     estadoBg: 'bg-violet-100',
-    border: 'border-violet-300',
+    border: 'border-slate-200',
     accentBar: 'bg-violet-500',
-    dash: 'text-violet-500',
-    cta: 'Solicitar acceso anticipado →',
+    check: '#8b5cf6',
+    cta: 'Solicitar acceso anticipado',
     ctaHref: '/soporte',
     ctaStyle: 'bg-violet-500 text-white hover:bg-violet-600',
-    nota: 'El acceso avanzado se abrirá primero a Monkeys piloto que completen el Operator Path.',
+    nota: 'Se abre primero a Monkeys piloto que completen el Operator Path.',
     incluye: [
       'Niveles 1, 2 y 3 completos',
       'Advanced Operator Playbook',
       'Migration System ChatGPT → Claude Code',
       'Soporte básico de implementación',
-      'Certificado de completado (próximamente)',
+      'Certificado de completado',
     ],
   },
   {
     nombre: 'XN Team System',
     para: 'Para equipos y negocios',
     estado: 'Bajo solicitud',
+    featured: false,
     estadoColor: 'text-amber-700',
     estadoBg: 'bg-amber-100',
-    border: 'border-amber-300',
+    border: 'border-slate-200',
     accentBar: 'bg-amber-500',
-    dash: 'text-amber-500',
-    cta: 'Solicitar implementación para equipo →',
+    check: '#f59e0b',
+    cta: 'Solicitar implementación',
     ctaHref: '/soporte',
     ctaStyle: 'bg-slate-900 text-white hover:bg-slate-800',
     nota: 'Contacto directo. Propuesta a medida.',
     incluye: [
-      'Escuela interna personalizada para el equipo',
+      'Escuela interna personalizada',
       'Sistema de prompts y SOPs a medida',
       'Migración ChatGPT → Claude Code',
-      'Automatización de workflows de trabajo',
+      'Automatización de workflows',
       'Soporte de implementación dedicado',
     ],
   },
 ];
 
 const diferencias = [
-  { label: 'Metodología propia', desc: 'No es un curso genérico de IA. Es el Operator Path — un sistema de 3 Keys con entregables reales por módulo.' },
-  { label: 'Sin código requerido', desc: 'El nivel de entrada no requiere programación. Solo disposición a construir con herramientas modernas.' },
-  { label: 'Basado en entregables', desc: 'No mides el progreso por videos vistos. Lo mides por archivos creados y sistemas que funcionan.' },
+  { label: 'Metodología propia', desc: 'No es un curso genérico de IA. Es el Operator Path: 3 Keys con entregables reales en cada módulo.' },
+  { label: 'Sin código requerido', desc: 'El nivel de entrada no pide programar. Solo disposición a construir con herramientas modernas.' },
+  { label: 'Basado en entregables', desc: 'No mides el progreso por vídeos vistos, sino por archivos creados y sistemas que funcionan.' },
   { label: 'Orientado a sistemas', desc: 'No enseñamos a usar el chat. Enseñamos a construir workflows, documentarlos y hacerlos autónomos.' },
+];
+
+const keys = [
+  { key: 'KEY 1', label: '8 módulos', note: 'Foundations', color: 'text-emerald-400' },
+  { key: 'KEY 2', label: '10 módulos', note: 'Advanced',    color: 'text-violet-400' },
+  { key: 'KEY 3', label: '8 módulos', note: 'Migration',    color: 'text-amber-400' },
 ];
 ---
 
@@ -79,55 +88,45 @@ const diferencias = [
 
   <!-- Hero -->
   <section class="pb-12 border-b border-slate-200">
-    <span class="label block mb-2">PLANES DE ACCESO</span>
-    <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-4">
-      Elige tu camino<br/>como Operator.
+    <span class="label block mb-4">PLANES DE ACCESO</span>
+    <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 leading-[1.05] tracking-tight mb-5">
+      Elige cómo entras<br/>al Operator Path.
     </h1>
-    <p class="text-slate-600 text-base leading-relaxed max-w-xl">
-      MOONKEY LAB está en fase piloto. El acceso a Nivel 1 es libre. Los niveles avanzados y el acceso privado se activan progresivamente. Los primeros Monkeys entran por participación directa.
+    <p class="text-slate-600 text-lg leading-relaxed max-w-xl">
+      MOONKEY LAB está en fase piloto. El Nivel 1 es libre. Los niveles avanzados y el
+      acceso privado se activan por fases — y los primeros Monkeys entran por participación
+      directa, no por pago.
     </p>
   </section>
 
-  <section class="py-12 border-b border-slate-200">
-    <span class="label block mb-6">POR QUÉ ES DIFERENTE</span>
-    <div class="grid sm:grid-cols-2 gap-4">
-      {diferencias.map(d => (
-        <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-          <p class="font-semibold text-slate-900 text-sm mb-1.5">{d.label}</p>
-          <p class="text-slate-500 text-xs leading-relaxed">{d.desc}</p>
-        </div>
-      ))}
-    </div>
-  </section>
-
-  <!-- Cards de planes -->
-  <section class="py-12 border-b border-slate-200">
+  <!-- Plan cards -->
+  <section class="py-14 border-b border-slate-200">
     <span class="label block mb-8">OPCIONES DE ACCESO</span>
-    <div class="grid sm:grid-cols-3 gap-5">
+    <div class="grid sm:grid-cols-3 gap-5 items-start">
       {planes.map(p => (
-        <div class={`bg-white border-2 ${p.border} rounded-2xl overflow-hidden flex flex-col shadow-sm`}>
-          <div class={`${p.accentBar} h-1 w-full`}></div>
+        <div class={`relative bg-white rounded-2xl overflow-hidden flex flex-col border ${p.border} ${p.featured ? 'ring-2 ring-emerald-400/40 shadow-lg shadow-emerald-500/5' : 'shadow-sm'}`}>
+          <div class={`${p.accentBar} h-1.5 w-full`}></div>
           <div class="p-6 flex flex-col flex-1">
-            <div class="mb-5">
-              <span class={`inline-block font-mono text-xs font-bold px-2.5 py-1 rounded-lg mb-3 ${p.estadoBg} ${p.estadoColor}`}>
-                {p.estado}
-              </span>
-              <h2 class="text-lg font-bold text-slate-900 mb-1">{p.nombre}</h2>
-              <p class="text-sm text-slate-500">{p.para}</p>
-            </div>
-            <ul class="space-y-2.5 flex-1 mb-5">
+            <span class={`inline-flex self-start items-center font-mono text-[11px] font-bold px-2.5 py-1 rounded-lg mb-4 ${p.estadoBg} ${p.estadoColor}`}>
+              {p.estado}
+            </span>
+            <h2 class="text-xl font-bold text-slate-900 mb-1">{p.nombre}</h2>
+            <p class="text-sm text-slate-500 mb-5">{p.para}</p>
+
+            <p class="font-mono text-[10px] tracking-widest uppercase text-slate-400 mb-3">Incluye</p>
+            <ul class="space-y-2.5 flex-1 mb-6">
               {p.incluye.map(item => (
-                <li class="flex items-start gap-2.5 text-xs text-slate-600 leading-relaxed">
-                  <span class={`${p.dash} font-mono shrink-0 mt-0.5`}>—</span>
+                <li class="flex items-start gap-2.5 text-[13px] text-slate-600 leading-relaxed">
+                  <svg class="shrink-0 mt-0.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={p.check} stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
                   {item}
                 </li>
               ))}
             </ul>
-            <div class="border-t border-slate-100 pt-4">
-              <a href={p.ctaHref} class={`block w-full text-center font-mono text-sm font-medium px-5 py-3 rounded-xl transition-colors mb-2 ${p.ctaStyle}`}>
-                {p.cta}
+            <div class="border-t border-slate-100 pt-5">
+              <a href={p.ctaHref} class={`flex items-center justify-center gap-1.5 w-full font-mono text-sm font-medium px-5 py-3 rounded-xl transition-colors mb-2.5 ${p.ctaStyle}`}>
+                {p.cta} <span aria-hidden="true">→</span>
               </a>
-              {p.nota && <p class="text-center text-[11px] text-slate-400 font-mono">{p.nota}</p>}
+              {p.nota && <p class="text-center text-[11px] text-slate-400 leading-relaxed font-mono">{p.nota}</p>}
             </div>
           </div>
         </div>
@@ -135,69 +134,86 @@ const diferencias = [
     </div>
   </section>
 
+  <!-- Por qué es diferente -->
+  <section class="py-14 border-b border-slate-200">
+    <span class="label block mb-6">POR QUÉ ES DIFERENTE</span>
+    <div class="grid sm:grid-cols-2 gap-4">
+      {diferencias.map((d, i) => (
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm card-hover hover:border-slate-300 transition-colors">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="font-mono text-[10px] text-emerald-500 font-bold">{String(i + 1).padStart(2, '0')}</span>
+            <p class="font-semibold text-slate-900 text-sm">{d.label}</p>
+          </div>
+          <p class="text-slate-500 text-sm leading-relaxed">{d.desc}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
   <!-- Metodología -->
-  <section class="py-12 border-b border-slate-200">
-    <div class="bg-slate-900 rounded-2xl overflow-hidden">
-      <div class="px-8 py-10">
+  <section class="py-14 border-b border-slate-200">
+    <div class="rounded-2xl overflow-hidden" style="background:linear-gradient(150deg,#0b1220 0%,#0f172a 60%,#071a12 100%)">
+      <div class="px-8 sm:px-10 py-11">
         <span class="font-mono text-[10px] tracking-widest uppercase text-emerald-400 block mb-4">METODOLOGÍA MOONKEY XN</span>
-        <h2 class="text-xl font-bold text-white mb-3">Sistema propio de formación modular.</h2>
-        <p class="text-slate-400 text-sm leading-relaxed mb-6 max-w-lg">
-          El Operator Path es un sistema de 3 Keys diseñado para llevar a cualquier profesional desde cero hasta operador IA autónomo. Cada nivel tiene módulos con entregables reales: no hay progreso sin construcción.
+        <h2 class="text-2xl font-bold text-white mb-3 tracking-tight">Un sistema propio, no un curso más.</h2>
+        <p class="text-slate-400 text-sm leading-relaxed mb-7 max-w-lg">
+          El Operator Path lleva a cualquier profesional desde cero hasta operador IA autónomo
+          en 3 Keys. Cada nivel tiene módulos con entregables reales: no hay progreso sin construcción.
         </p>
         <div class="grid sm:grid-cols-3 gap-px bg-white/[0.06] rounded-xl overflow-hidden mb-6">
-          {[
-            { key: 'KEY 1', label: '8 módulos', note: 'Foundations', color: 'text-emerald-400' },
-            { key: 'KEY 2', label: '10 módulos', note: 'Advanced', color: 'text-violet-400' },
-            { key: 'KEY 3', label: '8 módulos', note: 'Migration', color: 'text-amber-400' },
-          ].map(k => (
-            <div class="bg-slate-800/60 px-4 py-4 text-center">
-              <p class={`font-mono text-[10px] tracking-widest font-bold mb-1 ${k.color}`}>{k.key}</p>
-              <p class="text-white text-sm font-bold">{k.label}</p>
-              <p class="text-slate-500 text-[11px]">{k.note}</p>
+          {keys.map(k => (
+            <div class="bg-slate-800/60 px-5 py-5 text-center">
+              <p class={`font-mono text-[10px] tracking-widest font-bold mb-1.5 ${k.color}`}>{k.key}</p>
+              <p class="text-white text-base font-bold">{k.label}</p>
+              <p class="text-slate-500 text-[11px] mt-0.5">{k.note}</p>
             </div>
           ))}
         </div>
-        <p class="text-slate-500 text-xs font-mono max-w-lg">
-          Todos los contenidos, estructura y materiales son parte de la metodología MOONKEY XN. Un sistema en construcción activa.
+        <p class="text-slate-500 text-xs font-mono max-w-lg leading-relaxed">
+          Contenidos, estructura y materiales son parte de la metodología MOONKEY XN. Un sistema en construcción activa.
         </p>
       </div>
     </div>
   </section>
 
-  <!-- Acceso privado próximamente -->
-  <section class="py-12 border-b border-slate-200">
+  <!-- Acceso privado y pagos -->
+  <section class="py-14 border-b border-slate-200">
     <span class="label block mb-6">ACCESO PRIVADO Y PAGOS</span>
     <div class="bg-slate-50 border border-slate-200 rounded-2xl p-8">
-      <div class="flex items-start justify-between mb-3">
-        <h2 class="text-xl font-bold text-slate-900">Próximamente.</h2>
-        <span class="font-mono text-[10px] bg-slate-200 text-slate-500 px-2.5 py-1 rounded-lg uppercase tracking-widest">Fase 2</span>
+      <div class="flex items-start justify-between gap-4 mb-3">
+        <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Aún no hay precios.</h2>
+        <span class="font-mono text-[10px] bg-slate-200 text-slate-500 px-2.5 py-1 rounded-lg uppercase tracking-widest shrink-0">Fase 2</span>
       </div>
-      <p class="text-slate-600 text-sm leading-relaxed mb-4 max-w-lg">
-        MOONKEY LAB está preparada para evolucionar a acceso privado. Los pagos reales se implementarán en una fase posterior. Los participantes del programa piloto tendrán condiciones especiales.
+      <p class="text-slate-600 text-sm leading-relaxed mb-5 max-w-lg">
+        Los pagos llegan en una fase posterior. Quien participe en el piloto entra con condiciones
+        especiales — el objetivo ahora no es facturar, es encontrar a los primeros operadores excepcionales.
       </p>
       <div class="border-l-4 border-slate-300 pl-4">
         <p class="text-slate-400 text-xs leading-relaxed max-w-lg font-mono">
-          Playbooks avanzados, recursos de implementación y acceso directo al ecosistema estarán disponibles para suscriptores privados en la siguiente fase del programa.
+          Playbooks avanzados, recursos de implementación y acceso directo al ecosistema se abrirán
+          a suscriptores privados en la siguiente fase del programa.
         </p>
       </div>
     </div>
   </section>
 
   <!-- CTA final -->
-  <section class="py-12">
-    <div class="grid sm:grid-cols-3 gap-4">
-      <a href="/modulos" class="bg-emerald-50 border border-emerald-200 rounded-xl p-5 hover:bg-emerald-100 transition-colors text-center group">
-        <p class="font-semibold text-emerald-700 text-sm mb-1 group-hover:underline">Empezar gratis</p>
-        <p class="text-xs text-slate-500">Nivel 1 siempre disponible</p>
-      </a>
-      <a href="/soporte" class="bg-violet-50 border border-violet-200 rounded-xl p-5 hover:bg-violet-100 transition-colors text-center group">
-        <p class="font-semibold text-violet-700 text-sm mb-1 group-hover:underline">Solicitar acceso piloto</p>
-        <p class="text-xs text-slate-500">Contacto directo</p>
-      </a>
-      <a href="/onboarding" class="bg-amber-50 border border-amber-200 rounded-xl p-5 hover:bg-amber-100 transition-colors text-center group">
-        <p class="font-semibold text-amber-700 text-sm mb-1 group-hover:underline">Ver servicios de equipo</p>
-        <p class="text-xs text-slate-500">Implementación a medida</p>
-      </a>
+  <section class="py-14">
+    <span class="label block mb-6">POR DÓNDE EMPIEZAS</span>
+    <div class="grid sm:grid-cols-3 gap-3">
+      {[
+        { href: '/modulos',    t: 'Empezar gratis',         d: 'Nivel 1 siempre disponible', wrap: 'bg-emerald-50 border-emerald-200', title: 'text-emerald-700', arrow: 'text-emerald-400' },
+        { href: '/soporte',    t: 'Solicitar acceso piloto', d: 'Contacto directo',          wrap: 'bg-violet-50 border-violet-200',   title: 'text-violet-700',  arrow: 'text-violet-400'  },
+        { href: '/onboarding', t: 'Servicios de equipo',     d: 'Implementación a medida',    wrap: 'bg-amber-50 border-amber-200',     title: 'text-amber-700',   arrow: 'text-amber-400'   },
+      ].map(x => (
+        <a href={x.href} class={`group flex items-center justify-between gap-3 border rounded-2xl px-5 py-5 hover:shadow-sm transition-all card-hover ${x.wrap}`}>
+          <div>
+            <p class={`font-semibold text-sm mb-0.5 ${x.title}`}>{x.t}</p>
+            <p class="text-xs text-slate-500">{x.d}</p>
+          </div>
+          <span class={`font-mono shrink-0 group-hover:translate-x-0.5 transition-transform ${x.arrow}`}>→</span>
+        </a>
+      ))}
     </div>
   </section>
 

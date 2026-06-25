@@ -3,16 +3,17 @@ import tailwind from '@astrojs/tailwind';
 
 export default defineConfig({
   // Phase 0 i18n foundation — ES stays at root, EN under /en/.
-  // 'redirect' avoids request.headers access in static builds (rewrite triggers that).
-  // /en/* pages are generated as meta-refresh redirects to the ES root equivalent.
+  // 'rewrite' regenerates /en/* pages with EN locale context so t() calls produce EN content.
+  // Triggers a cosmetic Astro.request.headers warning in static builds — harmless, build passes.
   i18n: {
-    locales: ['es', 'en'],
+    locales: ['es', 'en', 'th', 'fr', 'it', 'ch'],
     defaultLocale: 'es',
     routing: {
       prefixDefaultLocale: false,
-      fallbackType: 'redirect',
+      fallbackType: 'rewrite',
     },
-    fallback: { en: 'es' },
+    // Any key missing in a locale's dictionary falls back to ES at render time.
+    fallback: { en: 'es', th: 'es', fr: 'es', it: 'es', ch: 'es' },
   },
   integrations: [tailwind()],
 });

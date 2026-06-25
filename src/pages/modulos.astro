@@ -5,18 +5,28 @@ import MiniGlossary from '../components/MiniGlossary.astro';
 import PromptBlock from '../components/PromptBlock.astro';
 import FlowDiagram from '../components/FlowDiagram.astro';
 import InsightBox from '../components/InsightBox.astro';
+import AnimalIcon from '../components/AnimalIcon.astro';
+import { resolveLocale, useTranslations } from '../i18n/utils';
+import type { Locale } from '../i18n/config';
 
-const toc = [
-  { id: 'modulo-0', label: 'Preparar contexto',    time: '15 min' },
-  { id: 'modulo-1', label: 'Entorno de trabajo',   time: '20 min' },
-  { id: 'modulo-2', label: 'Claude Code',          time: '20 min' },
-  { id: 'modulo-3', label: 'GitHub y seguridad',   time: '25 min' },
-  { id: 'modulo-4', label: 'CLAUDE.md y memoria',  time: '20 min' },
-  { id: 'modulo-5', label: 'Prompts operativos',   time: '20 min' },
-  { id: 'modulo-6', label: 'Automatizaciones',     time: '25 min' },
-  { id: 'modulo-7', label: 'Publicar y mejorar',   time: '20 min' },
-];
+const locale = resolveLocale(Astro.currentLocale, Astro.url.pathname);
+const t = useTranslations(locale);
 
+// Deep module bodies exist only for es/en/th. For other locales (fr/it/ch) the
+// page chrome is translated via t(), but the long curriculum content falls back
+// to English — far more readable for those audiences than Spanish.
+type ContentLocale = 'es' | 'en' | 'th';
+const cLocale: ContentLocale = (locale === 'es' || locale === 'th') ? locale : 'en';
+
+// ── helper: inline code HTML ──────────────────────────────────────────────────
+const C  = 'bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono';
+const CE = 'font-mono text-xs bg-rose-100 px-1 rounded';
+const B  = 'text-slate-700';
+const code  = (x: string) => `<code class="${C}">${x}</code>`;
+const codeE = (x: string) => `<code class="${CE}">${x}</code>`;
+const bold  = (x: string) => `<strong class="${B}">${x}</strong>`;
+
+// ── color map ─────────────────────────────────────────────────────────────────
 const mc = [
   { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-300', label: 'text-emerald-600', toc: 'text-emerald-700 bg-emerald-50' },
   { bg: 'bg-sky-50',     text: 'text-sky-700',     border: 'border-sky-300',     label: 'text-sky-600',     toc: 'text-sky-700 bg-sky-50'         },
@@ -28,71 +38,779 @@ const mc = [
   { bg: 'bg-indigo-50',  text: 'text-indigo-700',  border: 'border-indigo-300',  label: 'text-indigo-600',  toc: 'text-indigo-700 bg-indigo-50'   },
 ];
 
-const promptContexto = `Tengo historial de trabajo contigo en conversaciones previas.
+// ── module times (locale-invariant) ───────────────────────────────────────────
+const modTimes = ['15 min','20 min','20 min','25 min','20 min','20 min','25 min','20 min'];
 
-Extrae un resumen estructurado con estos bloques:
-- Nombre de mi proyecto o área de trabajo principal
-- Herramientas que uso habitualmente
-- Mis objetivos actuales
-- Mi estilo de trabajo preferido con IA
-- Lo que NO quiero que hagas cuando trabajamos juntos
-- Cualquier regla de trabajo que hayamos establecido juntos
+// ── insight box label overrides ───────────────────────────────────────────────
+const insightLabels: Record<Locale, { protip: string; error: string; remember: string; insight: string }> = {
+  es: { protip: 'PRO TIP',   error: 'ERROR COMÚN',              remember: 'RECUERDA', insight: 'INSIGHT' },
+  en: { protip: 'PRO TIP',   error: 'COMMON MISTAKE',           remember: 'REMEMBER', insight: 'INSIGHT' },
+  th: { protip: 'เคล็ดลับ', error: 'ข้อผิดพลาดที่พบบ่อย', remember: 'จำไว้',     insight: 'ข้อมูลเชิงลึก' },
+};
+const IL = insightLabels[cLocale];
 
-Formato: Markdown. Máximo 30 líneas. Sin decoración ni relleno.`;
+// ── prompts ───────────────────────────────────────────────────────────────────
+const prompts: Record<'contexto'|'documentar'|'claudeMd'|'auditoria', Record<Locale, string>> = {
+  contexto: {
+    es: `Tengo historial de trabajo contigo en conversaciones previas.\n\nExtrae un resumen estructurado con estos bloques:\n- Nombre de mi proyecto o área de trabajo principal\n- Herramientas que uso habitualmente\n- Mis objetivos actuales\n- Mi estilo de trabajo preferido con IA\n- Lo que NO quiero que hagas cuando trabajamos juntos\n- Cualquier regla de trabajo que hayamos establecido juntos\n\nFormato: Markdown. Máximo 30 líneas. Sin decoración ni relleno.`,
+    en: `I have work history with you in previous conversations.\n\nExtract a structured summary with these blocks:\n- Name of my project or main work area\n- Tools I regularly use\n- My current objectives\n- My preferred working style with AI\n- What I DON'T want you to do when we work together\n- Any working rules we've established together\n\nFormat: Markdown. Maximum 30 lines. No decoration or filler.`,
+    th: `ฉันมีประวัติการทำงานกับคุณในการสนทนาก่อนหน้า\n\nดึงสรุปที่มีโครงสร้างพร้อม sections เหล่านี้:\n- ชื่อโปรเจกต์หรือพื้นที่งานหลักของฉัน\n- เครื่องมือที่ฉันใช้เป็นประจำ\n- เป้าหมายปัจจุบันของฉัน\n- สไตล์การทำงานกับ AI ที่ฉันชอบ\n- สิ่งที่ฉันไม่ต้องการให้คุณทำเมื่อเราทำงานร่วมกัน\n- กฎการทำงานที่เราตกลงกันไว้\n\nFormat: Markdown ไม่เกิน 30 บรรทัด ไม่มีตกแต่งหรือ filler`,
+  },
+  documentar: {
+    es: `Actúa como redactor de documentación técnica.\n\nAnaliza este proyecto y crea un README.md que incluya:\n- Qué hace este proyecto en una sola línea\n- Por qué existe\n- Cómo instalarlo y ejecutarlo\n- Estructura de archivos y carpetas relevante\n- Próximos pasos o cómo contribuir\n\nTono: claro y directo. Sin lenguaje innecesariamente técnico.`,
+    en: `Act as a technical documentation writer.\n\nAnalyze this project and create a README.md that includes:\n- What this project does in a single line\n- Why it exists\n- How to install and run it\n- Relevant file and folder structure\n- Next steps or how to contribute\n\nTone: clear and direct. No unnecessarily technical language.`,
+    th: `ทำตัวเป็นนักเขียนเอกสารทางเทคนิค\n\nวิเคราะห์โปรเจกต์นี้และสร้าง README.md ที่รวมถึง:\n- สิ่งที่โปรเจกต์นี้ทำในหนึ่งบรรทัด\n- เหตุผลที่มีอยู่\n- วิธีติดตั้งและเรียกใช้\n- โครงสร้างไฟล์และโฟลเดอร์ที่เกี่ยวข้อง\n- ขั้นตอนต่อไปหรือวิธีมีส่วนร่วม\n\nโทน: ชัดเจนและตรงไปตรงมา ไม่ใช้ภาษาเทคนิคโดยไม่จำเป็น`,
+  },
+  claudeMd: {
+    es: `Actúa como arquitecto de proyectos.\n\nCrea un CLAUDE.md para este proyecto con:\n- Descripción y objetivo principal\n- Stack técnico utilizado\n- Convenciones de estilo o código\n- Lo que NO debes hacer en este proyecto\n- Cómo añadir módulos o nuevas secciones\n- Tono y voz del proyecto si aplica\n\nSé conciso. Sin relleno. Máximo 40 líneas.`,
+    en: `Act as a project architect.\n\nCreate a CLAUDE.md for this project with:\n- Description and main objective\n- Technical stack used\n- Style or code conventions\n- What you should NOT do in this project\n- How to add modules or new sections\n- Project tone and voice if applicable\n\nBe concise. No filler. Maximum 40 lines.`,
+    th: `ทำตัวเป็น architect โปรเจกต์\n\nสร้าง CLAUDE.md สำหรับโปรเจกต์นี้พร้อม:\n- คำอธิบายและเป้าหมายหลัก\n- tech stack ที่ใช้\n- convention ของ style หรือโค้ด\n- สิ่งที่ไม่ควรทำในโปรเจกต์นี้\n- วิธีเพิ่ม module หรือ section ใหม่\n- โทนและเสียงของโปรเจกต์ถ้ามี\n\nกระชับ ไม่มี filler ไม่เกิน 40 บรรทัด`,
+  },
+  auditoria: {
+    es: `Actúa como analista de flujos de trabajo.\n\nAnaliza esta tarea repetitiva: [describe la tarea en detalle]\n\nResponde:\n1. Pasos que la componen, desglosados sin omitir ninguno\n2. Qué pasos son automatizables y cuáles no, con justificación\n3. Qué herramienta resolvería cada parte automatizable\n4. Qué partes requieren supervisión humana obligatoria\n5. Estimación de tiempo ahorrado si se implementara la automatización\n\nSé específico. No generalices.`,
+    en: `Act as a workflow analyst.\n\nAnalyze this repetitive task: [describe the task in detail]\n\nAnswer:\n1. The steps that compose it, broken down without omitting any\n2. Which steps are automatable and which are not, with justification\n3. What tool would solve each automatable part\n4. Which parts require mandatory human supervision\n5. Estimated time saved if the automation were implemented\n\nBe specific. Don't generalize.`,
+    th: `ทำตัวเป็นนักวิเคราะห์ workflow\n\nวิเคราะห์งานซ้ำๆ นี้: [อธิบายงานในรายละเอียด]\n\nตอบ:\n1. ขั้นตอนที่ประกอบขึ้น แยกออกมาโดยไม่ข้ามขั้นตอนใด\n2. ขั้นตอนไหน automate ได้และไม่ได้ พร้อมเหตุผล\n3. เครื่องมืออะไรที่แก้ปัญหาส่วนที่ automate ได้แต่ละส่วน\n4. ส่วนไหนที่ต้องการการดูแลจากมนุษย์อย่างบังคับ\n5. เวลาที่ประมาณว่าจะประหยัดได้ถ้านำ automation ไปใช้\n\nระบุให้ชัดเจน อย่า generalize`,
+  },
+};
+const P = (k: 'contexto'|'documentar'|'claudeMd'|'auditoria') => prompts[k][cLocale];
 
-const promptDocumentar = `Actúa como redactor de documentación técnica.
+// ── flow diagram nodes ─────────────────────────────────────────────────────────
+type FlowNode = { label: string; sub: string };
+const flowNodes: Record<Locale, FlowNode[]> = {
+  es: [
+    { label: 'TÚ',                                              sub: 'Operador con contexto y objetivos' },
+    { label: 'Claude Code',                                     sub: 'IA en tu entorno local' },
+    { label: 'CLAUDE.md + contexto + prompts',                  sub: 'Las instrucciones que guían el trabajo' },
+    { label: 'GitHub + archivos + automatizaciones',            sub: 'Donde vive y se versiona el trabajo' },
+    { label: 'Output: páginas, sistemas, documentación, workflows', sub: 'El resultado concreto y entregable' },
+  ],
+  en: [
+    { label: 'YOU',                                             sub: 'Operator with context and objectives' },
+    { label: 'Claude Code',                                     sub: 'AI in your local environment' },
+    { label: 'CLAUDE.md + context + prompts',                   sub: 'The instructions that guide the work' },
+    { label: 'GitHub + files + automations',                    sub: 'Where work lives and is versioned' },
+    { label: 'Output: pages, systems, documentation, workflows',sub: 'The concrete, deliverable result' },
+  ],
+  th: [
+    { label: 'คุณ',                                             sub: 'Operator พร้อม context และเป้าหมาย' },
+    { label: 'Claude Code',                                     sub: 'AI ในสภาพแวดล้อม local ของคุณ' },
+    { label: 'CLAUDE.md + context + prompts',                   sub: 'คำสั่งที่ guide การทำงาน' },
+    { label: 'GitHub + ไฟล์ + automation',                     sub: 'ที่อยู่และ version ของงาน' },
+    { label: 'Output: เว็บ, ระบบ, เอกสาร, workflow',           sub: 'ผลลัพธ์ที่จับต้องได้และส่งมอบได้' },
+  ],
+};
+const fNodes = flowNodes[cLocale];
 
-Analiza este proyecto y crea un README.md que incluya:
-- Qué hace este proyecto en una sola línea
-- Por qué existe
-- Cómo instalarlo y ejecutarlo
-- Estructura de archivos y carpetas relevante
-- Próximos pasos o cómo contribuir
+// ── module content ─────────────────────────────────────────────────────────────
+type ModData = {
+  title: string;
+  completion: string;
+  desc: string;
+  why: string;
+  insightType?: 'protip'|'insight'|'error'|'remember';
+  insightHtml?: string;
+  promptKey?: 'contexto'|'documentar'|'claudeMd'|'auditoria';
+  promptTitle?: string;
+  exer: {
+    objetivo: string;
+    antesDeEmpezar?: string;
+    resultado: string;
+    errorComun: string;
+    comoSaberBien?: string;
+  };
+  steps: string[];
+  deliverable: string;
+  deliverableCheck: string;
+};
 
-Tono: claro y directo. Sin lenguaje innecesariamente técnico.`;
+const MODS: Record<Locale, ModData[]> = {
+  es: [
+    // M0
+    {
+      title: 'Preparar contexto',
+      completion: 'Tienes un documento con tu contexto operativo listo para darle a Claude al inicio de cualquier proyecto.',
+      desc: 'Claude no tiene memoria entre sesiones. Sin contexto, trabaja de forma genérica. Con contexto, trabaja de forma precisa. Este módulo te enseña a crear ese contexto antes de empezar cualquier tarea.',
+      why: 'La mayoría de outputs mediocres de IA no vienen de la herramienta, vienen de la falta de contexto. Un documento bien escrito te ahorra media hora de correcciones en cada sesión.',
+      insightType: 'protip',
+      insightHtml: 'Escribe el contexto como si le explicaras tu trabajo a un contratista experto pero recién llegado. Denso, preciso, sin tutoriales. Una línea por punto. Si supera 30 líneas, recorta.',
+      promptKey: 'contexto',
+      promptTitle: 'Extraer contexto operativo de conversaciones previas',
+      exer: {
+        objetivo: 'Crear un documento personal de contexto operativo que puedas darle a Claude al inicio de cualquier proyecto.',
+        antesDeEmpezar: 'Abre VS Code o cualquier editor. No necesitas instalar nada para este módulo.',
+        resultado: `Un archivo ${code('mi-contexto.md')} de 20–30 líneas con información densa y útil sobre ti y tu trabajo.`,
+        errorComun: 'Escribir demasiado. El contexto debe ser preciso, no exhaustivo. Si pasa de 30 líneas, recorta.',
+        comoSaberBien: 'Puedes darle el archivo a Claude en una nueva sesión y él sabe cómo trabajar contigo sin que tengas que explicar nada básico.',
+      },
+      steps: [
+        `Crea un archivo llamado ${code('mi-contexto.md')} en una carpeta de tu elección.`,
+        `Escribe estas secciones: ${bold('Quién soy')}, ${bold('Proyectos activos')}, ${bold('Herramientas que uso')}, ${bold('Cómo prefiero trabajar')}, ${bold('Lo que NO quiero que Claude haga')}.`,
+        'Sé concreto. Una línea por punto. Sin párrafos innecesarios.',
+        `Si tienes historial en Claude.ai, usa el prompt de arriba para extraer el contexto automáticamente.`,
+      ],
+      deliverable: code('mi-contexto.md'),
+      deliverableCheck: 'Claude entiende tu trabajo sin explicaciones repetidas',
+    },
+    // M1
+    {
+      title: 'Entorno de trabajo',
+      completion: 'Terminal abierta, carpeta de práctica creada y VS Code funcionando con tu primer archivo.',
+      desc: 'No puedes operar sistemas digitales sin conocer el entorno donde viven. La terminal es el cockpit desde donde controlas todo. VS Code es donde editas y revisas. Este módulo te da las herramientas mínimas para empezar.',
+      why: 'Muchos principiantes evitan la terminal durante meses. Es el error más caro que puedes cometer. Todo lo que harás en los siguientes módulos requiere moverse por ella con soltura básica.',
+      exer: {
+        objetivo: 'Abrir la terminal, crear una carpeta de práctica y abrir el entorno de trabajo en VS Code.',
+        antesDeEmpezar: 'Descarga e instala VS Code desde code.visualstudio.com si todavía no lo tienes.',
+        resultado: `VS Code abierto con la carpeta ${code('operador-practica')} y el archivo ${code('README.md')} visible en el explorador lateral.`,
+        errorComun: `Usar nombres de carpetas con espacios. Evítalos: usa guiones en lugar de espacios (${code('operador-practica')}, no ${code('operador practica')}).`,
+        comoSaberBien: `Ves el archivo ${code('README.md')} en el panel izquierdo de VS Code y puedes editarlo.`,
+      },
+      steps: [
+        `Abre la terminal. Mac: ${code('Cmd+Espacio')} → "Terminal". Windows: tecla Windows → "PowerShell".`,
+        `Ejecuta ${code('mkdir operador-practica')} para crear tu carpeta de práctica.`,
+        `Ejecuta ${code('cd operador-practica')} para entrar en ella.`,
+        `Ejecuta ${code('touch README.md')} (Mac/Linux) o ${code('ni README.md')} (Windows) para crear un archivo.`,
+        `Ejecuta ${code('code .')} para abrir la carpeta en VS Code.`,
+      ],
+      deliverable: code('operador-practica/README.md'),
+      deliverableCheck: 'Sabes crear carpetas y archivos desde la terminal',
+    },
+    // M2
+    {
+      title: 'Claude Code',
+      completion: 'Claude Code instalado y usado para generar documentación real dentro de tu proyecto.',
+      desc: 'Claude Code no es un chatbot. Es un asistente que trabaja dentro de tu proyecto: lee archivos, escribe código, ejecuta acciones y propone soluciones en contexto. Sabe lo que hay en tu carpeta. Eso cambia todo.',
+      why: 'Usar Claude desde un chat web y usarlo desde Claude Code son dos experiencias completamente distintas. Uno responde preguntas. El otro ejecuta trabajo dentro de tu proyecto.',
+      insightType: 'protip',
+      insightHtml: 'Claude Code lee tu carpeta real. Cuando le pides algo, sabe qué archivos existen, qué hay dentro y qué ha cambiado. Eso cambia completamente lo que puedes pedirle y cómo responde.',
+      promptKey: 'documentar',
+      promptTitle: 'Pedir a Claude que documente tu proyecto',
+      exer: {
+        objetivo: 'Instalar Claude Code y completar tu primera tarea real: generar documentación para tu proyecto.',
+        antesDeEmpezar: `Necesitas Node.js instalado. Compruébalo con: ${code('node --version')}. Si no aparece un número, descárgalo en nodejs.org.`,
+        resultado: `Un ${code('README.md')} con contenido generado por Claude y revisado por ti. El archivo tiene sentido y no contiene información inventada.`,
+        errorComun: 'Aceptar el output de Claude sin leerlo. Claude puede inventar detalles que no existen. Siempre revisa antes de guardar.',
+        comoSaberBien: `El README describe con precisión qué es tu carpeta de práctica y no contiene ninguna afirmación falsa.`,
+      },
+      steps: [
+        `Instala Claude Code: ${code('npm install -g @anthropic-ai/claude-code')}`,
+        `Navega a tu carpeta: ${code('cd operador-practica')}`,
+        `Inicia Claude Code: ${code('claude')}`,
+        `Usa el prompt de arriba o escríbele directamente: "Crea un README.md que explique que esta es mi carpeta de práctica para aprender a operar sistemas IA."`,
+        'Lee el resultado completo. Edita cualquier cosa que no sea correcta o que no represente bien tu proyecto.',
+      ],
+      deliverable: `${code('README.md')} revisado y correcto`,
+      deliverableCheck: 'Claude Code instalado y funcionando en tu proyecto',
+    },
+    // M3
+    {
+      title: 'GitHub y seguridad',
+      completion: 'Primer repositorio subido a GitHub con commits claros y .gitignore configurado para no exponer información sensible.',
+      desc: 'Git registra cada cambio con un mensaje. GitHub guarda esos registros en la nube. Sin Git, tu trabajo no tiene historial y no puede desplegarse fácilmente. Sin .gitignore, puedes subir claves API o contraseñas por accidente.',
+      why: 'Git no es solo para programadores. Es para cualquiera que quiera no perder trabajo, colaborar con otros o publicar proyectos en internet. La seguridad del .gitignore no es opcional: una clave API filtrada en GitHub puede generar facturas de cientos de euros en horas.',
+      insightType: 'error',
+      insightHtml: `Revisa siempre ${codeE('git status')} antes de hacer ${codeE('git add .')} Si aparece un archivo ${codeE('.env')} o con credenciales, crea el .gitignore primero. Una clave API en un repo público puede generar deuda en minutos.`,
+      exer: {
+        objetivo: 'Inicializar Git en tu proyecto, hacer un primer commit seguro y subir el repo a GitHub.',
+        antesDeEmpezar: 'Crea una cuenta gratuita en github.com si todavía no tienes una.',
+        resultado: `Tu carpeta ${code('operador-practica')} visible en github.com con el README y al menos un commit con mensaje claro.`,
+        errorComun: `Hacer el primer commit sin tener .gitignore. Si subes un ${code('.env')} con claves API antes de añadir el .gitignore, esas claves quedan en el historial aunque luego las borres.`,
+        comoSaberBien: `Abres la URL del repo en GitHub desde otro navegador y ves tus archivos sin ningún archivo ${code('.env')} o de credenciales.`,
+      },
+      steps: [
+        `Dentro de ${code('operador-practica')}, ejecuta ${code('git init')}`,
+        `Crea un archivo ${code('.gitignore')} y añade estas líneas: ${code('.DS_Store')}, ${code('node_modules/')}, ${code('.env')}`,
+        `Ejecuta ${code('git add .')} y luego ${code('git commit -m "inicio: carpeta de práctica de operador IA"')}`,
+        `En github.com, crea un nuevo repo vacío llamado ${code('operador-practica')}. Copia la URL.`,
+        `Ejecuta ${code('git remote add origin TU_URL')} y luego ${code('git push -u origin main')}`,
+      ],
+      deliverable: 'Repo público en GitHub con al menos 1 commit',
+      deliverableCheck: 'Tu trabajo está en la nube con historial de versiones',
+    },
+    // M4
+    {
+      title: 'CLAUDE.md y memoria',
+      completion: 'Un archivo CLAUDE.md en tu proyecto que le da contexto persistente a Claude sin que tengas que repetirlo en cada sesión.',
+      desc: 'Claude no recuerda entre sesiones, pero puede leer archivos. Un CLAUDE.md bien escrito es el manual de instrucciones de tu proyecto. Claude lo lee al iniciar y sabe exactamente cómo comportarse: qué hacer, qué evitar, cómo hablar.',
+      why: 'Sin CLAUDE.md, cada sesión empieza de cero. Con CLAUDE.md, cada sesión empieza alineada con tus objetivos, tu estilo y tus reglas. La diferencia se acumula en horas ahorradas.',
+      insightType: 'remember',
+      insightHtml: 'El primer CLAUDE.md no tiene que ser perfecto. Escríbelo y empieza a usarlo. Claude te dirá (implícitamente, en sus respuestas) qué falta. Se mejora sesión a sesión, no en una tarde.',
+      promptKey: 'claudeMd',
+      promptTitle: 'Generar un CLAUDE.md para tu proyecto',
+      exer: {
+        objetivo: `Crear un CLAUDE.md para ${code('operador-practica')} con objetivo, stack, estilo y restricciones.`,
+        antesDeEmpezar: 'Piensa en 3 cosas que quieres que Claude sepa de este proyecto antes de empezar a trabajar en él.',
+        resultado: `Un CLAUDE.md de 20–40 líneas con reglas claras y contexto útil. En la próxima sesión, Claude lee el archivo y ya sabe cómo trabajar.`,
+        errorComun: `Escribir reglas contradictorias o demasiado generales como "sé útil". Las reglas deben ser específicas: "no añadas dependencias sin justificación", "usa siempre español".`,
+        comoSaberBien: 'Abres una nueva sesión de Claude Code en la misma carpeta y, sin explicar nada, él ya sabe qué es el proyecto y cómo trabajar en él.',
+      },
+      steps: [
+        `Abre ${code('operador-practica')} en VS Code.`,
+        `Crea un archivo ${code('CLAUDE.md')} en la raíz del proyecto.`,
+        'Usa el prompt de arriba en Claude para que te ayude a completarlo.',
+        'Revisa el resultado. Ajusta lo que no encaje con tu proyecto real. Elimina lo que sea genérico.',
+        `Haz commit: ${code('git add CLAUDE.md && git commit -m "añadir CLAUDE.md"')}`,
+      ],
+      deliverable: `${code('CLAUDE.md')} con commit`,
+      deliverableCheck: 'Claude trabaja con contexto de proyecto sin repeticiones',
+    },
+    // M5
+    {
+      title: 'Prompts operativos',
+      completion: 'Sabes estructurar peticiones que producen trabajo directamente usable, no respuestas genéricas que hay que reescribir.',
+      desc: 'Un prompt genérico produce resultados genéricos. Un prompt operativo tiene rol, contexto, estructura y límites. La diferencia puede ser media hora de trabajo extra en correcciones o un entregable que usas tal cual.',
+      why: 'La mayoría de la gente usa la IA como si fuera un buscador. La IA no es un buscador. Es un colaborador que necesita briefing. Sin briefing, produce trabajo genérico. Con briefing, produce trabajo específico.',
+      insightType: 'protip',
+      insightHtml: `Estructura mínima de un prompt operativo: ${bold('ROL')} (quién es Claude para esta tarea) + ${bold('TAREA')} (qué exactamente) + ${bold('FORMATO')} (cómo quieres el output) + ${bold('LÍMITE')} (máximo X líneas, sin Y, etc.). Cuatro elementos. Todo lo demás es optativo.`,
+      promptKey: 'auditoria',
+      promptTitle: 'Auditar una tarea repetitiva y mapear su automatización',
+      exer: {
+        objetivo: 'Transformar una petición vaga en un prompt operativo y comparar los resultados lado a lado.',
+        resultado: 'Un prompt operativo escrito por ti que produce un output que usarías directamente, sin edición significativa.',
+        errorComun: 'Añadir contexto que no es relevante para la tarea. El contexto debe ser denso y pertinente, no extenso.',
+        comoSaberBien: 'El output del prompt operativo no necesita reescritura para usarse. El output del prompt vago sí la necesita.',
+      },
+      steps: [
+        'Piensa en una tarea concreta que quieras delegar a Claude. Por ejemplo: redactar un email, resumir un documento, crear una lista de tareas.',
+        'Escribe la versión vaga en una línea: "Escríbeme un email para un cliente", "Resume este texto".',
+        'Ahora reescríbela añadiendo: rol de Claude, quién es el receptor, tono esperado, formato del output, extensión máxima.',
+        'Envía ambas versiones a Claude y compara los resultados en paralelo.',
+        '¿Cuál usarías sin editar? ¿Qué parte del contexto fue la que más cambió el output?',
+      ],
+      deliverable: 'Un prompt operativo propio que produce resultado usable',
+      deliverableCheck: 'Distingues entre petición vaga y petición estructurada',
+    },
+    // M6
+    {
+      title: 'Automatizaciones',
+      completion: 'Has identificado al menos una tarea de tu trabajo que puede sistematizarse y tienes un mapa de cómo hacerlo.',
+      desc: 'Automatizar no significa programar. Significa pensar en pasos: qué hago, qué parte puede hacer una máquina, qué necesito supervisar. Este módulo es sobre diseñar antes de construir.',
+      why: 'La mayoría de la gente automatiza antes de entender qué está automatizando. El resultado son sistemas frágiles que se rompen cuando algo cambia. Mapear primero ahorra horas después.',
+      insightType: 'insight',
+      insightHtml: 'Automatizar no elimina trabajo: lo redistribuye. Menos ejecución repetitiva, más diseño y supervisión. El operador que no entiende qué hay detrás no puede supervisarlo ni mejorarlo cuando falla.',
+      exer: {
+        objetivo: 'Mapear una tarea repetitiva propia y detectar qué partes son automatizables, cuáles necesitan supervisión y cuáles requieren criterio humano.',
+        resultado: 'Un documento con el mapa de la tarea, etiquetado por tipo (automatizable / supervisado / humano) y una propuesta de flujo mejorado.',
+        errorComun: 'Intentar automatizar todo de golpe. Empieza por el paso más repetitivo y menos crítico. Los sistemas pequeños que funcionan valen más que los grandes que no terminan.',
+        comoSaberBien: 'Puedes describir el sistema en 5 líneas y explicarle a alguien cómo funcionaría sin usar palabras técnicas.',
+      },
+      steps: [
+        'Elige una tarea que hagas al menos una vez por semana. Cuanto más concreta, mejor.',
+        'Escribe todos los pasos de esa tarea, en orden, sin omitir ninguno. Incluye incluso los más pequeños.',
+        `Para cada paso, pon una etiqueta: ${code('automatizable')}, ${code('supervisado')}, o ${code('humano')}.`,
+        'Identifica el paso que más tiempo o energía mental te consume.',
+        '¿Cómo sería ese paso si lo ejecutara Claude? ¿Qué información necesitaría? ¿Qué produciría? ¿Cómo lo revisarías?',
+      ],
+      deliverable: 'Mapa de tarea con etiquetas y propuesta de automatización',
+      deliverableCheck: 'Distingues tarea, proceso, sistema y automatización',
+    },
+    // M7
+    {
+      title: 'Publicar y mejorar',
+      completion: 'Algo publicado con una URL real, accesible desde cualquier navegador, y una lista de mejoras documentadas para la siguiente versión.',
+      desc: 'Publicar cierra el ciclo. Convierte trabajo privado en trabajo real. Aprende a desplegar algo pequeño en menos de 10 minutos. Después escribe qué cambiarías: así empieza la iteración.',
+      why: 'Los proyectos que no se publican no reciben feedback, no mejoran y eventualmente se abandonan. Lo imperfecto que funciona y existe siempre vale más que lo perfecto que no llega a salir.',
+      insightType: 'remember',
+      insightHtml: 'Publica en versión 0.1, no en versión 1.0. La primera URL existe para que exista. El feedback real empieza cuando algo está publicado. La iteración, también.',
+      exer: {
+        objetivo: `Desplegar ${code('operador-practica')} en Cloudflare Pages y documentar mejoras para v2.`,
+        antesDeEmpezar: 'Asegúrate de que el proyecto tiene al menos un archivo de contenido y está subido a GitHub.',
+        resultado: `URL pública activa que carga desde cualquier navegador, más un archivo ${code('mejoras-v2.md')} con al menos 3 puntos concretos.`,
+        errorComun: 'Esperar a que esté "perfecto" para publicar. No existe el perfecto antes de publicar. Existe el imperfecto que recibe feedback y mejora.',
+        comoSaberBien: `La URL carga en un navegador que no es el tuyo. El archivo ${code('mejoras-v2.md')} tiene puntos concretos, no vagos.`,
+      },
+      steps: [
+        `Entra en ${code('dash.cloudflare.com')} → Workers & Pages → Create → Pages.`,
+        `Conecta tu cuenta de GitHub y selecciona el repo ${code('operador-practica')}.`,
+        `Si es HTML estático: deja Build command vacío, output directory ${code('/')}. Si es Astro: Build command ${code('npm run build')}, output ${code('dist')}.`,
+        'Haz click en Save and Deploy. En ~60 segundos tienes una URL pública.',
+        `Crea ${code('mejoras-v2.md')} con al menos 3 cosas concretas que cambiarías o añadirías.`,
+      ],
+      deliverable: `URL pública activa + ${code('mejoras-v2.md')}`,
+      deliverableCheck: 'Has cerrado el ciclo: construir → documentar → publicar → mejorar',
+    },
+  ],
 
-const promptClaudeMd = `Actúa como arquitecto de proyectos.
+  en: [
+    // M0
+    {
+      title: 'Prepare context',
+      completion: 'You have a document with your operational context ready to give Claude at the start of any project.',
+      desc: 'Claude has no memory between sessions. Without context, it works generically. With context, it works precisely. This module teaches you to create that context before starting any task.',
+      why: 'Most mediocre AI outputs don\'t come from the tool — they come from lack of context. A well-written document saves half an hour of corrections per session.',
+      insightType: 'protip',
+      insightHtml: 'Write context as if you were explaining your work to an expert contractor who just arrived. Dense, precise, no tutorials. One line per point. If it exceeds 30 lines, trim it.',
+      promptKey: 'contexto',
+      promptTitle: 'Extract operational context from previous conversations',
+      exer: {
+        objetivo: 'Create a personal operational context document you can give Claude at the start of any project.',
+        antesDeEmpezar: 'Open VS Code or any editor. No installation needed for this module.',
+        resultado: `A ${code('mi-contexto.md')} file of 20–30 lines with dense, useful information about you and your work.`,
+        errorComun: 'Writing too much. Context must be precise, not exhaustive. If it exceeds 30 lines, trim it.',
+        comoSaberBien: 'You can give the file to Claude in a new session and it knows how to work with you without needing basic explanations.',
+      },
+      steps: [
+        `Create a file called ${code('mi-contexto.md')} in a folder of your choice.`,
+        `Write these sections: ${bold('Who I am')}, ${bold('Active projects')}, ${bold('Tools I use')}, ${bold('How I prefer to work')}, ${bold('What I DON\'T want Claude to do')}.`,
+        'Be specific. One line per point. No unnecessary paragraphs.',
+        'If you have history on Claude.ai, use the prompt above to extract the context automatically.',
+      ],
+      deliverable: code('mi-contexto.md'),
+      deliverableCheck: 'Claude understands your work without repeated explanations',
+    },
+    // M1
+    {
+      title: 'Work environment',
+      completion: 'Terminal open, practice folder created and VS Code running with your first file.',
+      desc: "You can't operate digital systems without knowing the environment where they live. The terminal is the cockpit from which you control everything. VS Code is where you edit and review. This module gives you the minimum tools to get started.",
+      why: 'Many beginners avoid the terminal for months. It\'s the most expensive mistake you can make. Everything you\'ll do in the following modules requires moving through it with basic fluency.',
+      exer: {
+        objetivo: 'Open the terminal, create a practice folder and open the work environment in VS Code.',
+        antesDeEmpezar: 'Download and install VS Code from code.visualstudio.com if you don\'t have it yet.',
+        resultado: `VS Code open with the ${code('operador-practica')} folder and ${code('README.md')} visible in the side explorer.`,
+        errorComun: `Using folder names with spaces. Avoid them: use dashes instead of spaces (${code('operador-practica')}, not ${code('operador practica')}).`,
+        comoSaberBien: `You see the ${code('README.md')} file in VS Code's left panel and can edit it.`,
+      },
+      steps: [
+        `Open the terminal. Mac: ${code('Cmd+Space')} → "Terminal". Windows: Windows key → "PowerShell".`,
+        `Run ${code('mkdir operador-practica')} to create your practice folder.`,
+        `Run ${code('cd operador-practica')} to enter it.`,
+        `Run ${code('touch README.md')} (Mac/Linux) or ${code('ni README.md')} (Windows) to create a file.`,
+        `Run ${code('code .')} to open the folder in VS Code.`,
+      ],
+      deliverable: code('operador-practica/README.md'),
+      deliverableCheck: 'You know how to create folders and files from the terminal',
+    },
+    // M2
+    {
+      title: 'Claude Code',
+      completion: 'Claude Code installed and used to generate real documentation inside your project.',
+      desc: "Claude Code is not a chatbot. It's an assistant that works inside your project: reads files, writes code, executes actions and proposes solutions in context. It knows what's in your folder. That changes everything.",
+      why: 'Using Claude from a web chat and using it from Claude Code are two completely different experiences. One answers questions. The other executes work inside your project.',
+      insightType: 'protip',
+      insightHtml: "Claude Code reads your real folder. When you ask it something, it knows which files exist, what's inside them and what has changed. That completely changes what you can ask it and how it responds.",
+      promptKey: 'documentar',
+      promptTitle: 'Ask Claude to document your project',
+      exer: {
+        objetivo: 'Install Claude Code and complete your first real task: generate documentation for your project.',
+        antesDeEmpezar: `You need Node.js installed. Check with: ${code('node --version')}. If no number appears, download it at nodejs.org.`,
+        resultado: `A ${code('README.md')} with content generated by Claude and reviewed by you. The file makes sense and contains no invented information.`,
+        errorComun: "Accepting Claude's output without reading it. Claude can invent details that don't exist. Always review before saving.",
+        comoSaberBien: 'The README accurately describes what your practice folder is and contains no false statements.',
+      },
+      steps: [
+        `Install Claude Code: ${code('npm install -g @anthropic-ai/claude-code')}`,
+        `Navigate to your folder: ${code('cd operador-practica')}`,
+        `Start Claude Code: ${code('claude')}`,
+        'Use the prompt above or write directly: "Create a README.md explaining that this is my practice folder for learning to operate AI systems."',
+        'Read the full result. Edit anything that is incorrect or doesn\'t represent your project well.',
+      ],
+      deliverable: `${code('README.md')} reviewed and correct`,
+      deliverableCheck: 'Claude Code installed and working in your project',
+    },
+    // M3
+    {
+      title: 'GitHub and security',
+      completion: 'First repository uploaded to GitHub with clear commits and .gitignore configured to not expose sensitive information.',
+      desc: 'Git records every change with a message. GitHub stores those records in the cloud. Without Git, your work has no history and can\'t be deployed easily. Without .gitignore, you can accidentally upload API keys or passwords.',
+      why: 'Git is not just for programmers. It\'s for anyone who wants to not lose work, collaborate with others or publish projects on the internet. .gitignore security is not optional: an API key leaked on GitHub can generate bills of hundreds of euros in hours.',
+      insightType: 'error',
+      insightHtml: `Always check ${codeE('git status')} before running ${codeE('git add .')} If a ${codeE('.env')} file or credentials appear, create .gitignore first. An API key in a public repo can generate debt in minutes.`,
+      exer: {
+        objetivo: 'Initialize Git in your project, make a safe first commit and upload the repo to GitHub.',
+        antesDeEmpezar: 'Create a free account at github.com if you don\'t have one yet.',
+        resultado: `Your ${code('operador-practica')} folder visible on github.com with the README and at least one commit with a clear message.`,
+        errorComun: `Making the first commit without .gitignore. If you upload a ${code('.env')} with API keys before adding .gitignore, those keys remain in history even if you delete them later.`,
+        comoSaberBien: `You open the repo URL on GitHub from another browser and see your files with no ${code('.env')} or credential files.`,
+      },
+      steps: [
+        `Inside ${code('operador-practica')}, run ${code('git init')}`,
+        `Create a ${code('.gitignore')} file and add these lines: ${code('.DS_Store')}, ${code('node_modules/')}, ${code('.env')}`,
+        `Run ${code('git add .')} then ${code('git commit -m "init: operator practice folder"')}`,
+        `On github.com, create a new empty repo called ${code('operador-practica')}. Copy the URL.`,
+        `Run ${code('git remote add origin YOUR_URL')} then ${code('git push -u origin main')}`,
+      ],
+      deliverable: 'Public repo on GitHub with at least 1 commit',
+      deliverableCheck: 'Your work is in the cloud with version history',
+    },
+    // M4
+    {
+      title: 'CLAUDE.md and memory',
+      completion: 'A CLAUDE.md file in your project that gives Claude persistent context without you having to repeat it every session.',
+      desc: "Claude doesn't remember between sessions, but it can read files. A well-written CLAUDE.md is your project's instruction manual. Claude reads it at startup and knows exactly how to behave: what to do, what to avoid, how to speak.",
+      why: 'Without CLAUDE.md, every session starts from zero. With CLAUDE.md, every session starts aligned with your objectives, your style and your rules. The difference accumulates in hours saved.',
+      insightType: 'remember',
+      insightHtml: "The first CLAUDE.md doesn't have to be perfect. Write it and start using it. Claude will tell you (implicitly, through its responses) what's missing. It improves session by session, not in one afternoon.",
+      promptKey: 'claudeMd',
+      promptTitle: 'Generate a CLAUDE.md for your project',
+      exer: {
+        objetivo: `Create a CLAUDE.md for ${code('operador-practica')} with objective, stack, style and constraints.`,
+        antesDeEmpezar: 'Think of 3 things you want Claude to know about this project before starting to work on it.',
+        resultado: 'A CLAUDE.md of 20–40 lines with clear rules and useful context. In the next session, Claude reads the file and already knows how to work.',
+        errorComun: '"Be helpful". Rules must be specific: "don\'t add dependencies without justification", "always use English".',
+        comoSaberBien: 'You open a new Claude Code session in the same folder and, without explaining anything, it already knows what the project is and how to work on it.',
+      },
+      steps: [
+        `Open ${code('operador-practica')} in VS Code.`,
+        `Create a ${code('CLAUDE.md')} file in the project root.`,
+        'Use the prompt above in Claude to help fill it in.',
+        "Review the result. Adjust anything that doesn't fit your real project. Remove what is generic.",
+        `Commit: ${code('git add CLAUDE.md && git commit -m "add CLAUDE.md"')}`,
+      ],
+      deliverable: `${code('CLAUDE.md')} with commit`,
+      deliverableCheck: 'Claude works with project context without repetitions',
+    },
+    // M5
+    {
+      title: 'Operative prompts',
+      completion: 'You know how to structure requests that produce directly usable work, not generic responses that need rewriting.',
+      desc: 'A generic prompt produces generic results. An operative prompt has role, context, structure and limits. The difference can be half an hour of extra correction work or a deliverable you use as-is.',
+      why: "Most people use AI as if it were a search engine. AI is not a search engine. It's a collaborator that needs briefing. Without briefing, it produces generic work. With briefing, it produces specific work.",
+      insightType: 'protip',
+      insightHtml: `Minimum structure for an operative prompt: ${bold('ROLE')} (who Claude is for this task) + ${bold('TASK')} (what exactly) + ${bold('FORMAT')} (how you want the output) + ${bold('LIMIT')} (max X lines, no Y, etc.). Four elements. Everything else is optional.`,
+      promptKey: 'auditoria',
+      promptTitle: 'Audit a repetitive task and map its automation',
+      exer: {
+        objetivo: 'Transform a vague request into an operative prompt and compare the results side by side.',
+        resultado: 'An operative prompt written by you that produces output you would use directly, without significant editing.',
+        errorComun: "Adding context that isn't relevant to the task. Context must be dense and pertinent, not extensive.",
+        comoSaberBien: "The operative prompt's output doesn't need rewriting to be used. The vague prompt's output does.",
+      },
+      steps: [
+        'Think of a specific task you want to delegate to Claude. For example: drafting an email, summarizing a document, creating a to-do list.',
+        'Write the vague version in one line: "Write me an email for a client", "Summarize this text".',
+        'Now rewrite it adding: Claude\'s role, who the recipient is, expected tone, output format, maximum length.',
+        'Send both versions to Claude and compare the results side by side.',
+        'Which would you use without editing? Which part of the context changed the output most?',
+      ],
+      deliverable: 'Your own operative prompt that produces usable output',
+      deliverableCheck: 'You distinguish between vague and structured requests',
+    },
+    // M6
+    {
+      title: 'Automations',
+      completion: 'You have identified at least one task in your work that can be systematized and have a map of how to do it.',
+      desc: "Automating doesn't mean programming. It means thinking in steps: what do I do, what part can a machine do, what do I need to supervise. This module is about designing before building.",
+      why: "Most people automate before understanding what they're automating. The result is fragile systems that break when something changes. Mapping first saves hours later.",
+      insightType: 'insight',
+      insightHtml: "Automating doesn't eliminate work: it redistributes it. Less repetitive execution, more design and supervision. The operator who doesn't understand what's behind it can't supervise or improve it when it fails.",
+      exer: {
+        objetivo: 'Map one of your own repetitive tasks and detect which parts are automatable, which need supervision and which require human judgment.',
+        resultado: 'A document with the task map, labeled by type (automatable / supervised / human) and a proposed improved flow.',
+        errorComun: "Trying to automate everything at once. Start with the most repetitive, least critical step. Small systems that work are worth more than large ones that don't finish.",
+        comoSaberBien: "You can describe the system in 5 lines and explain to someone how it would work without using technical words.",
+      },
+      steps: [
+        'Choose a task you do at least once a week. The more specific, the better.',
+        'Write all the steps of that task, in order, without omitting any. Include even the smallest ones.',
+        `For each step, put a label: ${code('automatable')}, ${code('supervised')}, or ${code('human')}.`,
+        'Identify the step that consumes the most time or mental energy.',
+        'Design how that step would look if Claude executed it. What information would it need? What would it produce? How would you review it?',
+      ],
+      deliverable: 'Task map with labels and automation proposal',
+      deliverableCheck: 'You distinguish task, process, system and automation',
+    },
+    // M7
+    {
+      title: 'Publish and improve',
+      completion: 'Something published with a real URL, accessible from any browser, and a list of documented improvements for the next version.',
+      desc: 'Publishing closes the cycle. It turns private work into real work. Learn to deploy something small in under 10 minutes. Then write what you would change: that\'s how iteration starts.',
+      why: "Projects that don't get published don't receive feedback, don't improve and eventually get abandoned. The imperfect thing that works and exists is always worth more than the perfect thing that never ships.",
+      insightType: 'remember',
+      insightHtml: 'Publish at version 0.1, not 1.0. The first URL exists so that it exists. Real feedback starts when something is published. So does iteration.',
+      exer: {
+        objetivo: `Deploy ${code('operador-practica')} on Cloudflare Pages and document improvements for v2.`,
+        antesDeEmpezar: 'Make sure the project has at least one content file and is uploaded to GitHub.',
+        resultado: `Active public URL that loads from any browser, plus a ${code('mejoras-v2.md')} file with at least 3 concrete points.`,
+        errorComun: 'Waiting until it\'s "perfect" to publish. There is no perfect before publishing. There is the imperfect that receives feedback and improves.',
+        comoSaberBien: `The URL loads in a browser that isn't yours. The ${code('mejoras-v2.md')} file has specific, not vague, points.`,
+      },
+      steps: [
+        `Go to ${code('dash.cloudflare.com')} → Workers & Pages → Create → Pages.`,
+        `Connect your GitHub account and select the ${code('operador-practica')} repo.`,
+        `If static HTML: leave Build command empty, output directory ${code('/')}. If Astro: Build command ${code('npm run build')}, output ${code('dist')}.`,
+        'Click Save and Deploy. In ~60 seconds you have a public URL.',
+        `Create ${code('mejoras-v2.md')} with at least 3 concrete things you would change or add.`,
+      ],
+      deliverable: `Active public URL + ${code('mejoras-v2.md')}`,
+      deliverableCheck: 'You closed the cycle: build → document → publish → improve',
+    },
+  ],
 
-Crea un CLAUDE.md para este proyecto con:
-- Descripción y objetivo principal
-- Stack técnico utilizado
-- Convenciones de estilo o código
-- Lo que NO debes hacer en este proyecto
-- Cómo añadir módulos o nuevas secciones
-- Tono y voz del proyecto si aplica
+  th: [
+    // M0
+    {
+      title: 'เตรียม context',
+      completion: 'มี document บันทึก context การทำงานของคุณพร้อมให้ Claude ใช้ตั้งแต่เริ่มต้นทุกโปรเจกต์',
+      desc: 'Claude ไม่มีความจำระหว่าง session เมื่อไม่มี context จะทำงานแบบ generic เมื่อมี context จะทำงานได้แม่นยำ module นี้สอนวิธีสร้าง context ก่อนเริ่มทุกงาน',
+      why: 'ผลลัพธ์ mediocre ส่วนใหญ่ไม่ได้มาจากเครื่องมือ แต่มาจากการขาด context document ที่ดีประหยัดเวลาแก้ไขครึ่งชั่วโมงในแต่ละ session',
+      insightType: 'protip',
+      insightHtml: 'เขียน context ราวกับว่าคุณกำลังอธิบายงานให้ผู้รับจ้างที่เก่งแต่เพิ่งมาถึง หนาแน่น แม่นยำ ไม่มีการสอนพื้นฐาน หนึ่งบรรทัดต่อหนึ่งจุด ถ้าเกิน 30 บรรทัดให้ตัด',
+      promptKey: 'contexto',
+      promptTitle: 'ดึง context เชิงปฏิบัติจากการสนทนาก่อนหน้า',
+      exer: {
+        objetivo: 'สร้าง document context ส่วนตัวที่ให้ Claude ใช้ได้ในทุกโปรเจกต์',
+        antesDeEmpezar: 'เปิด VS Code หรือ editor อะไรก็ได้ module นี้ไม่ต้องติดตั้งอะไร',
+        resultado: `ไฟล์ ${code('mi-contexto.md')} ขนาด 20–30 บรรทัด พร้อมข้อมูลที่หนาแน่นและมีประโยชน์เกี่ยวกับตัวคุณและงาน`,
+        errorComun: 'เขียนมากเกินไป context ต้องแม่นยำ ไม่ใช่ครบถ้วน ถ้าเกิน 30 บรรทัดให้ตัด',
+        comoSaberBien: 'เปิด session ใหม่ของ Claude แล้ว Claude รู้วิธีทำงานกับคุณโดยไม่ต้องอธิบายอะไรพื้นฐาน',
+      },
+      steps: [
+        `สร้างไฟล์ชื่อ ${code('mi-contexto.md')} ในโฟลเดอร์ที่คุณเลือก`,
+        `เขียน sections เหล่านี้: ${bold('ฉันเป็นใคร')}, ${bold('โปรเจกต์ที่กำลังทำ')}, ${bold('เครื่องมือที่ใช้')}, ${bold('วิธีที่ชอบทำงาน')}, ${bold('สิ่งที่ไม่ต้องการให้ Claude ทำ')}`,
+        'เขียนให้กระชับ หนึ่งบรรทัดต่อหนึ่งจุด ไม่ต้องเป็นย่อหน้า',
+        'ถ้ามีประวัติใน Claude.ai ให้ใช้ prompt ด้านบนเพื่อดึง context ออกมาอัตโนมัติ',
+      ],
+      deliverable: code('mi-contexto.md'),
+      deliverableCheck: 'Claude เข้าใจงานของคุณโดยไม่ต้องอธิบายซ้ำ',
+    },
+    // M1
+    {
+      title: 'สภาพแวดล้อมการทำงาน',
+      completion: 'เปิด Terminal แล้ว สร้างโฟลเดอร์ฝึกหัดแล้ว และ VS Code ทำงานได้พร้อมไฟล์แรกของคุณ',
+      desc: 'คุณไม่สามารถ operate ระบบดิจิทัลได้โดยไม่รู้จัก environment ที่พวกมันอยู่ Terminal คือ cockpit ที่คุณควบคุมทุกอย่าง VS Code คือที่ที่คุณแก้ไขและตรวจสอบ module นี้ให้เครื่องมือขั้นต่ำที่จำเป็นในการเริ่มต้น',
+      why: 'หลายคนหลีกเลี่ยง Terminal เป็นเดือนๆ นั่นคือความผิดพลาดที่แพงที่สุดที่คุณทำได้ ทุกอย่างที่คุณจะทำใน module ต่อๆ ไปต้องใช้ Terminal ขั้นพื้นฐาน',
+      exer: {
+        objetivo: 'เปิด Terminal สร้างโฟลเดอร์ฝึกหัด และเปิด environment ทำงานใน VS Code',
+        antesDeEmpezar: 'ดาวน์โหลดและติดตั้ง VS Code จาก code.visualstudio.com ถ้ายังไม่มี',
+        resultado: `VS Code เปิดอยู่พร้อมโฟลเดอร์ ${code('operador-practica')} และไฟล์ ${code('README.md')} ที่มองเห็นใน explorer ด้านข้าง`,
+        errorComun: `ใช้ชื่อโฟลเดอร์ที่มีช่องว่าง ให้หลีกเลี่ยง: ใช้ขีดกลางแทนช่องว่าง (${code('operador-practica')} ไม่ใช่ ${code('operador practica')})`,
+        comoSaberBien: `เห็นไฟล์ ${code('README.md')} ใน panel ซ้ายของ VS Code และสามารถแก้ไขได้`,
+      },
+      steps: [
+        `เปิด Terminal: Mac: ${code('Cmd+Space')} → "Terminal" / Windows: Windows key → "PowerShell"`,
+        `รัน ${code('mkdir operador-practica')} เพื่อสร้างโฟลเดอร์ฝึกหัด`,
+        `รัน ${code('cd operador-practica')} เพื่อเข้าไปในโฟลเดอร์`,
+        `รัน ${code('touch README.md')} (Mac/Linux) หรือ ${code('ni README.md')} (Windows) เพื่อสร้างไฟล์`,
+        `รัน ${code('code .')} เพื่อเปิดโฟลเดอร์ใน VS Code`,
+      ],
+      deliverable: code('operador-practica/README.md'),
+      deliverableCheck: 'รู้วิธีสร้างโฟลเดอร์และไฟล์จาก Terminal',
+    },
+    // M2
+    {
+      title: 'Claude Code',
+      completion: 'ติดตั้ง Claude Code และใช้งานเพื่อสร้าง documentation จริงในโปรเจกต์ของคุณ',
+      desc: 'Claude Code ไม่ใช่ chatbot แต่เป็น assistant ที่ทำงานในโปรเจกต์ของคุณ: อ่านไฟล์ เขียนโค้ด ดำเนินการ และเสนอแนวทางแก้ไขตาม context มันรู้ว่าอะไรอยู่ในโฟลเดอร์ของคุณ นั่นเปลี่ยนทุกอย่าง',
+      why: 'การใช้ Claude จาก web chat กับการใช้จาก Claude Code เป็นสองประสบการณ์ที่ต่างกันสิ้นเชิง อันหนึ่งตอบคำถาม อีกอันดำเนิน work ในโปรเจกต์ของคุณ',
+      insightType: 'protip',
+      insightHtml: 'Claude Code อ่านโฟลเดอร์จริงของคุณ เมื่อคุณถามอะไร มันรู้ว่าไฟล์ไหนมีอยู่ ข้างในมีอะไร และอะไรที่เปลี่ยนไป นั่นเปลี่ยนสิ่งที่คุณขอได้และวิธีที่มันตอบโดยสิ้นเชิง',
+      promptKey: 'documentar',
+      promptTitle: 'ขอให้ Claude สร้าง document โปรเจกต์ของคุณ',
+      exer: {
+        objetivo: 'ติดตั้ง Claude Code และทำงานแรกจริง: สร้าง documentation สำหรับโปรเจกต์ของคุณ',
+        antesDeEmpezar: `ต้องติดตั้ง Node.js ตรวจสอบด้วย: ${code('node --version')} ถ้าไม่มีเลขให้ดาวน์โหลดที่ nodejs.org`,
+        resultado: `${code('README.md')} ที่มีเนื้อหาจาก Claude และตรวจสอบโดยคุณ ไฟล์สมเหตุสมผลและไม่มีข้อมูลที่แต่งขึ้น`,
+        errorComun: 'รับ output ของ Claude โดยไม่อ่าน Claude อาจแต่งรายละเอียดที่ไม่มีอยู่จริง ตรวจสอบเสมอก่อนบันทึก',
+        comoSaberBien: 'README อธิบายได้ถูกต้องว่าโฟลเดอร์ฝึกหัดของคุณคืออะไร และไม่มีข้อความที่เป็นเท็จ',
+      },
+      steps: [
+        `ติดตั้ง Claude Code: ${code('npm install -g @anthropic-ai/claude-code')}`,
+        `ไปที่โฟลเดอร์: ${code('cd operador-practica')}`,
+        `เริ่ม Claude Code: ${code('claude')}`,
+        'ใช้ prompt ด้านบน หรือพิมพ์ตรงๆ: "สร้าง README.md ที่อธิบายว่านี่คือโฟลเดอร์ฝึกหัดสำหรับเรียนรู้การ operate ระบบ AI"',
+        'อ่านผลลัพธ์ทั้งหมด แก้ไขสิ่งที่ไม่ถูกต้องหรือไม่ตรงกับโปรเจกต์จริงของคุณ',
+      ],
+      deliverable: `${code('README.md')} ตรวจสอบแล้วและถูกต้อง`,
+      deliverableCheck: 'ติดตั้ง Claude Code และทำงานในโปรเจกต์ของคุณได้',
+    },
+    // M3
+    {
+      title: 'GitHub และความปลอดภัย',
+      completion: 'repo แรกถูก upload ขึ้น GitHub พร้อม commit ที่ชัดเจนและตั้งค่า .gitignore เพื่อไม่เปิดเผยข้อมูลสำคัญ',
+      desc: 'Git บันทึกทุก change พร้อม message GitHub เก็บบันทึกเหล่านั้นบน cloud ไม่มี Git งานของคุณไม่มีประวัติและ deploy ได้ยาก ไม่มี .gitignore อาจ upload API keys หรือรหัสผ่านโดยไม่ตั้งใจ',
+      why: 'Git ไม่ใช่แค่สำหรับโปรแกรมเมอร์ เป็นสำหรับทุกคนที่ต้องการไม่สูญเสียงาน ร่วมมือกับคนอื่น หรือเผยแพร่โปรเจกต์บนอินเทอร์เน็ต ความปลอดภัยของ .gitignore ไม่ใช่ optional: API key ที่รั่วบน GitHub สามารถสร้างหนี้ได้ภายในชั่วโมง',
+      insightType: 'error',
+      insightHtml: `ตรวจสอบ ${codeE('git status')} ก่อนเสมอก่อนรัน ${codeE('git add .')} ถ้าเห็นไฟล์ ${codeE('.env')} หรือ credentials ให้สร้าง .gitignore ก่อน API key ใน repo สาธารณะสามารถสร้างหนี้ได้ในไม่กี่นาที`,
+      exer: {
+        objetivo: 'Initialize Git ในโปรเจกต์ ทำ commit แรกที่ปลอดภัย และ upload repo ขึ้น GitHub',
+        antesDeEmpezar: 'สร้างบัญชีฟรีที่ github.com ถ้ายังไม่มี',
+        resultado: `โฟลเดอร์ ${code('operador-practica')} ที่มองเห็นได้ใน github.com พร้อม README และ commit อย่างน้อยหนึ่งอันพร้อม message ที่ชัดเจน`,
+        errorComun: `ทำ commit แรกโดยไม่มี .gitignore ถ้า upload ไฟล์ ${code('.env')} พร้อม API keys ก่อนเพิ่ม .gitignore keys เหล่านั้นจะยังอยู่ใน history แม้จะลบทีหลัง`,
+        comoSaberBien: `เปิด URL ของ repo ใน GitHub จาก browser อื่นและเห็นไฟล์ของคุณโดยไม่มีไฟล์ ${code('.env')} หรือ credentials ใดๆ`,
+      },
+      steps: [
+        `ภายใน ${code('operador-practica')} รัน ${code('git init')}`,
+        `สร้างไฟล์ ${code('.gitignore')} และเพิ่ม: ${code('.DS_Store')}, ${code('node_modules/')}, ${code('.env')}`,
+        `รัน ${code('git add .')} แล้ว ${code('git commit -m "init: ai-operator practice folder"')}`,
+        `บน github.com สร้าง repo ใหม่เปล่าชื่อ ${code('operador-practica')} แล้วคัดลอก URL`,
+        `รัน ${code('git remote add origin URL_ของคุณ')} แล้ว ${code('git push -u origin main')}`,
+      ],
+      deliverable: 'Repo สาธารณะบน GitHub พร้อม commit อย่างน้อย 1 อัน',
+      deliverableCheck: 'งานของคุณอยู่บน cloud พร้อม version history',
+    },
+    // M4
+    {
+      title: 'CLAUDE.md และความจำ',
+      completion: 'ไฟล์ CLAUDE.md ในโปรเจกต์ที่ให้ context ถาวรแก่ Claude โดยไม่ต้องพูดซ้ำทุก session',
+      desc: 'Claude ไม่จำระหว่าง session แต่อ่านไฟล์ได้ CLAUDE.md ที่เขียนดีคือ manual สำหรับโปรเจกต์ Claude อ่านเมื่อเริ่มต้นและรู้ว่าต้องทำอะไร: ทำอะไร หลีกเลี่ยงอะไร พูดอย่างไร',
+      why: 'ไม่มี CLAUDE.md ทุก session เริ่มจากศูนย์ มี CLAUDE.md ทุก session เริ่มพร้อม alignment กับเป้าหมาย สไตล์ และกฎของคุณ ความแตกต่างสะสมเป็นชั่วโมงที่ประหยัดได้',
+      insightType: 'remember',
+      insightHtml: 'CLAUDE.md อันแรกไม่จำเป็นต้องสมบูรณ์แบบ เขียนแล้วเริ่มใช้เลย Claude จะบอก (โดยปริยาย ผ่าน response) ว่าขาดอะไร มันดีขึ้น session ต่อ session ไม่ใช่ในบ่ายเดียว',
+      promptKey: 'claudeMd',
+      promptTitle: 'สร้าง CLAUDE.md สำหรับโปรเจกต์ของคุณ',
+      exer: {
+        objetivo: `สร้าง CLAUDE.md สำหรับ ${code('operador-practica')} พร้อม objective, stack, style และข้อจำกัด`,
+        antesDeEmpezar: 'คิด 3 อย่างที่ต้องการให้ Claude รู้เกี่ยวกับโปรเจกต์นี้ก่อนเริ่มทำงาน',
+        resultado: 'CLAUDE.md ขนาด 20–40 บรรทัดพร้อมกฎที่ชัดเจนและ context ที่มีประโยชน์ ใน session ถัดไป Claude อ่านไฟล์และรู้วิธีทำงานแล้ว',
+        errorComun: '"จงเป็นประโยชน์" กฎต้องเฉพาะเจาะจง: "ไม่เพิ่ม dependencies โดยไม่มีเหตุผล", "ใช้ภาษาไทยเสมอ"',
+        comoSaberBien: 'เปิด session ใหม่ของ Claude Code ในโฟลเดอร์เดิมและโดยไม่ต้องอธิบายอะไร เขารู้แล้วว่าโปรเจกต์คืออะไรและทำงานอย่างไร',
+      },
+      steps: [
+        `เปิด ${code('operador-practica')} ใน VS Code`,
+        `สร้างไฟล์ ${code('CLAUDE.md')} ใน root ของโปรเจกต์`,
+        'ใช้ prompt ด้านบนใน Claude เพื่อช่วยกรอกข้อมูล',
+        'ตรวจสอบผลลัพธ์ ปรับอะไรที่ไม่ตรงกับโปรเจกต์จริง ลบสิ่งที่ generic',
+        `ทำ commit: ${code('git add CLAUDE.md && git commit -m "add CLAUDE.md"')}`,
+      ],
+      deliverable: `${code('CLAUDE.md')} พร้อม commit`,
+      deliverableCheck: 'Claude ทำงานพร้อม context โปรเจกต์โดยไม่ต้องพูดซ้ำ',
+    },
+    // M5
+    {
+      title: 'Prompt เชิงปฏิบัติ',
+      completion: 'รู้วิธีโครงสร้าง request ที่ผลิตงานที่ใช้ได้โดยตรง ไม่ใช่ response generic ที่ต้องเขียนใหม่',
+      desc: 'Prompt แบบ generic ได้ผลลัพธ์แบบ generic Prompt เชิงปฏิบัติมี role, context, structure และ limits ความแตกต่างอาจเป็นเวลาแก้ไขครึ่งชั่วโมงหรือ deliverable ที่ใช้ได้เลย',
+      why: 'คนส่วนใหญ่ใช้ AI เหมือนเครื่องค้นหา AI ไม่ใช่เครื่องค้นหา มันคือ collaborator ที่ต้องการ briefing ไม่มี briefing ได้งาน generic มี briefing ได้งานเฉพาะ',
+      insightType: 'protip',
+      insightHtml: `โครงสร้างขั้นต่ำของ prompt เชิงปฏิบัติ: ${bold('ROLE')} (Claude คือใครสำหรับงานนี้) + ${bold('งาน')} (อะไรกันแน่) + ${bold('FORMAT')} (ต้องการ output แบบไหน) + ${bold('ขีดจำกัด')} (ไม่เกิน X บรรทัด, ไม่มี Y ฯลฯ) สี่องค์ประกอบ ที่เหลือเป็น optional`,
+      promptKey: 'auditoria',
+      promptTitle: 'ตรวจสอบงานซ้ำๆ และวาง map การทำให้อัตโนมัติ',
+      exer: {
+        objetivo: 'เปลี่ยน request คลุมเครือเป็น prompt เชิงปฏิบัติและเปรียบเทียบผลลัพธ์',
+        resultado: 'Prompt เชิงปฏิบัติที่เขียนโดยคุณซึ่งผลิต output ที่ใช้ได้โดยตรงโดยไม่ต้องแก้ไขมาก',
+        errorComun: 'เพิ่ม context ที่ไม่เกี่ยวกับงาน Context ต้องหนาแน่นและเกี่ยวข้อง ไม่ใช่ยาว',
+        comoSaberBien: 'Output ของ prompt เชิงปฏิบัติไม่ต้องเขียนใหม่เพื่อนำไปใช้ Output ของ prompt คลุมเครือต้องการ',
+      },
+      steps: [
+        'คิดถึงงานที่ต้องการมอบหมายให้ Claude เช่น: ร่าง email, สรุป document, สร้าง to-do list',
+        'เขียนเวอร์ชัน generic ในหนึ่งบรรทัด: "เขียน email ให้ลูกค้า", "สรุปข้อความนี้"',
+        'เขียนใหม่โดยเพิ่ม: role ของ Claude, ผู้รับคือใคร, โทนที่ต้องการ, format ของ output, ความยาวสูงสุด',
+        'ส่งทั้งสองเวอร์ชันให้ Claude และเปรียบเทียบผลลัพธ์แบบเคียงข้างกัน',
+        'อันไหนที่ใช้ได้โดยไม่ต้องแก้? ส่วนไหนของ context ที่เปลี่ยน output มากที่สุด?',
+      ],
+      deliverable: 'Prompt เชิงปฏิบัติส่วนตัวที่ผลิตผลลัพธ์ที่ใช้ได้',
+      deliverableCheck: 'แยกแยะระหว่าง request คลุมเครือและ request ที่มีโครงสร้างได้',
+    },
+    // M6
+    {
+      title: 'การทำให้อัตโนมัติ',
+      completion: 'ระบุได้อย่างน้อยหนึ่งงานในการทำงานของคุณที่สามารถ systematize ได้ และมี map ว่าจะทำอย่างไร',
+      desc: 'การทำให้อัตโนมัติไม่ได้หมายถึงการโปรแกรม หมายถึงการคิดเป็นขั้นตอน: ฉันทำอะไร ส่วนไหนที่เครื่องจักรทำได้ ส่วนไหนที่ต้องดูแล module นี้เกี่ยวกับการออกแบบก่อนสร้าง',
+      why: 'คนส่วนใหญ่ทำให้อัตโนมัติก่อนเข้าใจว่ากำลัง automate อะไร ผลที่ได้คือระบบที่เปราะบางซึ่งพังเมื่อมีอะไรเปลี่ยน การ map ก่อนประหยัดเวลาหลังจากนั้น',
+      insightType: 'insight',
+      insightHtml: 'การทำให้อัตโนมัติไม่ได้กำจัดงาน: มันกระจายงานใหม่ ลดการดำเนินการซ้ำๆ เพิ่มการออกแบบและการดูแล operator ที่ไม่เข้าใจสิ่งที่อยู่เบื้องหลังไม่สามารถดูแลหรือปรับปรุงมันเมื่อมันพัง',
+      exer: {
+        objetivo: 'Map งานซ้ำๆ ของตัวเองและตรวจสอบว่าส่วนไหน automate ได้ ส่วนไหนต้องดูแล และส่วนไหนต้องการ human judgment',
+        resultado: 'Document พร้อม map ของงาน ติดป้ายตามประเภท (automate ได้ / ดูแล / human) และข้อเสนอ workflow ที่ดีขึ้น',
+        errorComun: 'พยายาม automate ทุกอย่างพร้อมกัน เริ่มจากขั้นตอนที่ซ้ำที่สุดและสำคัญน้อยที่สุด ระบบเล็กที่ทำงานได้มีค่ามากกว่าระบบใหญ่ที่ยังไม่เสร็จ',
+        comoSaberBien: 'อธิบายระบบได้ใน 5 บรรทัดและบอกวิธีทำงานให้คนอื่นฟังโดยไม่ใช้คำศัพท์เทคนิค',
+      },
+      steps: [
+        'เลือกงานที่ทำอย่างน้อยสัปดาห์ละครั้ง ยิ่งเฉพาะเจาะจงยิ่งดี',
+        'เขียนทุกขั้นตอนของงานนั้นตามลำดับ อย่าข้ามแม้แต่ขั้นตอนเล็กๆ',
+        `สำหรับแต่ละขั้นตอน ติดป้าย: ${code('automate ได้')}, ${code('ดูแล')}, หรือ ${code('human')}`,
+        'ระบุขั้นตอนที่ใช้เวลาหรือพลังงานสมองมากที่สุด',
+        'ออกแบบว่าขั้นตอนนั้นจะเป็นอย่างไรถ้า Claude ดำเนินการ Claude ต้องการข้อมูลอะไร? จะผลิตอะไร? คุณจะตรวจสอบอย่างไร?',
+      ],
+      deliverable: 'Map ของงานพร้อมป้ายและข้อเสนอการทำให้อัตโนมัติ',
+      deliverableCheck: 'แยกแยะระหว่างงาน กระบวนการ ระบบ และการทำให้อัตโนมัติได้',
+    },
+    // M7
+    {
+      title: 'เผยแพร่และปรับปรุง',
+      completion: 'สิ่งที่เผยแพร่แล้วพร้อม URL จริงที่เข้าถึงได้จาก browser ใดก็ได้ และรายการการปรับปรุงที่บันทึกไว้สำหรับเวอร์ชันถัดไป',
+      desc: 'การเผยแพร่ปิด cycle เปลี่ยนงานส่วนตัวเป็นงานจริง เรียนรู้วิธี deploy สิ่งเล็กๆ ใน 10 นาที จากนั้นเขียนว่าจะเปลี่ยนอะไร: นั่นคือจุดเริ่มต้นของการ iterate',
+      why: 'โปรเจกต์ที่ไม่เผยแพร่ไม่ได้รับ feedback ไม่ปรับปรุง และในที่สุดก็ถูกทิ้ง สิ่งไม่สมบูรณ์ที่ทำงานได้และมีอยู่จริงมีค่ามากกว่าสิ่งสมบูรณ์แบบที่ไม่มีวันออก',
+      insightType: 'remember',
+      insightHtml: 'เผยแพร่ที่เวอร์ชัน 0.1 ไม่ใช่ 1.0 URL แรกมีอยู่เพื่อให้มีอยู่ feedback จริงเริ่มเมื่อมีบางอย่างเผยแพร่แล้ว การ iterate ก็เช่นกัน',
+      exer: {
+        objetivo: `Deploy ${code('operador-practica')} บน Cloudflare Pages และบันทึกการปรับปรุงสำหรับ v2`,
+        antesDeEmpezar: 'ตรวจสอบว่าโปรเจกต์มีไฟล์เนื้อหาอย่างน้อยหนึ่งไฟล์และ upload ขึ้น GitHub แล้ว',
+        resultado: `URL สาธารณะที่ load ได้จาก browser ใดก็ได้ รวมถึงไฟล์ ${code('mejoras-v2.md')} พร้อมอย่างน้อย 3 จุดที่เฉพาะเจาะจง`,
+        errorComun: 'รอให้ "สมบูรณ์แบบ" ก่อนเผยแพร่ ไม่มีสมบูรณ์แบบก่อนเผยแพร่ มีแต่สิ่งไม่สมบูรณ์ที่รับ feedback และปรับปรุง',
+        comoSaberBien: `URL load ได้ใน browser ที่ไม่ใช่ของคุณ ไฟล์ ${code('mejoras-v2.md')} มีจุดที่เฉพาะเจาะจง ไม่คลุมเครือ`,
+      },
+      steps: [
+        `เข้า ${code('dash.cloudflare.com')} → Workers & Pages → Create → Pages`,
+        `เชื่อมต่อบัญชี GitHub ของคุณและเลือก repo ${code('operador-practica')}`,
+        `ถ้าเป็น HTML static: ปล่อย Build command ว่างไว้, output directory ${code('/')} ถ้าเป็น Astro: Build command ${code('npm run build')}, output ${code('dist')}`,
+        'คลิก Save and Deploy ใน ~60 วินาที จะมี URL สาธารณะ',
+        `สร้าง ${code('mejoras-v2.md')} พร้อมอย่างน้อย 3 อย่างที่คุณจะเปลี่ยนหรือเพิ่ม`,
+      ],
+      deliverable: `URL สาธารณะที่ active + ${code('mejoras-v2.md')}`,
+      deliverableCheck: 'ปิด cycle แล้ว: สร้าง → บันทึก → เผยแพร่ → ปรับปรุง',
+    },
+  ],
+};
 
-Sé conciso. Sin relleno. Máximo 40 líneas.`;
+const mods = MODS[cLocale];
 
-const promptAuditoria = `Actúa como analista de flujos de trabajo.
+// ── toc (uses module titles from mods) ─────────────────────────────────────────
+const toc = mods.map((m, i) => ({ id: `modulo-${i}`, label: m.title, time: modTimes[i] }));
 
-Analiza esta tarea repetitiva: [describe la tarea en detalle]
+// ── proof checklist ───────────────────────────────────────────────────────────
+const proofChecklist: Record<Locale, string[]> = {
+  es: [
+    'mi-contexto.md en el repo operador-practica',
+    'README.md generado con Claude Code y revisado por ti',
+    'CLAUDE.md commiteado en el repo',
+    '.gitignore y al menos 1 commit (sin secretos)',
+    'Prompt operativo propio guardado en el repo',
+    'Mapa de automatización de una tarea real',
+    'mejoras-v2.md con 3+ puntos concretos',
+    'El proyecto desplegado en una URL pública viva',
+  ],
+  en: [
+    'mi-contexto.md in the operador-practica repo',
+    'README.md generated with Claude Code and reviewed by you',
+    'CLAUDE.md committed to the repo',
+    '.gitignore with at least 1 commit (no secrets)',
+    'Your own operative prompt saved in the repo',
+    'Automation map for a real task',
+    'mejoras-v2.md with 3+ concrete points',
+    'The project deployed to a live public URL',
+  ],
+  th: [
+    'mi-contexto.md ใน repo operador-practica',
+    'README.md ที่สร้างด้วย Claude Code และตรวจสอบโดยคุณ',
+    'CLAUDE.md ที่ commit เข้า repo แล้ว',
+    '.gitignore และ commit อย่างน้อย 1 อัน (ไม่มี secret)',
+    'Prompt เชิงปฏิบัติของตัวเองที่บันทึกใน repo',
+    'แผนผัง automation ของงานจริง',
+    'mejoras-v2.md พร้อมอย่างน้อย 3 จุดที่เฉพาะเจาะจง',
+    'โปรเจกต์ที่ deploy บน URL สาธารณะที่ใช้งานได้จริง',
+  ],
+};
+const checklist = proofChecklist[cLocale];
 
-Responde:
-1. Pasos que la componen, desglosados sin omitir ninguno
-2. Qué pasos son automatizables y cuáles no, con justificación
-3. Qué herramienta resolvería cada parte automatizable
-4. Qué partes requieren supervisión humana obligatoria
-5. Estimación de tiempo ahorrado si se implementara la automatización
+// ── page meta ─────────────────────────────────────────────────────────────────
+const pageTitle = cLocale === 'th' ? 'ระดับ 1 — Operator Foundations' : cLocale === 'en' ? 'Level 1 — Operator Foundations' : 'Nivel 1 — Operator Foundations';
+const pageDesc  = cLocale === 'th' ? 'พื้นฐานการใช้ Claude Code, GitHub, automation และระบบ AI 8 โมดูลเชิงปฏิบัติ' : cLocale === 'en' ? 'The foundation for operating Claude Code, GitHub, automations and AI systems. 8 practical modules.' : 'La base para operar Claude Code, GitHub, automatizaciones y sistemas IA. 8 módulos prácticos.';
 
-Sé específico. No generalices.`;
+// ── proof JS strings (passed via define:vars) ─────────────────────────────────
+const jsStrings = {
+  delivered: t('n1.proof.status.delivered'),
+  pending:   t('n1.proof.status.pending'),
+  errRepo:        t('n1.proof.err.repo'),
+  errRepoFormat:  t('n1.proof.err.repoformat'),
+  errUrl:         t('n1.proof.err.url'),
+  errUrlFormat:   t('n1.proof.err.urlformat'),
+};
 ---
 
-<LayoutLevel
-  title="Nivel 1 — Operator Foundations"
-  description="La base para operar Claude Code, GitHub, automatizaciones y sistemas IA. 8 módulos prácticos."
->
+<LayoutLevel title={pageTitle} description={pageDesc}>
 
   <!-- SIDEBAR (desktop) -->
   <div slot="sidebar">
     <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
       <div class="px-4 py-3 border-b border-slate-100">
-        <span class="font-mono text-xs text-emerald-600 tracking-widest uppercase block mb-0.5">NIVEL 1</span>
+        <span class="font-mono text-xs text-emerald-600 tracking-widest uppercase block mb-0.5">{t('n1.sidebar.label')}</span>
         <p class="font-semibold text-slate-900 leading-snug text-sm">Operator Foundations</p>
-        <p class="font-mono text-xs text-emerald-600 mt-0.5">Disponible</p>
+        <p class="font-mono text-xs text-emerald-600 mt-0.5">{t('l1.available')}</p>
       </div>
       <div class="px-4 py-3 border-b border-slate-100">
         <div class="flex items-center justify-between mb-1.5">
-          <span class="font-mono text-xs text-slate-400">Progreso</span>
+          <span class="font-mono text-xs text-slate-400">{t('n1.sidebar.progress')}</span>
           <span id="sb-l1-count" class="font-mono text-xs text-slate-500">0/8</span>
         </div>
         <div class="bg-slate-100 rounded-full h-1.5 overflow-hidden">
@@ -106,12 +824,9 @@ Sé específico. No generalices.`;
               class="sb-mod-btn w-4 h-4 rounded border border-slate-200 shrink-0 text-xs flex items-center justify-center hover:border-emerald-400 transition-colors bg-white leading-none"
               data-mkey={`moonkey_level_1_module_${i}`}
               type="button"
-              title={`Marcar M${i} completado`}
+              title={`M${i}`}
             ></button>
-            <a
-              href={`#${item.id}`}
-              class="flex-1 flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 px-1 py-1 rounded hover:bg-slate-50 transition-colors overflow-hidden"
-            >
+            <a href={`#${item.id}`} class="flex-1 flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 px-1 py-1 rounded hover:bg-slate-50 transition-colors overflow-hidden">
               <span class="font-mono text-slate-300 shrink-0">M{i}</span>
               <span class="truncate">{item.label}</span>
             </a>
@@ -120,7 +835,7 @@ Sé específico. No generalices.`;
       </nav>
       <div class="p-3 border-t border-slate-100">
         <a href="#completar-n1" class="block w-full text-center font-mono text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-lg hover:bg-emerald-100 transition-colors">
-          Finalizar Nivel 1 →
+          {t('n1.sidebar.finalize')}
         </a>
       </div>
     </div>
@@ -129,7 +844,7 @@ Sé específico. No generalices.`;
   <!-- MOBILE NAV -->
   <details class="lg:hidden bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden mb-6">
     <summary class="flex items-center justify-between px-4 py-3 cursor-pointer select-none list-none">
-      <span class="font-mono text-xs text-emerald-600 tracking-widest uppercase">N1 — Operator Foundations</span>
+      <span class="font-mono text-xs text-emerald-600 tracking-widest uppercase">{t('n1.mobile.label')}</span>
       <span class="text-slate-400 text-xs font-mono">▾</span>
     </summary>
     <nav class="px-4 py-2 border-t border-slate-100 grid grid-cols-2 gap-x-4 gap-y-1">
@@ -143,45 +858,38 @@ Sé específico. No generalices.`;
 
   <!-- HERO -->
   <section class="pb-12 border-b border-slate-200">
-    <span class="text-xs font-mono text-emerald-600 tracking-widest uppercase block mb-2">NIVEL 1 · MOONKEY LAB</span>
-    <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-4">
+    <div class="flex items-center gap-3 mb-5">
+      <span class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 ring-1 ring-slate-900/5" style="background:#1e293b">
+        <AnimalIcon name="monkey" color="#94a3b8" bg="#1e293b" size={22} />
+      </span>
+      <span class="text-xs font-mono text-emerald-600 tracking-widest uppercase">{t('n1.hero.label')}</span>
+    </div>
+    <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 leading-[1.04] tracking-tight mb-4">
       Operator<br/>Foundations
     </h1>
-    <p class="text-slate-600 text-base leading-relaxed max-w-xl mb-8">
-      Construye la base para operar Claude Code, GitHub, automatizaciones y sistemas IA. 8 módulos prácticos con ejercicios reales y entregables concretos. Sin código previo. A tu ritmo.
-    </p>
+    <p class="text-slate-600 text-lg leading-relaxed max-w-xl mb-8">{t('n1.hero.desc')}</p>
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
       {[
-        { value: '8',    label: 'módulos',       color: mc[0] },
-        { value: '~3h',  label: 'en total',      color: mc[1] },
-        { value: '0',    label: 'código previo', color: mc[2] },
-        { value: '100%', label: 'práctico',      color: mc[3] },
+        { value: '8',    label: t('n1.stats.modules'),   color: mc[0] },
+        { value: '~3h',  label: t('n1.stats.total'),     color: mc[1] },
+        { value: '0',    label: t('n1.stats.nocode'),    color: mc[2] },
+        { value: '100%', label: t('n1.stats.practical'), color: mc[3] },
       ].map(s => (
-        <div class="bg-white rounded-xl border border-slate-200 p-4 text-center shadow-sm">
-          <div class={`text-2xl font-semibold mb-1 ${s.color.text}`}>{s.value}</div>
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 text-center shadow-sm">
+          <div class={`text-3xl font-bold mb-1 font-display ${s.color.text}`}>{s.value}</div>
           <div class="text-xs text-slate-500 font-mono">{s.label}</div>
         </div>
       ))}
     </div>
   </section>
 
-  <FlowDiagram
-    title="Diagrama — Cómo funciona el sistema básico"
-    color="emerald"
-    nodes={[
-      { label: 'TÚ', sub: 'Operador con contexto y objetivos' },
-      { label: 'Claude Code', sub: 'IA en tu entorno local' },
-      { label: 'CLAUDE.md + contexto + prompts', sub: 'Las instrucciones que guían el trabajo' },
-      { label: 'GitHub + archivos + automatizaciones', sub: 'Donde vive y se versiona el trabajo' },
-      { label: 'Output: páginas, sistemas, documentación, workflows', sub: 'El resultado concreto y entregable' },
-    ]}
-  />
+  <FlowDiagram title={t('n1.flow.title')} color="emerald" nodes={fNodes} />
 
   <MiniGlossary />
 
   <!-- TOC (mobile only) -->
   <nav id="toc" class="lg:hidden bg-white border border-slate-200 rounded-xl p-5 shadow-sm mb-10">
-    <p class="font-semibold text-slate-900 text-sm mb-4">Contenido del nivel</p>
+    <p class="font-semibold text-slate-900 text-sm mb-4">{t('n1.toc.title')}</p>
     <ol class="space-y-2">
       {toc.map((item, i) => (
         <li class="flex items-center gap-3">
@@ -193,411 +901,85 @@ Sé específico. No generalices.`;
     </ol>
   </nav>
 
-  <!-- MÓDULO 0 -->
-  <section id="modulo-0" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-7 mb-6 scroll-mt-20">
-    <div class="flex items-start gap-4 mb-5">
-      <span class={`${mc[0].bg} ${mc[0].text} font-mono text-sm font-bold rounded-lg px-3 py-1.5 shrink-0`}>M0</span>
-      <div>
-        <h2 class="text-lg font-semibold text-slate-900">Preparar contexto</h2>
-        <span class="text-xs text-slate-400 font-mono mt-0.5 inline-block">⏱ 15 min</span>
+  <!-- MÓDULOS 0–7 -->
+  {mods.map((mod, i) => (
+    <section id={`modulo-${i}`} class="bg-white rounded-2xl border border-slate-200 shadow-sm p-7 mb-6 scroll-mt-20">
+      <div class="flex items-start gap-4 mb-5">
+        <span class={`${mc[i].bg} ${mc[i].text} font-mono text-sm font-bold rounded-lg px-3 py-1.5 shrink-0`}>M{i}</span>
+        <div>
+          <h2 class="text-xl font-bold text-slate-900 tracking-tight">{mod.title}</h2>
+          <span class="text-xs text-slate-400 font-mono mt-1 inline-flex items-center gap-1.5">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            {modTimes[i]}
+          </span>
+        </div>
       </div>
-    </div>
-    <div class="bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3 mb-5">
-      <p class="text-xs font-mono text-emerald-600 uppercase tracking-widest mb-1">Al terminar</p>
-      <p class="text-sm text-slate-700 leading-relaxed">Tienes un documento con tu contexto operativo listo para darle a Claude al inicio de cualquier proyecto.</p>
-    </div>
-    <p class="text-slate-600 text-sm leading-relaxed mb-5">Claude no tiene memoria entre sesiones. Sin contexto, trabaja de forma genérica. Con contexto, trabaja de forma precisa. Este módulo te enseña a crear ese contexto antes de empezar cualquier tarea.</p>
-    <div class={`border-l-4 ${mc[0].border} pl-4 py-1 mb-6`}>
-      <p class={`text-xs font-mono ${mc[0].label} uppercase tracking-widest mb-1`}>Por qué importa</p>
-      <p class="text-sm text-slate-500 italic leading-relaxed">La mayoría de outputs mediocres de IA no vienen de la herramienta, vienen de la falta de contexto. Un documento bien escrito te ahorra media hora de correcciones en cada sesión.</p>
-    </div>
-    <InsightBox type="protip">Escribe el contexto como si le explicaras tu trabajo a un contratista experto pero recién llegado. Denso, preciso, sin tutoriales. Una línea por punto. Si supera 30 líneas, recorta.</InsightBox>
-    <PromptBlock tag="PROMPT M0" title="Extraer contexto operativo de conversaciones previas" prompt={promptContexto} />
-    <ExerciseAccordion
-      objetivo="Crear un documento personal de contexto operativo que puedas darle a Claude al inicio de cualquier proyecto."
-      antesDeEmpezar="Abre VS Code o cualquier editor. No necesitas instalar nada para este módulo."
-      resultado="Un archivo mi-contexto.md de 20–30 líneas con información densa y útil sobre ti y tu trabajo."
-      errorComun="Escribir demasiado. El contexto debe ser preciso, no exhaustivo. Si pasa de 30 líneas, recorta."
-      comoSaberBien="Puedes darle el archivo a Claude en una nueva sesión y él sabe cómo trabajar contigo sin que tengas que explicar nada básico."
-    >
-      <ol class="space-y-3">
-        {[
-          <>Crea un archivo llamado <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">mi-contexto.md</code> en una carpeta de tu elección.</>,
-          <>Escribe estas secciones: <strong class="text-slate-700">Quién soy</strong>, <strong class="text-slate-700">Proyectos activos</strong>, <strong class="text-slate-700">Herramientas que uso</strong>, <strong class="text-slate-700">Cómo prefiero trabajar</strong>, <strong class="text-slate-700">Lo que NO quiero que Claude haga</strong>.</>,
-          <>Sé concreto. Una línea por punto. Sin párrafos innecesarios.</>,
-          <>Si tienes historial en Claude.ai, usa el prompt de arriba para extraer el contexto automáticamente.</>,
-        ].map((step, i) => (
-          <li class="flex gap-3 items-start text-sm text-slate-600">
-            <span class="bg-slate-100 text-slate-500 font-mono text-xs rounded px-1.5 py-0.5 shrink-0 mt-0.5 leading-5">{i + 1}</span>
-            <span class="leading-relaxed">{step}</span>
-          </li>
-        ))}
-      </ol>
-    </ExerciseAccordion>
-    <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-5 pt-5 border-t border-slate-100 text-xs">
-      <div class="flex items-center gap-2 text-slate-500"><span class="font-mono">Entregable:</span><code class="bg-slate-100 px-2 py-0.5 rounded font-mono text-slate-600">mi-contexto.md</code></div>
-      <div class="flex items-center gap-2 text-emerald-700"><span>✓</span><span>Claude entiende tu trabajo sin explicaciones repetidas</span></div>
-      <a href="#toc" class="ml-auto text-slate-300 hover:text-slate-500 font-mono transition-colors">↑ índice</a>
-    </div>
-  </section>
 
-  <!-- MÓDULO 1 -->
-  <section id="modulo-1" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-7 mb-6 scroll-mt-20">
-    <div class="flex items-start gap-4 mb-5">
-      <span class={`${mc[1].bg} ${mc[1].text} font-mono text-sm font-bold rounded-lg px-3 py-1.5 shrink-0`}>M1</span>
-      <div>
-        <h2 class="text-lg font-semibold text-slate-900">Entorno de trabajo</h2>
-        <span class="text-xs text-slate-400 font-mono mt-0.5 inline-block">⏱ 20 min</span>
+      <div class="bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3 mb-5">
+        <p class="text-xs font-mono text-emerald-600 uppercase tracking-widest mb-1">{t('n1.mod.complete')}</p>
+        <p class="text-sm text-slate-700 leading-relaxed">{mod.completion}</p>
       </div>
-    </div>
-    <div class="bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3 mb-5">
-      <p class="text-xs font-mono text-emerald-600 uppercase tracking-widest mb-1">Al terminar</p>
-      <p class="text-sm text-slate-700 leading-relaxed">Terminal abierta, carpeta de práctica creada y VS Code funcionando con tu primer archivo.</p>
-    </div>
-    <p class="text-slate-600 text-sm leading-relaxed mb-5">No puedes operar sistemas digitales sin conocer el entorno donde viven. La terminal es el cockpit desde donde controlas todo. VS Code es donde editas y revisas. Este módulo te da las herramientas mínimas para empezar.</p>
-    <div class={`border-l-4 ${mc[1].border} pl-4 py-1 mb-6`}>
-      <p class={`text-xs font-mono ${mc[1].label} uppercase tracking-widest mb-1`}>Por qué importa</p>
-      <p class="text-sm text-slate-500 italic leading-relaxed">Muchos principiantes evitan la terminal durante meses. Es el error más caro que puedes cometer. Todo lo que harás en los siguientes módulos requiere moverse por ella con soltura básica.</p>
-    </div>
-    <ExerciseAccordion
-      objetivo="Abrir la terminal, crear una carpeta de práctica y abrir el entorno de trabajo en VS Code."
-      antesDeEmpezar="Descarga e instala VS Code desde code.visualstudio.com si todavía no lo tienes."
-      resultado="VS Code abierto con la carpeta operador-practica y el archivo README.md visible en el explorador lateral."
-      errorComun="Usar nombres de carpetas con espacios. Evítalos: usa guiones en lugar de espacios (operador-practica, no operador practica)."
-      comoSaberBien="Ves el archivo README.md en el panel izquierdo de VS Code y puedes editarlo."
-    >
-      <ol class="space-y-3">
-        {[
-          <>Abre la terminal. Mac: <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">Cmd+Espacio</code> → "Terminal". Windows: tecla Windows → "PowerShell".</>,
-          <>Ejecuta <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">mkdir operador-practica</code> para crear tu carpeta de práctica.</>,
-          <>Ejecuta <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">cd operador-practica</code> para entrar en ella.</>,
-          <>Ejecuta <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">touch README.md</code> (Mac/Linux) o <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">ni README.md</code> (Windows) para crear un archivo.</>,
-          <>Ejecuta <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">code .</code> para abrir la carpeta en VS Code.</>,
-        ].map((step, i) => (
-          <li class="flex gap-3 items-start text-sm text-slate-600">
-            <span class="bg-slate-100 text-slate-500 font-mono text-xs rounded px-1.5 py-0.5 shrink-0 mt-0.5 leading-5">{i + 1}</span>
-            <span class="leading-relaxed">{step}</span>
-          </li>
-        ))}
-      </ol>
-    </ExerciseAccordion>
-    <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-5 pt-5 border-t border-slate-100 text-xs">
-      <div class="flex items-center gap-2 text-slate-500"><span class="font-mono">Entregable:</span><code class="bg-slate-100 px-2 py-0.5 rounded font-mono text-slate-600">operador-practica/README.md</code></div>
-      <div class="flex items-center gap-2 text-emerald-700"><span>✓</span><span>Sabes crear carpetas y archivos desde la terminal</span></div>
-      <a href="#toc" class="ml-auto text-slate-300 hover:text-slate-500 font-mono transition-colors">↑ índice</a>
-    </div>
-  </section>
 
-  <!-- MÓDULO 2 -->
-  <section id="modulo-2" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-7 mb-6 scroll-mt-20">
-    <div class="flex items-start gap-4 mb-5">
-      <span class={`${mc[2].bg} ${mc[2].text} font-mono text-sm font-bold rounded-lg px-3 py-1.5 shrink-0`}>M2</span>
-      <div>
-        <h2 class="text-lg font-semibold text-slate-900">Claude Code</h2>
-        <span class="text-xs text-slate-400 font-mono mt-0.5 inline-block">⏱ 20 min</span>
+      <p class="text-slate-600 text-sm leading-relaxed mb-5">{mod.desc}</p>
+
+      <div class={`border-l-4 ${mc[i].border} pl-4 py-1 mb-6`}>
+        <p class={`text-xs font-mono ${mc[i].label} uppercase tracking-widest mb-1`}>{t('n1.mod.why')}</p>
+        <p class="text-sm text-slate-500 italic leading-relaxed">{mod.why}</p>
       </div>
-    </div>
-    <div class="bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3 mb-5">
-      <p class="text-xs font-mono text-emerald-600 uppercase tracking-widest mb-1">Al terminar</p>
-      <p class="text-sm text-slate-700 leading-relaxed">Claude Code instalado y usado para generar documentación real dentro de tu proyecto.</p>
-    </div>
-    <p class="text-slate-600 text-sm leading-relaxed mb-5">Claude Code no es un chatbot. Es un asistente que trabaja dentro de tu proyecto: lee archivos, escribe código, ejecuta acciones y propone soluciones en contexto. Sabe lo que hay en tu carpeta. Eso cambia todo.</p>
-    <div class={`border-l-4 ${mc[2].border} pl-4 py-1 mb-6`}>
-      <p class={`text-xs font-mono ${mc[2].label} uppercase tracking-widest mb-1`}>Por qué importa</p>
-      <p class="text-sm text-slate-500 italic leading-relaxed">Usar Claude desde un chat web y usarlo desde Claude Code son dos experiencias completamente distintas. Uno responde preguntas. El otro ejecuta trabajo dentro de tu proyecto.</p>
-    </div>
-    <InsightBox type="protip">Claude Code lee tu carpeta real. Cuando le pides algo, sabe qué archivos existen, qué hay dentro y qué ha cambiado. Eso cambia completamente lo que puedes pedirle y cómo responde.</InsightBox>
-    <PromptBlock tag="PROMPT M2" title="Pedir a Claude que documente tu proyecto" prompt={promptDocumentar} />
-    <ExerciseAccordion
-      objetivo="Instalar Claude Code y completar tu primera tarea real: generar documentación para tu proyecto."
-      antesDeEmpezar="Necesitas Node.js instalado. Compruébalo con: node --version. Si no aparece un número, descárgalo en nodejs.org."
-      resultado="Un README.md con contenido generado por Claude y revisado por ti. El archivo tiene sentido y no contiene información inventada."
-      errorComun="Aceptar el output de Claude sin leerlo. Claude puede inventar detalles que no existen. Siempre revisa antes de guardar."
-      comoSaberBien="El README describe con precisión qué es tu carpeta de práctica y no contiene ninguna afirmación falsa."
-    >
-      <ol class="space-y-3">
-        {[
-          <>Instala Claude Code: <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">npm install -g @anthropic-ai/claude-code</code></>,
-          <>Navega a tu carpeta: <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">cd operador-practica</code></>,
-          <>Inicia Claude Code: <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">claude</code></>,
-          <>Usa el prompt de arriba o escríbele directamente: "Crea un README.md que explique que esta es mi carpeta de práctica para aprender a operar sistemas IA."</>,
-          <>Lee el resultado completo. Edita cualquier cosa que no sea correcta o que no represente bien tu proyecto.</>,
-        ].map((step, i) => (
-          <li class="flex gap-3 items-start text-sm text-slate-600">
-            <span class="bg-slate-100 text-slate-500 font-mono text-xs rounded px-1.5 py-0.5 shrink-0 mt-0.5 leading-5">{i + 1}</span>
-            <span class="leading-relaxed">{step}</span>
-          </li>
-        ))}
-      </ol>
-    </ExerciseAccordion>
-    <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-5 pt-5 border-t border-slate-100 text-xs">
-      <div class="flex items-center gap-2 text-slate-500"><span class="font-mono">Entregable:</span><code class="bg-slate-100 px-2 py-0.5 rounded font-mono text-slate-600">README.md</code><span class="text-slate-400">revisado y correcto</span></div>
-      <div class="flex items-center gap-2 text-emerald-700"><span>✓</span><span>Claude Code instalado y funcionando en tu proyecto</span></div>
-      <a href="#toc" class="ml-auto text-slate-300 hover:text-slate-500 font-mono transition-colors">↑ índice</a>
-    </div>
-  </section>
 
-  <!-- MÓDULO 3 -->
-  <section id="modulo-3" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-7 mb-6 scroll-mt-20">
-    <div class="flex items-start gap-4 mb-5">
-      <span class={`${mc[3].bg} ${mc[3].text} font-mono text-sm font-bold rounded-lg px-3 py-1.5 shrink-0`}>M3</span>
-      <div>
-        <h2 class="text-lg font-semibold text-slate-900">GitHub y seguridad</h2>
-        <span class="text-xs text-slate-400 font-mono mt-0.5 inline-block">⏱ 25 min</span>
+      {mod.insightType && mod.insightHtml && (
+        <InsightBox type={mod.insightType} title={IL[mod.insightType]}>
+          <Fragment set:html={mod.insightHtml} />
+        </InsightBox>
+      )}
+
+      {mod.promptKey && mod.promptTitle && (
+        <PromptBlock tag={`PROMPT M${i}`} title={mod.promptTitle} prompt={P(mod.promptKey)} />
+      )}
+
+      <ExerciseAccordion
+        objetivo={mod.exer.objetivo}
+        antesDeEmpezar={mod.exer.antesDeEmpezar}
+        resultado={mod.exer.resultado}
+        errorComun={mod.exer.errorComun}
+        comoSaberBien={mod.exer.comoSaberBien}
+        locale={locale}
+      >
+        <ol class="space-y-3">
+          {mod.steps.map((step, si) => (
+            <li class="flex gap-3 items-start text-sm text-slate-600">
+              <span class="bg-slate-100 text-slate-500 font-mono text-xs rounded px-1.5 py-0.5 shrink-0 mt-0.5 leading-5">{si + 1}</span>
+              <span class="leading-relaxed" set:html={step}></span>
+            </li>
+          ))}
+        </ol>
+      </ExerciseAccordion>
+
+      <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-5 pt-5 border-t border-slate-100 text-xs">
+        <div class="flex items-center gap-2 text-slate-500">
+          <span class="font-mono">{t('n1.mod.deliverable')}</span>
+          <span set:html={mod.deliverable}></span>
+        </div>
+        <div class="flex items-center gap-2 text-emerald-700"><span>✓</span><span>{mod.deliverableCheck}</span></div>
+        <a href="#toc" class="ml-auto text-slate-300 hover:text-slate-500 font-mono transition-colors">{t('n1.mod.index')}</a>
       </div>
-    </div>
-    <div class="bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3 mb-5">
-      <p class="text-xs font-mono text-emerald-600 uppercase tracking-widest mb-1">Al terminar</p>
-      <p class="text-sm text-slate-700 leading-relaxed">Primer repositorio subido a GitHub con commits claros y .gitignore configurado para no exponer información sensible.</p>
-    </div>
-    <p class="text-slate-600 text-sm leading-relaxed mb-5">Git registra cada cambio con un mensaje. GitHub guarda esos registros en la nube. Sin Git, tu trabajo no tiene historial y no puede desplegarse fácilmente. Sin .gitignore, puedes subir claves API o contraseñas por accidente.</p>
-    <div class={`border-l-4 ${mc[3].border} pl-4 py-1 mb-6`}>
-      <p class={`text-xs font-mono ${mc[3].label} uppercase tracking-widest mb-1`}>Por qué importa</p>
-      <p class="text-sm text-slate-500 italic leading-relaxed">Git no es solo para programadores. Es para cualquiera que quiera no perder trabajo, colaborar con otros o publicar proyectos en internet. La seguridad del .gitignore no es opcional: una clave API filtrada en GitHub puede generar facturas de cientos de euros en horas.</p>
-    </div>
-    <InsightBox type="error">Revisa siempre <code class="font-mono text-xs bg-rose-100 px-1 rounded">git status</code> antes de hacer <code class="font-mono text-xs bg-rose-100 px-1 rounded">git add .</code> Si aparece un archivo <code class="font-mono text-xs bg-rose-100 px-1 rounded">.env</code> o con credenciales, crea el .gitignore primero. Una clave API en un repo público puede generar deuda en minutos.</InsightBox>
-    <ExerciseAccordion
-      objetivo="Inicializar Git en tu proyecto, hacer un primer commit seguro y subir el repo a GitHub."
-      antesDeEmpezar="Crea una cuenta gratuita en github.com si todavía no tienes una."
-      resultado="Tu carpeta operador-practica visible en github.com con el README y al menos un commit con mensaje claro."
-      errorComun="Hacer el primer commit sin tener .gitignore. Si subes un .env con claves API antes de añadir el .gitignore, esas claves quedan en el historial aunque luego las borres."
-      comoSaberBien="Abres la URL del repo en GitHub desde otro navegador y ves tus archivos sin ningún archivo .env o de credenciales."
-    >
-      <ol class="space-y-3">
-        {[
-          <>Dentro de <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">operador-practica</code>, ejecuta <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">git init</code></>,
-          <>Crea un archivo <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">.gitignore</code> y añade estas líneas: <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">.DS_Store</code>, <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">node_modules/</code>, <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">.env</code></>,
-          <>Ejecuta <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">git add .</code> y luego <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">git commit -m "inicio: carpeta de práctica de operador IA"</code></>,
-          <>En github.com, crea un nuevo repo vacío llamado <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">operador-practica</code>. Copia la URL.</>,
-          <>Ejecuta <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">git remote add origin TU_URL</code> y luego <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">git push -u origin main</code></>,
-        ].map((step, i) => (
-          <li class="flex gap-3 items-start text-sm text-slate-600">
-            <span class="bg-slate-100 text-slate-500 font-mono text-xs rounded px-1.5 py-0.5 shrink-0 mt-0.5 leading-5">{i + 1}</span>
-            <span class="leading-relaxed">{step}</span>
-          </li>
-        ))}
-      </ol>
-    </ExerciseAccordion>
-    <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-5 pt-5 border-t border-slate-100 text-xs">
-      <div class="flex items-center gap-2 text-slate-500"><span class="font-mono">Entregable:</span><span class="text-slate-600">Repo público en GitHub con al menos 1 commit</span></div>
-      <div class="flex items-center gap-2 text-emerald-700"><span>✓</span><span>Tu trabajo está en la nube con historial de versiones</span></div>
-      <a href="#toc" class="ml-auto text-slate-300 hover:text-slate-500 font-mono transition-colors">↑ índice</a>
-    </div>
-  </section>
+    </section>
+  ))}
 
-  <!-- MÓDULO 4 -->
-  <section id="modulo-4" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-7 mb-6 scroll-mt-20">
-    <div class="flex items-start gap-4 mb-5">
-      <span class={`${mc[4].bg} ${mc[4].text} font-mono text-sm font-bold rounded-lg px-3 py-1.5 shrink-0`}>M4</span>
-      <div>
-        <h2 class="text-lg font-semibold text-slate-900">CLAUDE.md y memoria</h2>
-        <span class="text-xs text-slate-400 font-mono mt-0.5 inline-block">⏱ 20 min</span>
-      </div>
-    </div>
-    <div class="bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3 mb-5">
-      <p class="text-xs font-mono text-emerald-600 uppercase tracking-widest mb-1">Al terminar</p>
-      <p class="text-sm text-slate-700 leading-relaxed">Un archivo CLAUDE.md en tu proyecto que le da contexto persistente a Claude sin que tengas que repetirlo en cada sesión.</p>
-    </div>
-    <p class="text-slate-600 text-sm leading-relaxed mb-5">Claude no recuerda entre sesiones, pero puede leer archivos. Un CLAUDE.md bien escrito es el manual de instrucciones de tu proyecto. Claude lo lee al iniciar y sabe exactamente cómo comportarse: qué hacer, qué evitar, cómo hablar.</p>
-    <div class={`border-l-4 ${mc[4].border} pl-4 py-1 mb-6`}>
-      <p class={`text-xs font-mono ${mc[4].label} uppercase tracking-widest mb-1`}>Por qué importa</p>
-      <p class="text-sm text-slate-500 italic leading-relaxed">Sin CLAUDE.md, cada sesión empieza de cero. Con CLAUDE.md, cada sesión empieza alineada con tus objetivos, tu estilo y tus reglas. La diferencia se acumula en horas ahorradas.</p>
-    </div>
-    <InsightBox type="remember">El primer CLAUDE.md no tiene que ser perfecto. Escríbelo y empieza a usarlo. Claude te dirá (implícitamente, en sus respuestas) qué falta. Se mejora sesión a sesión, no en una tarde.</InsightBox>
-    <PromptBlock tag="PROMPT M4" title="Generar un CLAUDE.md para tu proyecto" prompt={promptClaudeMd} />
-    <ExerciseAccordion
-      objetivo="Crear un CLAUDE.md para operador-practica con objetivo, stack, estilo y restricciones."
-      antesDeEmpezar="Piensa en 3 cosas que quieres que Claude sepa de este proyecto antes de empezar a trabajar en él."
-      resultado="Un CLAUDE.md de 20–40 líneas con reglas claras y contexto útil. En la próxima sesión, Claude lee el archivo y ya sabe cómo trabajar."
-      errorComun="Escribir reglas contradictorias o demasiado generales como 'sé útil'. Las reglas deben ser específicas: 'no añadas dependencias sin justificación', 'usa siempre español'."
-      comoSaberBien="Abres una nueva sesión de Claude Code en la misma carpeta y, sin explicar nada, él ya sabe qué es el proyecto y cómo trabajar en él."
-    >
-      <ol class="space-y-3">
-        {[
-          <>Abre <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">operador-practica</code> en VS Code.</>,
-          <>Crea un archivo <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">CLAUDE.md</code> en la raíz del proyecto.</>,
-          <>Usa el prompt de arriba en Claude para que te ayude a completarlo.</>,
-          <>Revisa el resultado. Ajusta lo que no encaje con tu proyecto real. Elimina lo que sea genérico.</>,
-          <>Haz commit: <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">git add CLAUDE.md && git commit -m "añadir CLAUDE.md"</code></>,
-        ].map((step, i) => (
-          <li class="flex gap-3 items-start text-sm text-slate-600">
-            <span class="bg-slate-100 text-slate-500 font-mono text-xs rounded px-1.5 py-0.5 shrink-0 mt-0.5 leading-5">{i + 1}</span>
-            <span class="leading-relaxed">{step}</span>
-          </li>
-        ))}
-      </ol>
-    </ExerciseAccordion>
-    <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-5 pt-5 border-t border-slate-100 text-xs">
-      <div class="flex items-center gap-2 text-slate-500"><span class="font-mono">Entregable:</span><code class="bg-slate-100 px-2 py-0.5 rounded font-mono text-slate-600">CLAUDE.md</code><span class="text-slate-400">con commit</span></div>
-      <div class="flex items-center gap-2 text-emerald-700"><span>✓</span><span>Claude trabaja con contexto de proyecto sin repeticiones</span></div>
-      <a href="#toc" class="ml-auto text-slate-300 hover:text-slate-500 font-mono transition-colors">↑ índice</a>
-    </div>
-  </section>
-
-  <!-- MÓDULO 5 -->
-  <section id="modulo-5" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-7 mb-6 scroll-mt-20">
-    <div class="flex items-start gap-4 mb-5">
-      <span class={`${mc[5].bg} ${mc[5].text} font-mono text-sm font-bold rounded-lg px-3 py-1.5 shrink-0`}>M5</span>
-      <div>
-        <h2 class="text-lg font-semibold text-slate-900">Prompts operativos</h2>
-        <span class="text-xs text-slate-400 font-mono mt-0.5 inline-block">⏱ 20 min</span>
-      </div>
-    </div>
-    <div class="bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3 mb-5">
-      <p class="text-xs font-mono text-emerald-600 uppercase tracking-widest mb-1">Al terminar</p>
-      <p class="text-sm text-slate-700 leading-relaxed">Sabes estructurar peticiones que producen trabajo directamente usable, no respuestas genéricas que hay que reescribir.</p>
-    </div>
-    <p class="text-slate-600 text-sm leading-relaxed mb-5">Un prompt genérico produce resultados genéricos. Un prompt operativo tiene rol, contexto, estructura y límites. La diferencia puede ser media hora de trabajo extra en correcciones o un entregable que usas tal cual.</p>
-    <div class={`border-l-4 ${mc[5].border} pl-4 py-1 mb-6`}>
-      <p class={`text-xs font-mono ${mc[5].label} uppercase tracking-widest mb-1`}>Por qué importa</p>
-      <p class="text-sm text-slate-500 italic leading-relaxed">La mayoría de la gente usa la IA como si fuera un buscador. La IA no es un buscador. Es un colaborador que necesita briefing. Sin briefing, produce trabajo genérico. Con briefing, produce trabajo específico.</p>
-    </div>
-    <InsightBox type="protip">Estructura mínima de un prompt operativo: <strong>ROL</strong> (quién es Claude para esta tarea) + <strong>TAREA</strong> (qué exactamente) + <strong>FORMATO</strong> (cómo quieres el output) + <strong>LÍMITE</strong> (máximo X líneas, sin Y, etc.). Cuatro elementos. Todo lo demás es optativo.</InsightBox>
-    <PromptBlock tag="PROMPT M5" title="Auditar una tarea repetitiva y mapear su automatización" prompt={promptAuditoria} />
-    <ExerciseAccordion
-      objetivo="Transformar una petición vaga en un prompt operativo y comparar los resultados lado a lado."
-      resultado="Un prompt operativo escrito por ti que produce un output que usarías directamente, sin edición significativa."
-      errorComun="Añadir contexto que no es relevante para la tarea. El contexto debe ser denso y pertinente, no extenso."
-      comoSaberBien="El output del prompt operativo no necesita reescritura para usarse. El output del prompt vago sí la necesita."
-    >
-      <ol class="space-y-3">
-        {[
-          <>Piensa en una tarea concreta que quieras delegar a Claude. Por ejemplo: redactar un email, resumir un documento, crear una lista de tareas.</>,
-          <>Escribe la versión vaga en una línea: "Escríbeme un email para un cliente", "Resume este texto".</>,
-          <>Ahora reescríbela añadiendo: rol de Claude, quién es el receptor, tono esperado, formato del output, extensión máxima.</>,
-          <>Envía ambas versiones a Claude y compara los resultados en paralelo.</>,
-          <>Anota la diferencia. ¿Cuál usarías sin editar? ¿Qué parte del contexto fue la que más cambió el output?</>,
-        ].map((step, i) => (
-          <li class="flex gap-3 items-start text-sm text-slate-600">
-            <span class="bg-slate-100 text-slate-500 font-mono text-xs rounded px-1.5 py-0.5 shrink-0 mt-0.5 leading-5">{i + 1}</span>
-            <span class="leading-relaxed">{step}</span>
-          </li>
-        ))}
-      </ol>
-    </ExerciseAccordion>
-    <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-5 pt-5 border-t border-slate-100 text-xs">
-      <div class="flex items-center gap-2 text-slate-500"><span class="font-mono">Entregable:</span><span class="text-slate-600">Un prompt operativo propio que produce resultado usable</span></div>
-      <div class="flex items-center gap-2 text-emerald-700"><span>✓</span><span>Distingues entre petición vaga y petición estructurada</span></div>
-      <a href="#toc" class="ml-auto text-slate-300 hover:text-slate-500 font-mono transition-colors">↑ índice</a>
-    </div>
-  </section>
-
-  <!-- MÓDULO 6 -->
-  <section id="modulo-6" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-7 mb-6 scroll-mt-20">
-    <div class="flex items-start gap-4 mb-5">
-      <span class={`${mc[6].bg} ${mc[6].text} font-mono text-sm font-bold rounded-lg px-3 py-1.5 shrink-0`}>M6</span>
-      <div>
-        <h2 class="text-lg font-semibold text-slate-900">Automatizaciones</h2>
-        <span class="text-xs text-slate-400 font-mono mt-0.5 inline-block">⏱ 25 min</span>
-      </div>
-    </div>
-    <div class="bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3 mb-5">
-      <p class="text-xs font-mono text-emerald-600 uppercase tracking-widest mb-1">Al terminar</p>
-      <p class="text-sm text-slate-700 leading-relaxed">Has identificado al menos una tarea de tu trabajo que puede sistematizarse y tienes un mapa de cómo hacerlo.</p>
-    </div>
-    <p class="text-slate-600 text-sm leading-relaxed mb-5">Automatizar no significa programar. Significa pensar en pasos: qué hago, qué parte puede hacer una máquina, qué necesito supervisar. Este módulo es sobre diseñar antes de construir.</p>
-    <div class={`border-l-4 ${mc[6].border} pl-4 py-1 mb-6`}>
-      <p class={`text-xs font-mono ${mc[6].label} uppercase tracking-widest mb-1`}>Por qué importa</p>
-      <p class="text-sm text-slate-500 italic leading-relaxed">La mayoría de la gente automatiza antes de entender qué está automatizando. El resultado son sistemas frágiles que se rompen cuando algo cambia. Mapear primero ahorra horas después.</p>
-    </div>
-    <InsightBox type="insight">Automatizar no elimina trabajo: lo redistribuye. Menos ejecución repetitiva, más diseño y supervisión. El operador que no entiende qué hay detrás no puede supervisarlo ni mejorarlo cuando falla.</InsightBox>
-    <ExerciseAccordion
-      objetivo="Mapear una tarea repetitiva propia y detectar qué partes son automatizables, cuáles necesitan supervisión y cuáles requieren criterio humano."
-      resultado="Un documento con el mapa de la tarea, etiquetado por tipo (automatizable / supervisado / humano) y una propuesta de flujo mejorado."
-      errorComun="Intentar automatizar todo de golpe. Empieza por el paso más repetitivo y menos crítico. Los sistemas pequeños que funcionan valen más que los grandes que no terminan."
-      comoSaberBien="Puedes describir el sistema en 5 líneas y explicarle a alguien cómo funcionaría sin usar palabras técnicas."
-    >
-      <ol class="space-y-3">
-        {[
-          <>Elige una tarea que hagas al menos una vez por semana. Cuanto más concreta, mejor.</>,
-          <>Escribe todos los pasos de esa tarea, en orden, sin omitir ninguno. Incluye incluso los más pequeños.</>,
-          <>Para cada paso, pon una etiqueta: <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">automatizable</code>, <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">supervisado</code>, o <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">humano</code>.</>,
-          <>Identifica el paso que más tiempo o energía mental te consume.</>,
-          <>Diseña cómo sería ese paso si lo ejecutara Claude. ¿Qué información necesitaría? ¿Qué produciría? ¿Cómo lo revisarías?</>,
-        ].map((step, i) => (
-          <li class="flex gap-3 items-start text-sm text-slate-600">
-            <span class="bg-slate-100 text-slate-500 font-mono text-xs rounded px-1.5 py-0.5 shrink-0 mt-0.5 leading-5">{i + 1}</span>
-            <span class="leading-relaxed">{step}</span>
-          </li>
-        ))}
-      </ol>
-    </ExerciseAccordion>
-    <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-5 pt-5 border-t border-slate-100 text-xs">
-      <div class="flex items-center gap-2 text-slate-500"><span class="font-mono">Entregable:</span><span class="text-slate-600">Mapa de tarea con etiquetas y propuesta de automatización</span></div>
-      <div class="flex items-center gap-2 text-emerald-700"><span>✓</span><span>Distingues tarea, proceso, sistema y automatización</span></div>
-      <a href="#toc" class="ml-auto text-slate-300 hover:text-slate-500 font-mono transition-colors">↑ índice</a>
-    </div>
-  </section>
-
-  <!-- MÓDULO 7 -->
-  <section id="modulo-7" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-7 mb-6 scroll-mt-20">
-    <div class="flex items-start gap-4 mb-5">
-      <span class={`${mc[7].bg} ${mc[7].text} font-mono text-sm font-bold rounded-lg px-3 py-1.5 shrink-0`}>M7</span>
-      <div>
-        <h2 class="text-lg font-semibold text-slate-900">Publicar y mejorar</h2>
-        <span class="text-xs text-slate-400 font-mono mt-0.5 inline-block">⏱ 20 min</span>
-      </div>
-    </div>
-    <div class="bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3 mb-5">
-      <p class="text-xs font-mono text-emerald-600 uppercase tracking-widest mb-1">Al terminar</p>
-      <p class="text-sm text-slate-700 leading-relaxed">Algo publicado con una URL real, accesible desde cualquier navegador, y una lista de mejoras documentadas para la siguiente versión.</p>
-    </div>
-    <p class="text-slate-600 text-sm leading-relaxed mb-5">Publicar cierra el ciclo. Convierte trabajo privado en trabajo real. Aprende a desplegar algo pequeño en menos de 10 minutos. Después escribe qué cambiarías: así empieza la iteración.</p>
-    <div class={`border-l-4 ${mc[7].border} pl-4 py-1 mb-6`}>
-      <p class={`text-xs font-mono ${mc[7].label} uppercase tracking-widest mb-1`}>Por qué importa</p>
-      <p class="text-sm text-slate-500 italic leading-relaxed">Los proyectos que no se publican no reciben feedback, no mejoran y eventualmente se abandonan. Lo imperfecto que funciona y existe siempre vale más que lo perfecto que no llega a salir.</p>
-    </div>
-    <InsightBox type="remember">Publica en versión 0.1, no en versión 1.0. La primera URL existe para que exista. El feedback real empieza cuando algo está publicado. La iteración, también.</InsightBox>
-    <ExerciseAccordion
-      objetivo="Desplegar operador-practica en Cloudflare Pages y documentar mejoras para v2."
-      antesDeEmpezar="Asegúrate de que el proyecto tiene al menos un archivo de contenido y está subido a GitHub."
-      resultado="URL pública activa que carga desde cualquier navegador, más un archivo mejoras-v2.md con al menos 3 puntos concretos."
-      errorComun="Esperar a que esté 'perfecto' para publicar. No existe el perfecto antes de publicar. Existe el imperfecto que recibe feedback y mejora."
-      comoSaberBien="La URL carga en un navegador que no es el tuyo. El archivo mejoras-v2.md tiene puntos concretos, no vagos."
-    >
-      <ol class="space-y-3">
-        {[
-          <>Entra en <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">dash.cloudflare.com</code> → Workers & Pages → Create → Pages.</>,
-          <>Conecta tu cuenta de GitHub y selecciona el repo <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">operador-practica</code>.</>,
-          <>Si es HTML estático: deja Build command vacío, output directory <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">/</code>. Si es Astro: Build command <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">npm run build</code>, output <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">dist</code>.</>,
-          <>Haz click en Save and Deploy. En ~60 segundos tienes una URL pública.</>,
-          <>Crea <code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs font-mono">mejoras-v2.md</code> con al menos 3 cosas concretas que cambiarías o añadirías.</>,
-        ].map((step, i) => (
-          <li class="flex gap-3 items-start text-sm text-slate-600">
-            <span class="bg-slate-100 text-slate-500 font-mono text-xs rounded px-1.5 py-0.5 shrink-0 mt-0.5 leading-5">{i + 1}</span>
-            <span class="leading-relaxed">{step}</span>
-          </li>
-        ))}
-      </ol>
-    </ExerciseAccordion>
-    <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-5 pt-5 border-t border-slate-100 text-xs">
-      <div class="flex items-center gap-2 text-slate-500"><span class="font-mono">Entregable:</span><span class="text-slate-600">URL pública activa + mejoras-v2.md</span></div>
-      <div class="flex items-center gap-2 text-emerald-700"><span>✓</span><span>Has cerrado el ciclo: construir → documentar → publicar → mejorar</span></div>
-      <a href="#toc" class="ml-auto text-slate-300 hover:text-slate-500 font-mono transition-colors">↑ índice</a>
-    </div>
-  </section>
-
-  <!-- COMPLETION SECTION — proof submission -->
+  <!-- PROOF SUBMISSION -->
   <div id="completar-n1" class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-7 mt-4 scroll-mt-28">
     <div class="flex items-center justify-between gap-3 mb-2">
-      <span class="label">NIVEL 1 — ENTREGA TU PRUEBA</span>
-      <span id="proof-status" class="font-mono text-[10px] tracking-widest uppercase px-2.5 py-1 rounded-lg bg-amber-100 text-amber-700">Pendiente de prueba</span>
+      <span class="label">{t('n1.proof.label')}</span>
+      <span id="proof-status" class="font-mono text-[10px] tracking-widest uppercase px-2.5 py-1 rounded-lg bg-amber-100 text-amber-700">{t('n1.proof.status.pending')}</span>
     </div>
-    <p class="text-slate-700 text-sm leading-relaxed mb-1 font-semibold">Nivel 1 no se completa por ver contenido. Se completa entregando evidencia pública.</p>
-    <p class="text-slate-600 text-sm leading-relaxed mb-6">Tu prueba final es <strong>un repo público + una URL viva</strong>. Todos los entregables (contexto, CLAUDE.md, prompts, mapa de automatización, mejoras) viven en un único repositorio: <code class="bg-white border border-emerald-200 px-1.5 py-0.5 rounded font-mono text-emerald-700 text-xs">operador-practica</code>.</p>
+    <p class="text-slate-700 text-sm leading-relaxed mb-1 font-semibold">{t('n1.proof.title1')}</p>
+    <p class="text-slate-600 text-sm leading-relaxed mb-6">
+      {t('n1.proof.title2.a')} <strong>{t('n1.proof.title2.b')}</strong>. {t('n1.proof.title2.c')} <code class="bg-white border border-emerald-200 px-1.5 py-0.5 rounded font-mono text-emerald-700 text-xs">operador-practica</code>.
+    </p>
 
-    <p class="text-xs font-mono text-emerald-600 uppercase tracking-widest mb-3">Antes de entregar, asegúrate de:</p>
+    <p class="text-xs font-mono text-emerald-600 uppercase tracking-widest mb-3">{t('n1.proof.checklist.label')}</p>
     <ul class="space-y-2.5 mb-7">
-      {[
-        'mi-contexto.md en el repo operador-practica',
-        'README.md generado con Claude Code y revisado por ti',
-        'CLAUDE.md commiteado en el repo',
-        '.gitignore y al menos 1 commit (sin secretos)',
-        'Prompt operativo propio guardado en el repo',
-        'Mapa de automatización de una tarea real',
-        'mejoras-v2.md con 3+ puntos concretos',
-        'El proyecto desplegado en una URL pública viva',
-      ].map(item => (
+      {checklist.map(item => (
         <li class="flex items-start gap-3 text-sm text-slate-600">
           <span class="text-emerald-500 font-mono shrink-0 mt-0.5 text-base leading-4">✓</span>
           {item}
@@ -605,32 +987,29 @@ Sé específico. No generalices.`;
       ))}
     </ul>
 
-    <!-- Pending state: submission form -->
+    <!-- Pending: form -->
     <div id="proof-form">
       <div class="space-y-4 mb-5">
         <div>
-          <label for="proof-repo" class="block font-mono text-xs text-slate-600 mb-1.5">Repo público de GitHub</label>
+          <label for="proof-repo" class="block font-mono text-xs text-slate-600 mb-1.5">{t('n1.proof.form.repo')}</label>
           <input id="proof-repo" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://github.com/tu-usuario/operador-practica" class="w-full font-mono text-sm bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-400 transition-colors" />
         </div>
         <div>
-          <label for="proof-url" class="block font-mono text-xs text-slate-600 mb-1.5">URL viva del proyecto desplegado</label>
+          <label for="proof-url" class="block font-mono text-xs text-slate-600 mb-1.5">{t('n1.proof.form.url')}</label>
           <input id="proof-url" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://operador-practica.pages.dev" class="w-full font-mono text-sm bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-400 transition-colors" />
         </div>
       </div>
       <p id="proof-error" class="hidden text-sm text-rose-600 font-mono mb-4"></p>
-      <button
-        id="btn-submit-proof"
-        class="w-full font-mono text-sm font-semibold text-white bg-emerald-500 px-6 py-4 rounded-xl hover:bg-emerald-600 transition-colors cursor-pointer border-0"
-      >
-        Entregar prueba N1 →
+      <button id="btn-submit-proof" class="w-full font-mono text-sm font-semibold text-white bg-emerald-500 px-6 py-4 rounded-xl hover:bg-emerald-600 transition-colors cursor-pointer border-0">
+        {t('n1.proof.form.submit')}
       </button>
     </div>
 
     <!-- Delivered state -->
     <div id="proof-delivered" class="hidden">
       <div class="bg-emerald-500 text-white rounded-xl px-6 py-5 text-center mb-4">
-        <p class="font-mono text-xs tracking-widest uppercase mb-1.5 opacity-80">PRUEBA N1 ENTREGADA</p>
-        <p class="font-semibold text-base">Nivel 2 desbloqueado: Advanced Operator Playbook</p>
+        <p class="font-mono text-xs tracking-widest uppercase mb-1.5 opacity-80">{t('n1.proof.delivered.badge')}</p>
+        <p class="font-semibold text-base">{t('n1.proof.delivered.subtitle')}</p>
       </div>
       <div class="space-y-2 mb-4">
         <a id="proof-repo-link" href="#" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 bg-white border border-emerald-200 rounded-xl px-4 py-3 font-mono text-xs text-slate-700 hover:border-emerald-400 transition-colors break-all">
@@ -641,20 +1020,17 @@ Sé específico. No generalices.`;
         </a>
       </div>
       <div class="flex flex-wrap gap-3">
-        <a
-          href="/advanced"
-          class="flex-1 text-center font-mono text-sm font-semibold text-violet-700 border-2 border-violet-300 bg-violet-50 px-6 py-3.5 rounded-xl hover:bg-violet-100 transition-colors"
-        >
-          Ir a Nivel 2 →
+        <a href="/advanced" class="flex-1 text-center font-mono text-sm font-semibold text-violet-700 border-2 border-violet-300 bg-violet-50 px-6 py-3.5 rounded-xl hover:bg-violet-100 transition-colors">
+          {t('n1.proof.delivered.n2')}
         </a>
-        <button id="btn-edit-proof" class="font-mono text-xs text-slate-500 hover:text-slate-700 px-4 py-3.5 transition-colors cursor-pointer border-0 bg-transparent">Editar enlaces</button>
+        <button id="btn-edit-proof" class="font-mono text-xs text-slate-500 hover:text-slate-700 px-4 py-3.5 transition-colors cursor-pointer border-0 bg-transparent">{t('n1.proof.edit')}</button>
       </div>
     </div>
   </div>
 
 </LayoutLevel>
 
-<script is:inline>
+<script define:vars={jsStrings} is:inline>
   (function () {
     var MKEYS = [0,1,2,3,4,5,6,7].map(function(i) { return 'moonkey_level_1_module_' + i; });
     var TOTAL = 8;
@@ -689,25 +1065,24 @@ Sé específico. No generalices.`;
       });
     });
 
-    // ── Level 1 proof submission ──
+    // ── proof submission ──
     var REPO_KEY = 'moonkey_level_1_proof_repo';
-    var URL_KEY = 'moonkey_level_1_proof_url';
+    var URL_KEY  = 'moonkey_level_1_proof_url';
     var DONE_KEY = 'moonkey_level_1_completed';
 
-    var formEl = document.getElementById('proof-form');
+    var formEl      = document.getElementById('proof-form');
     var deliveredEl = document.getElementById('proof-delivered');
-    var statusEl = document.getElementById('proof-status');
-    var repoInput = document.getElementById('proof-repo');
-    var urlInput = document.getElementById('proof-url');
-    var errEl = document.getElementById('proof-error');
-    var submitBtn = document.getElementById('btn-submit-proof');
-    var editBtn = document.getElementById('btn-edit-proof');
+    var statusEl    = document.getElementById('proof-status');
+    var repoInput   = document.getElementById('proof-repo');
+    var urlInput    = document.getElementById('proof-url');
+    var errEl       = document.getElementById('proof-error');
+    var submitBtn   = document.getElementById('btn-submit-proof');
+    var editBtn     = document.getElementById('btn-edit-proof');
 
     function lsGet(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
     function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
 
     function isGithubRepo(v) {
-      // https://github.com/<owner>/<repo>  (path beyond the host required)
       return /^https:\/\/github\.com\/[^/\s]+\/[^/\s]+/i.test(v.trim());
     }
     function isLiveUrl(v) {
@@ -719,29 +1094,28 @@ Sé específico. No generalices.`;
       if (formEl) formEl.classList.add('hidden');
       if (deliveredEl) deliveredEl.classList.remove('hidden');
       if (statusEl) {
-        statusEl.textContent = 'Prueba N1 entregada';
+        statusEl.textContent = delivered;
         statusEl.className = 'font-mono text-[10px] tracking-widest uppercase px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-700';
       }
       var rl = document.getElementById('proof-repo-link');
       var ul = document.getElementById('proof-url-link');
-      if (rl) { rl.href = repo; }
-      if (ul) { ul.href = url; }
+      if (rl) rl.href = repo;
+      if (ul) ul.href = url;
       var rt = document.getElementById('proof-repo-text'); if (rt) rt.textContent = repo;
-      var ut = document.getElementById('proof-url-text'); if (ut) ut.textContent = url;
+      var ut = document.getElementById('proof-url-text');  if (ut) ut.textContent = url;
     }
 
     function showForm() {
       if (deliveredEl) deliveredEl.classList.add('hidden');
       if (formEl) formEl.classList.remove('hidden');
       if (statusEl) {
-        statusEl.textContent = 'Pendiente de prueba';
+        statusEl.textContent = pending;
         statusEl.className = 'font-mono text-[10px] tracking-widest uppercase px-2.5 py-1 rounded-lg bg-amber-100 text-amber-700';
       }
       if (repoInput) repoInput.value = lsGet(REPO_KEY);
-      if (urlInput) urlInput.value = lsGet(URL_KEY);
+      if (urlInput)  urlInput.value  = lsGet(URL_KEY);
     }
 
-    // Initial state: delivered only if both proof links exist and validate.
     var savedRepo = lsGet(REPO_KEY), savedUrl = lsGet(URL_KEY);
     if (savedRepo && savedUrl && isGithubRepo(savedRepo) && isLiveUrl(savedUrl)) {
       showDelivered();
@@ -752,20 +1126,18 @@ Sé específico. No generalices.`;
     if (submitBtn) {
       submitBtn.addEventListener('click', function() {
         var repo = (repoInput && repoInput.value || '').trim();
-        var url = (urlInput && urlInput.value || '').trim();
+        var url  = (urlInput  && urlInput.value  || '').trim();
         var problems = [];
-        if (!repo) problems.push('Falta la URL del repo de GitHub.');
-        else if (!isGithubRepo(repo)) problems.push('El repo debe ser https://github.com/usuario/proyecto');
-        if (!url) problems.push('Falta la URL viva del proyecto.');
-        else if (!isLiveUrl(url)) problems.push('La URL viva debe empezar por http:// o https://');
+        if (!repo) problems.push(errRepo);
+        else if (!isGithubRepo(repo)) problems.push(errRepoFormat);
+        if (!url) problems.push(errUrl);
+        else if (!isLiveUrl(url)) problems.push(errUrlFormat);
 
         if (problems.length) {
           if (errEl) { errEl.textContent = problems.join(' '); errEl.classList.remove('hidden'); }
           return;
         }
         if (errEl) errEl.classList.add('hidden');
-
-        // Persist proof + mark N1 complete (only when both links pass validation).
         lsSet(REPO_KEY, repo);
         lsSet(URL_KEY, url);
         lsSet(DONE_KEY, 'true');
@@ -776,5 +1148,44 @@ Sé específico. No generalices.`;
     if (editBtn) {
       editBtn.addEventListener('click', function() { showForm(); });
     }
+  })();
+</script>
+
+<script>
+  // N1 proof capture — on a valid submission, also record it in Supabase so the
+  // founder actually receives the proof (repo + live URL + who + ref + locale).
+  // Additive: the localStorage UX flow above is unchanged; if this fails, nothing breaks.
+  import { supabase } from '../lib/supabase';
+  (function () {
+    if (!supabase) return;
+    const btn = document.getElementById('btn-submit-proof');
+    const repoInput = document.getElementById('proof-repo');
+    const urlInput = document.getElementById('proof-url');
+    if (!btn || !repoInput || !urlInput) return;
+
+    const isRepo = (v) => /^https:\/\/github\.com\/[^/\s]+\/[^/\s]+/i.test(v.trim());
+    const isUrl = (v) => /^https?:\/\/[^\s.]+\.[^\s]+/i.test(v.trim());
+
+    btn.addEventListener('click', async () => {
+      const repo = (repoInput.value || '').trim();
+      const live = (urlInput.value || '').trim();
+      if (!isRepo(repo) || !isUrl(live)) return; // invalid → inline script shows the error
+
+      let email = null, userId = null, ref = null, locale = 'es';
+      try {
+        const { data } = await supabase.auth.getSession();
+        email = data?.session?.user?.email ?? null;
+        userId = data?.session?.user?.id ?? null;
+      } catch (e) {}
+      try { ref = localStorage.getItem('moonkey_ref'); } catch (e) {}
+      try { locale = document.documentElement.lang || 'es'; } catch (e) {}
+
+      try {
+        await supabase.from('proofs').insert({
+          level: 'N1', repo_url: repo, live_url: live,
+          email, user_id: userId, ref_code: ref, locale,
+        });
+      } catch (e) { console.warn('[proof] capture skipped:', e); }
+    });
   })();
 </script>
