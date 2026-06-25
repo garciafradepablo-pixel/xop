@@ -248,5 +248,46 @@ const esHref = localizedPath(pathname, 'es');
         } catch (e) {}
       })();
     </script>
+
+    <!-- Advanced scroll parallax + snap refinement -->
+    <script is:inline>
+      (function () {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var raf = null, lastScroll = 0;
+        var blobs = document.querySelectorAll('.mk-blob');
+        var sections = document.querySelectorAll('section[style*="background"]');
+
+        function updateParallax(scroll) {
+          // Blob parallax: dramatic but smooth, 0.4x factor (subtle yet noticeable)
+          blobs.forEach(function (blob, i) {
+            var factor = 0.4 + i * 0.05;
+            blob.style.transform = 'translate3d(0, ' + (scroll * factor) + 'px, 0)';
+          });
+
+          // Section band parallax: 0.2x factor (very subtle, maintains professionalism)
+          sections.forEach(function (sec) {
+            var rect = sec.getBoundingClientRect();
+            var inView = rect.top < window.innerHeight && rect.bottom > 0;
+            if (inView) {
+              var offset = window.innerHeight - rect.top;
+              sec.style.backgroundPosition = '0 ' + (offset * 0.15) + 'px';
+            }
+          });
+        }
+
+        function onScroll() {
+          lastScroll = window.scrollY || window.pageYOffset;
+          if (!raf) {
+            raf = requestAnimationFrame(function () {
+              updateParallax(lastScroll);
+              raf = null;
+            });
+          }
+        }
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        updateParallax(0);
+      })();
+    </script>
   </body>
 </html>
