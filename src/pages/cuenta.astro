@@ -499,8 +499,17 @@ const t = useTranslations(locale);
       document.getElementById('invite-login-prompt')?.classList.add('hidden');
       document.getElementById('invite-link-area')?.classList.remove('hidden');
 
-      // Show referral dashboard (counts default to 0; TODO PART 3 will populate real values)
+      // Show referral dashboard + populate REAL counts via the secure RPC.
       document.getElementById('referral-section')?.classList.remove('hidden');
+      supabase.rpc('my_referral_stats').then(({ data, error }) => {
+        if (error || !data || !data[0]) return;
+        const registered = Number(data[0].referred_count) || 0;
+        const proofs = Number(data[0].proof_count) || 0;
+        const set = (id: string, v: number) => { const el = document.getElementById(id); if (el) el.textContent = String(v); };
+        set('ref-registered', registered);
+        set('ref-proofs', proofs);
+        set('ref-sent', registered); // operators that entered through your link
+      });
 
       // Pre-filled share message — picked at runtime by the active locale.
       const SHARE_MSG: Record<string, string> = {
