@@ -133,9 +133,20 @@ const t = useTranslations(locale);
       const seg = location.pathname.split('/').filter(Boolean)[0];
       const prefix = ['en', 'th', 'fr', 'it', 'ch'].includes(seg) ? `/${seg}` : '';
       const cuentaUrl = `${location.origin}${prefix}/cuenta/`;
+
+      // Carry referral attribution at sign-up time (user_metadata), so a referred
+      // user is credited even if they never reach /cuenta. Supabase only applies this
+      // data on first account creation (ignored for existing users), so it can't
+      // overwrite an established attribution.
+      let referredBy = '';
+      try { referredBy = (localStorage.getItem('moonkey_ref') || '').toUpperCase(); } catch (e) {}
+
       const { error } = await supabase.auth.signInWithOtp({
         email,
-        options: { emailRedirectTo: cuentaUrl },
+        options: {
+          emailRedirectTo: cuentaUrl,
+          ...(referredBy ? { data: { referred_by: referredBy, referred_at: new Date().toISOString() } } : {}),
+        },
       });
 
       if (error) {

@@ -1,5 +1,7 @@
 ---
 import Layout from '../components/Layout.astro';
+import { resolveLocale, localizedPath } from '../i18n/utils';
+const locale = resolveLocale(Astro.currentLocale, Astro.url.pathname);
 
 // SECURITY MODEL (static SSG — there is no server-side request handler here):
 // The real access boundary is Postgres RLS, NOT this page. profiles/progress/
@@ -46,7 +48,7 @@ const configured = !!(
         <div class="bg-rose-50 border border-rose-200 rounded-xl px-5 py-5 max-w-sm">
           <p class="font-mono text-[10px] tracking-widest text-rose-700 uppercase mb-2">ACCESO DENEGADO</p>
           <p class="text-sm text-slate-700 mb-3">No tienes acceso a este panel.</p>
-          <a href="/cuenta" class="inline-block font-mono text-xs text-slate-500 border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-50 transition-colors">Volver a mi cuenta →</a>
+          <a href={localizedPath('/cuenta', locale)} class="inline-block font-mono text-xs text-slate-500 border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-50 transition-colors">Volver a mi cuenta →</a>
         </div>
       </div>
 

@@ -825,18 +825,23 @@ const caminos = [
 </script>
 
 <script>
-  // When logged in, let the "Reiniciar progreso" button also clear the cloud row —
-  // otherwise the next sync would re-pull and silently resurrect the reset progress.
-  import { supabase } from '../lib/supabase';
-  import { resetCloudProgress } from '../lib/progress';
-  (function () {
-    if (!supabase) return;
-    supabase.auth.getSession().then(function (r) {
-      const uid = r?.data?.session?.user?.id;
-      if (!uid) return;
-      (window as any).__moonkeyResetCloud = function () { return resetCloudProgress(supabase, uid); };
-    });
-  })();
+  // Reset-cloud bridge for the "Reiniciar progreso" button. Installed SYNCHRONOUSLY
+  // (no race against a pending getSession — the old version set this inside a .then(),
+  // so a fast click could reset local but skip the cloud). Supabase is imported LAZILY,
+  // only when the user actually resets — so the homepage critical path ships no auth SDK
+  // (~54KB gzip) for the ~100% of visitors who never click reset.
+  (window as any).__moonkeyResetCloud = async function () {
+    try {
+      const [{ supabase }, { resetCloudProgress }] = await Promise.all([
+        import('../lib/supabase'),
+        import('../lib/progress'),
+      ]);
+      if (!supabase) return;
+      const { data } = await supabase.auth.getSession();
+      const uid = data?.session?.user?.id;
+      if (uid) await resetCloudProgress(supabase, uid);
+    } catch (e) { /* local reset already happened; cloud best-effort */ }
+  };
 </script>
 
 <script is:inline>

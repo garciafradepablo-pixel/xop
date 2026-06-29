@@ -467,7 +467,8 @@ const erroresAvanzados = [
     document.querySelectorAll('.sb-mod-btn').forEach(function(btn) {
       btn.addEventListener('click', function() {
         var key = btn.getAttribute('data-mkey');
-        localStorage.setItem(key, ls(key) ? 'false' : 'true');
+        if (ls(key)) return; // completion is one-way; union sync can't revert it anyway
+        localStorage.setItem(key, 'true');
         applyChecks();
         document.dispatchEvent(new Event('moonkey:changed'));
       });

@@ -2,7 +2,7 @@
 import '../styles/global.css';
 import Header from './Header.astro';
 import LanguageBar from './LanguageBar.astro';
-import { getLocaleFromPath, localizedPath } from '../i18n/utils';
+import { resolveLocale, localizedPath } from '../i18n/utils';
 
 interface Props {
   title: string;
@@ -12,7 +12,10 @@ interface Props {
 const { title, description = 'Escuela modular para aprender a operar IA, automatizaciones y sistemas creativos.' } = Astro.props;
 
 const pathname = Astro.url.pathname;
-const locale = getLocaleFromPath(pathname);
+// Use Astro.currentLocale (correct under fallbackType:'rewrite') — pathname-only
+// detection returns 'es' for every rewritten /en/... page, which left the footer
+// links un-prefixed AND mislabelled <html lang>. resolveLocale fixes both.
+const locale = resolveLocale(Astro.currentLocale, pathname);
 const esHref = localizedPath(pathname, 'es');
 const enHref = localizedPath(pathname, 'en');
 ---
@@ -52,15 +55,15 @@ const enHref = localizedPath(pathname, 'en');
           <p class="text-xs text-slate-400 leading-relaxed">Aprende, desbloquea Keys y convierte IA en sistemas reales de trabajo.</p>
         </div>
         <nav class="flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs font-mono mb-8">
-          <a href="/manifiesto" class="text-slate-400 hover:text-emerald-600 transition-colors">Manifiesto</a>
-          <a href="/info" class="text-slate-400 hover:text-emerald-600 transition-colors">Info</a>
-          <a href="/monkeys" class="text-slate-400 hover:text-emerald-600 transition-colors">Monkeys</a>
-          <a href="/planes" class="text-slate-400 hover:text-emerald-600 transition-colors">Planes</a>
-          <a href="/soporte" class="text-slate-400 hover:text-emerald-600 transition-colors">Soporte</a>
-          <a href="/prueba-operador" class="text-slate-400 hover:text-emerald-600 transition-colors">Test de Operador</a>
-          <a href="/glosario" class="text-slate-400 hover:text-emerald-600 transition-colors">Glosario</a>
-          <a href="/cuenta" class="text-slate-400 hover:text-emerald-600 transition-colors">Cuenta</a>
-          <a href="/privacidad" class="text-slate-400 hover:text-emerald-600 transition-colors">Privacidad</a>
+          <a href={localizedPath('/manifiesto', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">Manifiesto</a>
+          <a href={localizedPath('/info', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">Info</a>
+          <a href={localizedPath('/monkeys', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">Monkeys</a>
+          <a href={localizedPath('/planes', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">Planes</a>
+          <a href={localizedPath('/soporte', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">Soporte</a>
+          <a href={localizedPath('/prueba-operador', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">Test de Operador</a>
+          <a href={localizedPath('/glosario', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">Glosario</a>
+          <a href={localizedPath('/cuenta', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">Cuenta</a>
+          <a href={localizedPath('/privacidad', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">Privacidad</a>
         </nav>
         <div class="border-t border-slate-100 mb-6"></div>
         <div class="text-center mb-6">
