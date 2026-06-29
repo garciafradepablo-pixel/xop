@@ -209,7 +209,7 @@ const configured = !!(
       .eq('id', session.user.id)
       .single();
 
-    if (!['admin', 'founder'].includes(selfProfile?.role ?? '')) {
+    if (!['admin', 'founder', 'ceo'].includes(selfProfile?.role ?? '')) {
       blockedEl?.classList.remove('hidden');
       return;
     }

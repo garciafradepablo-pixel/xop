@@ -118,6 +118,7 @@ const t = useTranslations(locale);
         <!-- Identity body -->
         <div class="px-5 py-4">
           <p id="pf-card-email" class="text-[11px] font-mono mb-1" style="color:rgba(148,163,184,0.7)"></p>
+          <p id="pf-card-ceo" class="font-mono text-[9px] tracking-widest uppercase hidden mb-1" style="color:#fbbf24">CEO · XNLAB Studio</p>
           <p id="pf-card-nickname" class="text-base font-bold hidden mb-1" style="color:#f0fdf4"></p>
           <p id="pf-card-goal" class="text-[11px] hidden mb-3" style="color:rgba(148,163,184,0.6)"></p>
           <p id="pf-card-level" class="font-mono text-[9px] tracking-widest uppercase hidden mt-2" style="color:#34d399"></p>
@@ -148,24 +149,32 @@ const t = useTranslations(locale);
           />
         </div>
         <div>
-          <label for="pf-goal" class="block text-sm font-medium text-slate-700 mb-1.5">Objetivo principal</label>
-          <input
-            id="pf-goal" name="operator_goal" type="text" maxlength="120"
-            placeholder="¿Qué quieres lograr con IA?"
-            class="w-full font-mono text-sm border border-slate-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent"
-          />
+          <label for="pf-goal" class="block text-sm font-medium text-slate-700 mb-1.5">¿Qué quieres lograr?</label>
+          <select
+            id="pf-goal" name="operator_goal"
+            class="w-full font-mono text-sm border border-slate-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent bg-white"
+          >
+            <option value="">Elige tu objetivo</option>
+            <option value="operar-ia">Operar la IA con criterio</option>
+            <option value="producto">Construir y lanzar productos</option>
+            <option value="datos">Datos, backend y automatización</option>
+            <option value="mercados">Mercados, trading, research</option>
+            <option value="marca">Diseño, marca y contenido</option>
+            <option value="seguridad">Seguridad y operaciones</option>
+            <option value="explorar">Aún explorando</option>
+          </select>
         </div>
-        <div>
+        <div id="pf-level-field">
           <label for="pf-level" class="block text-sm font-medium text-slate-700 mb-1.5">Nivel de experiencia</label>
           <select
             id="pf-level" name="experience_level"
             class="w-full font-mono text-sm border border-slate-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent bg-white"
           >
             <option value="">Selecciona tu nivel</option>
-            <option value="starter">Estoy empezando</option>
-            <option value="builder">Ya construyo cosas con IA</option>
-            <option value="operator">Quiero operar sistemas reales</option>
-            <option value="team">Quiero formar o dirigir equipo</option>
+            <option value="starter">Empezando — poca o ninguna experiencia técnica</option>
+            <option value="builder">Construyo con IA, pero aún sin sistema</option>
+            <option value="operator">Opero sistemas reales en producción</option>
+            <option value="team">Formo o dirijo a otros operadores</option>
           </select>
         </div>
 
@@ -181,6 +190,39 @@ const t = useTranslations(locale);
           <p id="pf-status" class="hidden text-xs font-mono text-emerald-700"></p>
         </div>
       </form>
+    </section>
+  )}
+
+  <!-- CEO dashboard — shown by script only for CEO/founder/admin -->
+  {configured && (
+    <section id="ceo-section" class="py-10 border-b border-slate-200 hidden">
+      <div class="flex items-center justify-between gap-4 mb-6 flex-wrap">
+        <p class="font-mono text-[10px] tracking-widest text-amber-600 uppercase">PANEL CEO · XNLAB STUDIO</p>
+        <a href="/admin" class="font-mono text-[11px] text-slate-500 border border-slate-200 px-3 py-1.5 rounded-lg hover:border-emerald-300 hover:text-emerald-600 transition-colors">Gestión completa →</a>
+      </div>
+
+      <div class="grid grid-cols-3 gap-3 max-w-md mb-8">
+        <div class="bg-white border border-slate-200 rounded-xl p-4 text-center shadow-sm">
+          <p id="ceo-stat-link" class="text-2xl font-bold font-mono mb-1 text-emerald-600">—</p>
+          <p class="text-[10px] text-slate-500 leading-tight">Con tu enlace</p>
+        </div>
+        <div class="bg-white border border-slate-200 rounded-xl p-4 text-center shadow-sm">
+          <p id="ceo-stat-ref" class="text-2xl font-bold font-mono mb-1 text-violet-600">—</p>
+          <p class="text-[10px] text-slate-500 leading-tight">Referidos directos</p>
+        </div>
+        <div class="bg-white border border-slate-200 rounded-xl p-4 text-center shadow-sm">
+          <p id="ceo-stat-ops" class="text-2xl font-bold font-mono mb-1 text-slate-900">—</p>
+          <p class="text-[10px] text-slate-500 leading-tight">Operadores</p>
+        </div>
+      </div>
+
+      <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-3">GENTE CON TU ENLACE</p>
+      <p class="text-slate-500 text-xs mb-4 max-w-lg">Cada persona que hizo el perfil de operador desde tu enlace — virtudes, objetivo y constelación de entrada, para filtrar a quién formar.</p>
+      <div id="ceo-link-list" class="space-y-2 max-w-2xl mb-10"></div>
+
+      <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-3">QUIÉN TRABAJA</p>
+      <p class="text-slate-500 text-xs mb-4 max-w-lg">Operadores registrados en el ecosistema, con su rango, objetivo y nivel.</p>
+      <div id="ceo-ops-list" class="space-y-2 max-w-2xl"></div>
     </section>
   )}
 
@@ -432,10 +474,20 @@ const t = useTranslations(locale);
   import { readLocalProgress, toSupabasePayload } from '../lib/progress';
 
   const LEVEL_LABELS: Record<string, string> = {
-    starter:  'Estoy empezando',
-    builder:  'Ya construyo cosas con IA',
-    operator: 'Quiero operar sistemas reales',
-    team:     'Quiero formar o dirigir equipo',
+    starter:  'Empezando',
+    builder:  'Construye con IA, sin sistema',
+    operator: 'Opera sistemas reales',
+    team:     'Forma o dirige operadores',
+  };
+
+  const GOAL_LABELS: Record<string, string> = {
+    'operar-ia': 'Operar la IA con criterio',
+    producto:    'Construir y lanzar productos',
+    datos:       'Datos, backend y automatización',
+    mercados:    'Mercados, trading, research',
+    marca:       'Diseño, marca y contenido',
+    seguridad:   'Seguridad y operaciones',
+    explorar:    'Aún explorando',
   };
 
   const RANK_DESC: Record<string, string> = {
@@ -443,6 +495,88 @@ const t = useTranslations(locale);
     gorilla: 'Gorilla · ejecuta con fuerza',
     eagle:   'Panda · domina su sistema',
   };
+
+  const CONST_LABEL: Record<string, string> = {
+    'operator-core': 'Operator Core', 'data-systems': 'Data & Systems', 'builders': 'Builders',
+    signal: 'Signal', 'brand-surface': 'Brand & Surface', 'ops-security': 'Ops & Security',
+  };
+  const esc = (s: any) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+  // ── CEO dashboard: who has the link (referred intakes) + who works (operators) ──
+  async function loadCeoDashboard(myId: string) {
+    if (!supabase) return;
+    document.getElementById('ceo-section')?.classList.remove('hidden');
+
+    const [intakeRes, profRes] = await Promise.all([
+      supabase.from('operator_intake')
+        .select('created_at, ref_code, name, email, virtues, aptitude, domains, goal, time_week, recommended, note')
+        .order('created_at', { ascending: false }).limit(100),
+      supabase.from('profiles')
+        .select('id, email, nickname, operator_goal, experience_level, operator_rank, founder_badge, role, created_at')
+        .order('created_at', { ascending: true }),
+    ]);
+
+    const intakes = (intakeRes.data ?? []) as any[];
+    const profs = (profRes.data ?? []) as any[];
+
+    const setN = (id: string, v: number | string) => { const el = document.getElementById(id); if (el) el.textContent = String(v); };
+    setN('ceo-stat-link', intakes.length);
+    setN('ceo-stat-ops', profs.length);
+    const withRef = intakes.filter((r) => r.ref_code).length;
+    setN('ceo-stat-ref', withRef);
+
+    // "Gente con tu enlace" — referred profiler intakes
+    const linkList = document.getElementById('ceo-link-list');
+    if (linkList) {
+      linkList.innerHTML = intakes.length === 0
+        ? '<p class="text-sm text-slate-400 font-mono">Aún nadie ha hecho el perfil con tu enlace.</p>'
+        : intakes.map((r) => {
+            const when = r.created_at ? new Date(r.created_at).toLocaleDateString() : '';
+            const virtues = Array.isArray(r.virtues) ? r.virtues.slice(0, 4).join(' · ') : '';
+            const rec = CONST_LABEL[r.recommended] ?? r.recommended ?? '—';
+            const goal = GOAL_LABELS[r.goal] ?? r.goal ?? '';
+            const lvl = LEVEL_LABELS[r.aptitude] ?? r.aptitude ?? '';
+            return `
+              <div class="bg-white border border-slate-200 rounded-xl px-5 py-4">
+                <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                  ${r.name ? `<span class="text-sm font-semibold text-slate-900">${esc(r.name)}</span>` : '<span class="text-sm text-slate-400 italic">Anónimo</span>'}
+                  ${r.email ? `<span class="font-mono text-[11px] text-slate-500">${esc(r.email)}</span>` : ''}
+                  ${r.ref_code ? `<span class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700">ref ${esc(r.ref_code)}</span>` : '<span class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-slate-50 border border-slate-200 text-slate-400">directo</span>'}
+                  <span class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-violet-50 border border-violet-200 text-violet-700">→ ${esc(rec)}</span>
+                  <span class="font-mono text-[10px] text-slate-300 ml-auto">${esc(when)}</span>
+                </div>
+                <p class="font-mono text-[11px] text-slate-500">${esc(goal)}${lvl ? ` · ${esc(lvl)}` : ''}${r.time_week ? ` · ${esc(r.time_week)}/sem` : ''}</p>
+                ${virtues ? `<p class="font-mono text-[11px] text-slate-400 mt-0.5">${esc(virtues)}</p>` : ''}
+                ${r.note ? `<p class="text-xs text-slate-400 leading-relaxed mt-1 truncate max-w-xl">${esc(r.note)}</p>` : ''}
+              </div>`;
+          }).join('');
+    }
+
+    // "Quién trabaja" — registered operators
+    const opsList = document.getElementById('ceo-ops-list');
+    if (opsList) {
+      const others = profs.filter((p) => p.id !== myId);
+      opsList.innerHTML = others.length === 0
+        ? '<p class="text-sm text-slate-400 font-mono">Aún no hay operadores registrados además de ti.</p>'
+        : others.map((p) => {
+            const who = p.nickname ? esc(p.nickname) : (p.email ? esc(p.email) : 'Operador');
+            const role = p.role && p.role !== 'student' ? p.role : '';
+            const rank = RANK_DESC[p.operator_rank] ?? '';
+            const goal = GOAL_LABELS[p.operator_goal] ?? p.operator_goal ?? '';
+            const lvl = LEVEL_LABELS[p.experience_level] ?? p.experience_level ?? '';
+            return `
+              <div class="bg-white border border-slate-200 rounded-xl px-5 py-4">
+                <div class="flex flex-wrap items-center gap-2 mb-1">
+                  <span class="text-sm font-semibold text-slate-900">${who}</span>
+                  ${role ? `<span class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-violet-50 border border-violet-200 text-violet-700">${esc(role)}</span>` : ''}
+                  ${rank ? `<span class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-slate-50 border border-slate-200 text-slate-500">${esc(rank)}</span>` : ''}
+                  ${p.founder_badge ? '<span class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700">Founder</span>' : ''}
+                </div>
+                ${(goal || lvl) ? `<p class="font-mono text-[11px] text-slate-500">${esc(goal)}${goal && lvl ? ' · ' : ''}${esc(lvl)}</p>` : ''}
+              </div>`;
+          }).join('');
+    }
+  }
 
   async function doSync(userId: string) {
     if (!supabase) return null;
@@ -599,7 +733,7 @@ const t = useTranslations(locale);
       const [profileRes, autoError] = await Promise.all([
         supabase
           .from('profiles')
-          .select('nickname, operator_goal, experience_level, operator_rank, founder_badge')
+          .select('nickname, operator_goal, experience_level, operator_rank, founder_badge, role')
           .eq('id', session.user.id)
           .single(),
         doSync(session.user.id),
@@ -612,11 +746,14 @@ const t = useTranslations(locale);
         experience_level?: string;
         operator_rank?: string;
         founder_badge?: boolean;
+        role?: string;
       } | null;
+
+      const isCeo = prof?.role === 'ceo' || prof?.role === 'founder' || prof?.role === 'admin' || prof?.founder_badge === true;
 
       if (prof) {
         setCardField('pf-card-nickname', prof.nickname ?? null);
-        setCardField('pf-card-goal', prof.operator_goal ?? null);
+        setCardField('pf-card-goal', prof.operator_goal ? (GOAL_LABELS[prof.operator_goal] ?? prof.operator_goal) : null);
         setCardField('pf-card-level', prof.experience_level ? (LEVEL_LABELS[prof.experience_level] ?? null) : null);
         setCardField(
           'pf-card-rank',
@@ -635,8 +772,15 @@ const t = useTranslations(locale);
         if (levelSelect && prof.experience_level)  levelSelect.value = prof.experience_level;
       }
 
-      // Jungle position card
-      {
+      // ── CEO mode: no student level required; show CEO identity + dashboard ──
+      if (isCeo) {
+        document.getElementById('pf-level-field')?.classList.add('hidden');
+        document.getElementById('pf-card-ceo')?.classList.remove('hidden');
+        loadCeoDashboard(session.user.id);
+      }
+
+      // Jungle position card (operator/student concept — not for CEO)
+      if (!isCeo) {
         const rank = prof?.operator_rank ?? 'monkey';
         const JUNGLE_NEXT: Record<string, string> = {
           monkey:  'próximo: Gorilla',
@@ -729,7 +873,7 @@ const t = useTranslations(locale);
         } else {
           if (pfStatus) { pfStatus.textContent = 'Perfil actualizado.'; pfStatus.classList.remove('hidden'); }
           setCardField('pf-card-nickname', nickname);
-          setCardField('pf-card-goal', operator_goal);
+          setCardField('pf-card-goal', operator_goal ? (GOAL_LABELS[operator_goal] ?? operator_goal) : null);
           setCardField('pf-card-level', experience_level ? (LEVEL_LABELS[experience_level] ?? null) : null);
         }
       });
