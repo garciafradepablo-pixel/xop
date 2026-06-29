@@ -31,6 +31,17 @@ Es un sitio estático: NO hay handler server-side. El límite real es Postgres R
 - `admin.astro` es UX (oculta el panel); la seguridad NO depende de ese gate.
 - TRUNCATE revocado de anon/authenticated. RPCs operativos = `authenticated` only.
 
+## Progreso (persistencia bidireccional — `src/lib/progress.ts`)
+El progreso vive en localStorage SIEMPRE; con sesión, se sincroniza con la nube (`progress`).
+- **`syncProgress`** (al cargar cada página de nivel + `/cuenta`): lee la nube PRIMERO; si la
+  lectura falla (`ok:false`) NO escribe nada (un fallo de red no puede borrar la nube). Si lee
+  bien, **union-merge** (la completitud nunca regresa) con el local de ESTE usuario y escribe el
+  resultado a local y nube. `moonkey_synced_uid` evita que el local de otra cuenta contamine la nube.
+- **Eventos** (inline ↔ bundled): el handler `is:inline` emite `moonkey:changed` al togglear y
+  re-pinta en `moonkey:hydrated`; el `<script>` bundled hace el merge y empuja `pushLocalToCloud`
+  (debounce 700ms + flush en `pagehide`/`visibilitychange`). NO metas Supabase en scripts `is:inline`.
+- Reset (`index.astro`) limpia local + `resetCloudProgress` vía `window.__moonkeyResetCloud` si hay sesión.
+
 ## i18n — TRES patrones (ojo a la inconsistencia)
 1. `src/i18n/ui.ts` con `useTranslations(locale)` → `t('key')`. Para chrome/nav corto.
    Usado por index, cuenta, login, modulos. Fallback de key faltante → ES.

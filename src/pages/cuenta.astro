@@ -440,38 +440,42 @@ const t = useTranslations(locale);
 </script>
 
 <script>
-  // Read local progress
+  // Read local progress — re-paints when the cloud sync hydrates localStorage.
   (function () {
-    const l1c = Array.from({ length: 8 }, (_, i) => localStorage.getItem(`moonkey_level_1_module_${i}`) === 'true').filter(Boolean).length;
-    const l2c = Array.from({ length: 10 }, (_, i) => localStorage.getItem(`moonkey_level_2_module_${i + 1}`) === 'true').filter(Boolean).length;
-    const l3c = Array.from({ length: 8 }, (_, i) => localStorage.getItem(`moonkey_level_3_section_${i + 1}`) === 'true').filter(Boolean).length;
+    function paint() {
+      const l1c = Array.from({ length: 8 }, (_, i) => localStorage.getItem(`moonkey_level_1_module_${i}`) === 'true').filter(Boolean).length;
+      const l2c = Array.from({ length: 10 }, (_, i) => localStorage.getItem(`moonkey_level_2_module_${i + 1}`) === 'true').filter(Boolean).length;
+      const l3c = Array.from({ length: 8 }, (_, i) => localStorage.getItem(`moonkey_level_3_section_${i + 1}`) === 'true').filter(Boolean).length;
 
-    const l1done = localStorage.getItem('moonkey_level_1_completed') === 'true';
-    const l2done = localStorage.getItem('moonkey_level_2_completed') === 'true';
-    const l3done = localStorage.getItem('moonkey_level_3_completed') === 'true';
+      const l1done = localStorage.getItem('moonkey_level_1_completed') === 'true';
+      const l2done = localStorage.getItem('moonkey_level_2_completed') === 'true';
+      const l3done = localStorage.getItem('moonkey_level_3_completed') === 'true';
 
-    const el1 = document.getElementById('l1-count');
-    const el2 = document.getElementById('l2-count');
-    const el3 = document.getElementById('l3-count');
-    if (el1) {
-      el1.textContent = l1done ? '✓ Completo' : `${l1c}/8`;
-      if (l1done) el1.classList.add('text-emerald-600', 'text-base');
+      const el1 = document.getElementById('l1-count');
+      const el2 = document.getElementById('l2-count');
+      const el3 = document.getElementById('l3-count');
+      if (el1) {
+        el1.textContent = l1done ? '✓ Completo' : `${l1c}/8`;
+        if (l1done) el1.classList.add('text-emerald-600', 'text-base');
+      }
+      if (el2) {
+        el2.textContent = l2done ? '✓ Completo' : `${l2c}/10`;
+        if (l2done) el2.classList.add('text-emerald-600', 'text-base');
+      }
+      if (el3) {
+        el3.textContent = l3done ? '✓ Completo' : `${l3c}/8`;
+        if (l3done) el3.classList.add('text-emerald-600', 'text-base');
+      }
     }
-    if (el2) {
-      el2.textContent = l2done ? '✓ Completo' : `${l2c}/10`;
-      if (l2done) el2.classList.add('text-emerald-600', 'text-base');
-    }
-    if (el3) {
-      el3.textContent = l3done ? '✓ Completo' : `${l3c}/8`;
-      if (l3done) el3.classList.add('text-emerald-600', 'text-base');
-    }
+    paint();
+    document.addEventListener('moonkey:hydrated', paint);
   })();
 </script>
 
 <!-- Script unconditional — Astro/Vite bundles it. Runtime guard handles unconfigured case. -->
 <script>
   import { supabase } from '../lib/supabase';
-  import { readLocalProgress, toSupabasePayload } from '../lib/progress';
+  import { syncProgress, clearLocalProgress } from '../lib/progress';
 
   const LEVEL_LABELS: Record<string, string> = {
     starter:  'Empezando',
@@ -580,13 +584,13 @@ const t = useTranslations(locale);
 
   async function doSync(userId: string) {
     if (!supabase) return null;
-    const data = readLocalProgress();
-    const payload = toSupabasePayload(data, userId);
-    const { error } = await supabase
-      .from('progress')
-      .upsert(payload, { onConflict: 'user_id' });
-    if (error) console.error('[cuenta] sync error:', error.message);
-    return error;
+    // Bidirectional: pulls cloud, union-merges with local, writes merged to both.
+    // A fresh/empty browser can no longer blank a richer cloud record — and if the
+    // cloud read fails (ok:false), nothing is written, so a blip can't overwrite it.
+    const { ok, error } = await syncProgress(supabase, userId);
+    if (error) console.error('[cuenta] sync error:', (error as { message?: string })?.message);
+    if (ok) document.dispatchEvent(new Event('moonkey:hydrated')); // repaint counts from merged state
+    return error as { message?: string } | null;
   }
 
   function setCardField(id: string, value: string | null | undefined) {
@@ -885,6 +889,7 @@ const t = useTranslations(locale);
 
     logoutBtn?.addEventListener('click', async () => {
       if (!supabase) return;
+      clearLocalProgress(); // don't leave this user's progress for the next account on this browser
       await supabase.auth.signOut();
       location.href = '/';
     });

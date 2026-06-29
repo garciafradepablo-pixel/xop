@@ -797,13 +797,17 @@ const caminos = [
       resetBtn.addEventListener('click', function () {
         if (confirm('¿Reiniciar todo el progreso de MOONKEY LAB?')) {
           var keys = [
-            'moonkey_level_1_completed', 'moonkey_level_2_completed', 'moonkey_level_3_completed'
+            'moonkey_level_1_completed', 'moonkey_level_2_completed', 'moonkey_level_3_completed',
+            'moonkey_level_1_proof_repo', 'moonkey_level_1_proof_url', 'moonkey_synced_uid'
           ];
           for (var i = 0; i <= 7; i++) keys.push('moonkey_level_1_module_' + i);
           for (var i = 1; i <= 10; i++) keys.push('moonkey_level_2_module_' + i);
           for (var i = 1; i <= 8; i++) keys.push('moonkey_level_3_section_' + i);
           keys.forEach(function(k) { localStorage.removeItem(k); });
-          window.location.reload();
+          // If logged in, also clear the cloud row so the next sync can't resurrect it.
+          var reload = function () { window.location.reload(); };
+          if (window.__moonkeyResetCloud) { window.__moonkeyResetCloud().then(reload, reload); }
+          else { reload(); }
         }
       });
     }
@@ -817,6 +821,21 @@ const caminos = [
       var hN2 = document.getElementById('hero-n2-col');
       if (hN2) hN2.style.opacity = '0.82';
     }
+  })();
+</script>
+
+<script>
+  // When logged in, let the "Reiniciar progreso" button also clear the cloud row —
+  // otherwise the next sync would re-pull and silently resurrect the reset progress.
+  import { supabase } from '../lib/supabase';
+  import { resetCloudProgress } from '../lib/progress';
+  (function () {
+    if (!supabase) return;
+    supabase.auth.getSession().then(function (r) {
+      const uid = r?.data?.session?.user?.id;
+      if (!uid) return;
+      (window as any).__moonkeyResetCloud = function () { return resetCloudProgress(supabase, uid); };
+    });
   })();
 </script>
 

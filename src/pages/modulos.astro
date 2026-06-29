@@ -1055,6 +1055,7 @@ const jsStrings = {
     }
 
     applyChecks();
+    document.addEventListener('moonkey:hydrated', applyChecks);
 
     document.querySelectorAll('.sb-mod-btn').forEach(function(btn) {
       btn.addEventListener('click', function() {
@@ -1062,6 +1063,7 @@ const jsStrings = {
         var done = localStorage.getItem(key) === 'true';
         localStorage.setItem(key, done ? 'false' : 'true');
         applyChecks();
+        document.dispatchEvent(new Event('moonkey:changed'));
       });
     });
 
@@ -1143,6 +1145,7 @@ const jsStrings = {
         lsSet(URL_KEY, url);
         lsSet(DONE_KEY, 'true');
         showDelivered();
+        document.dispatchEvent(new Event('moonkey:changed'));
       });
     }
 
@@ -1236,5 +1239,49 @@ const jsStrings = {
       if (error) { console.warn('[proof] capture failed:', error.message); setStatus(MSG.error, 'error'); }
       else { setStatus(MSG.ok, 'ok'); }
     });
+  })();
+</script>
+
+<script>
+  // Cloud progress — bidirectional sync for logged-in operators. On load, merge
+  // cloud↔local (progress from another device shows here; an empty browser never
+  // blanks the cloud). On each change, push local→cloud (debounced).
+  import { supabase } from '../lib/supabase';
+  import { syncProgress, pushLocalToCloud } from '../lib/progress';
+  (function () {
+    if (!supabase) return;
+    let userId: string | null = null;
+    let hydrated = false;
+    let dirtyDuringHydration = false;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    function schedulePush() {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(function () { timer = null; if (userId) pushLocalToCloud(supabase, userId); }, 700);
+    }
+    function flush() {
+      if (timer) { clearTimeout(timer); timer = null; if (hydrated && userId) pushLocalToCloud(supabase, userId); }
+    }
+
+    document.addEventListener('moonkey:changed', function () {
+      if (!userId) return;
+      if (!hydrated) { dirtyDuringHydration = true; return; } // captured by the post-hydration flush
+      schedulePush();
+    });
+    window.addEventListener('pagehide', flush);
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') flush(); });
+
+    (async function () {
+      try {
+        const { data } = await supabase.auth.getSession();
+        userId = data?.session?.user?.id ?? null;
+      } catch (e) {}
+      if (!userId) return;                        // anonymous → localStorage only
+      const res = await syncProgress(supabase, userId);
+      if (!res.ok) return;                        // cloud unreadable → keep pushes off, local intact
+      hydrated = true;
+      if (dirtyDuringHydration) pushLocalToCloud(supabase, userId); // flush a toggle made during sync
+      document.dispatchEvent(new Event('moonkey:hydrated')); // repaint from merged state
+    })();
   })();
 </script>

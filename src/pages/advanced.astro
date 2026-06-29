@@ -420,35 +420,14 @@ const erroresAvanzados = [
 
 <script is:inline>
   (function () {
-    var l1 = localStorage.getItem('moonkey_level_1_completed') === 'true';
-    var l2 = localStorage.getItem('moonkey_level_2_completed') === 'true';
     var MKEYS = [1,2,3,4,5,6,7,8,9,10].map(function(i) { return 'moonkey_level_2_module_' + i; });
     var TOTAL = 10;
-
-    // Lock / unlock main content
-    if (l1) {
-      var overlay = document.getElementById('advanced-lock-overlay');
-      if (overlay) overlay.classList.add('hidden');
-      var content = document.getElementById('advanced-content');
-      if (content) content.classList.remove('hidden');
-    }
-
-    // Sidebar state
-    var sbLocked = document.getElementById('sb-n2-locked');
-    var sbUnlocked = document.getElementById('sb-n2-unlocked');
-    if (l1) {
-      if (sbLocked) sbLocked.classList.add('hidden');
-      if (sbUnlocked) sbUnlocked.classList.remove('hidden');
-    }
-
-    function getCount() {
-      return MKEYS.reduce(function(n, k) { return n + (localStorage.getItem(k) === 'true' ? 1 : 0); }, 0);
-    }
+    function ls(k) { return localStorage.getItem(k) === 'true'; }
 
     function applyChecks() {
-      var count = getCount();
+      var count = MKEYS.reduce(function(n, k) { return n + (ls(k) ? 1 : 0); }, 0);
       document.querySelectorAll('.sb-mod-btn').forEach(function(btn) {
-        var done = localStorage.getItem(btn.getAttribute('data-mkey')) === 'true';
+        var done = ls(btn.getAttribute('data-mkey'));
         btn.textContent = done ? '✓' : '';
         btn.style.background = done ? '#8b5cf6' : '';
         btn.style.borderColor = done ? '#8b5cf6' : '';
@@ -460,33 +439,91 @@ const erroresAvanzados = [
       if (cnt) cnt.textContent = count + '/' + TOTAL;
     }
 
-    applyChecks();
-
-    if (l1) {
-      document.querySelectorAll('.sb-mod-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          var key = btn.getAttribute('data-mkey');
-          var done = localStorage.getItem(key) === 'true';
-          localStorage.setItem(key, done ? 'false' : 'true');
-          applyChecks();
-        });
-      });
-    }
-
-    // Level completion
     function showDone2() {
       var b = document.getElementById('btn-complete-l2');
       if (b) b.style.display = 'none';
       var m = document.getElementById('msg-complete-l2');
       if (m) m.classList.remove('hidden');
     }
-    if (l2) showDone2();
+
+    // Reflects current localStorage — re-runnable when cloud sync hydrates it.
+    function paint() {
+      var l1 = ls('moonkey_level_1_completed');
+      if (l1) {
+        var overlay = document.getElementById('advanced-lock-overlay');
+        if (overlay) overlay.classList.add('hidden');
+        var content = document.getElementById('advanced-content');
+        if (content) content.classList.remove('hidden');
+        var sbLocked = document.getElementById('sb-n2-locked');
+        var sbUnlocked = document.getElementById('sb-n2-unlocked');
+        if (sbLocked) sbLocked.classList.add('hidden');
+        if (sbUnlocked) sbUnlocked.classList.remove('hidden');
+      }
+      applyChecks();
+      if (ls('moonkey_level_2_completed')) showDone2();
+    }
+
+    // Listeners attached once (unconditional — clicks on locked/hidden content are inert).
+    document.querySelectorAll('.sb-mod-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var key = btn.getAttribute('data-mkey');
+        localStorage.setItem(key, ls(key) ? 'false' : 'true');
+        applyChecks();
+        document.dispatchEvent(new Event('moonkey:changed'));
+      });
+    });
     var complBtn = document.getElementById('btn-complete-l2');
     if (complBtn) {
       complBtn.addEventListener('click', function() {
         localStorage.setItem('moonkey_level_2_completed', 'true');
         showDone2();
+        document.dispatchEvent(new Event('moonkey:changed'));
       });
     }
+
+    paint();
+    document.addEventListener('moonkey:hydrated', paint);
+  })();
+</script>
+
+<script>
+  // Cloud progress — bidirectional sync for logged-in operators (see modulos.astro).
+  import { supabase } from '../lib/supabase';
+  import { syncProgress, pushLocalToCloud } from '../lib/progress';
+  (function () {
+    if (!supabase) return;
+    let userId: string | null = null;
+    let hydrated = false;
+    let dirtyDuringHydration = false;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    function schedulePush() {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(function () { timer = null; if (userId) pushLocalToCloud(supabase, userId); }, 700);
+    }
+    function flush() {
+      if (timer) { clearTimeout(timer); timer = null; if (hydrated && userId) pushLocalToCloud(supabase, userId); }
+    }
+
+    document.addEventListener('moonkey:changed', function () {
+      if (!userId) return;
+      if (!hydrated) { dirtyDuringHydration = true; return; }
+      schedulePush();
+    });
+    window.addEventListener('pagehide', flush);
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') flush(); });
+
+    (async function () {
+      try {
+        const { data } = await supabase.auth.getSession();
+        userId = data?.session?.user?.id ?? null;
+      } catch (e) {}
+      if (!userId) return;
+      const res = await syncProgress(supabase, userId);
+      if (!res.ok) return;
+      hydrated = true;
+      if (dirtyDuringHydration) pushLocalToCloud(supabase, userId);
+      document.dispatchEvent(new Event('moonkey:hydrated'));
+    })();
   })();
 </script>
