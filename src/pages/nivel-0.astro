@@ -1,0 +1,162 @@
+---
+import Layout from '../components/Layout.astro';
+import { resolveLocale, localizedPath } from '../i18n/utils';
+import { frontTr } from '../data/frontdoor.i18n';
+
+const locale = resolveLocale(Astro.currentLocale, Astro.url.pathname);
+const tr = frontTr('nivel-0', locale);
+const lp = (p: string) => localizedPath(p, locale);
+
+// Each tool: what it is · why it matters · what it's for. ES canonical; tr() localizes.
+const tools = [
+  {
+    n: '01', name: 'Terminal', color: 'emerald',
+    que: 'La línea de comandos: una pantalla de texto donde le das órdenes directas a tu ordenador.',
+    porque: 'Es la forma más directa y potente de controlar tu máquina. Sin menús ni clics — texto que ejecuta.',
+    para: 'Navegar carpetas, instalar herramientas, lanzar Claude Code y ejecutar tu trabajo.',
+  },
+  {
+    n: '02', name: 'VS Code', color: 'sky',
+    que: 'Un editor de código: la ventana donde ves y editas los archivos de tu proyecto.',
+    porque: 'Si Claude Code son tus manos, VS Code son tus ojos. Es donde verificas lo que se construye.',
+    para: 'Leer, editar y revisar el código y los archivos antes de darlos por buenos.',
+  },
+  {
+    n: '03', name: 'Claude Code', color: 'violet',
+    que: 'El operador IA dentro de tu máquina. No es un chat web: tiene acceso a tus archivos, tu git y tu terminal.',
+    porque: 'Convierte la IA de una herramienta de consumo en un sistema de trabajo real que construye contigo.',
+    para: 'Construir, depurar, refactorizar y documentar proyectos — contigo dirigiendo, no la máquina sola.',
+  },
+  {
+    n: '04', name: 'Git', color: 'amber',
+    que: 'El control de versiones: guarda fotos (commits) de tu proyecto a lo largo del tiempo.',
+    porque: 'Te deja experimentar sin miedo. Si algo se rompe, vuelves a un punto estable anterior.',
+    para: 'Versionar tu trabajo, revertir errores y ver exactamente qué cambió y cuándo.',
+  },
+  {
+    n: '05', name: 'GitHub', color: 'rose',
+    que: 'El hogar remoto de tus repositorios Git: tu código guardado en la nube.',
+    porque: 'Respaldo, colaboración y el gatillo del deploy automático. Tu trabajo deja de vivir solo en tu portátil.',
+    para: 'Guardar tu trabajo, compartirlo y publicar tu proyecto con un simple git push.',
+  },
+  {
+    n: '06', name: 'CLAUDE.md', color: 'indigo',
+    que: 'Un archivo de texto que le da a Claude memoria persistente de tu proyecto.',
+    porque: 'Sin él, cada sesión empieza de cero. Con él, la IA ya conoce tu stack, tus reglas y tus límites.',
+    para: 'Que Claude trabaje preciso desde el primer mensaje, no genérico ni inventándose convenciones.',
+  },
+  {
+    n: '07', name: 'Prompts · Arsenal', color: 'emerald',
+    que: 'Las instrucciones que le das a la IA: el lenguaje de trabajo entre tú y la máquina.',
+    porque: 'Un buen prompt es la diferencia entre un resultado usable y uno mediocre. Se entrena, no se improvisa.',
+    para: 'Pedir trabajo con rol, estructura e intención — y recibir entregables reales, no respuestas vagas.',
+  },
+  {
+    n: '08', name: 'Deploy · Cloudflare Pages', color: 'sky',
+    que: 'Publicar tu proyecto en una URL real, automáticamente, cada vez que haces git push.',
+    porque: 'Un proyecto que nadie puede ver no existe. El deploy convierte tu trabajo en algo real y compartible.',
+    para: 'Que cada cambio que subes se convierta, en segundos, en una web en vivo.',
+  },
+];
+
+const C: Record<string, { text: string; dot: string; border: string; soft: string }> = {
+  emerald: { text: 'text-emerald-600', dot: '#10b981', border: 'border-emerald-200', soft: 'bg-emerald-50' },
+  sky:     { text: 'text-sky-600',     dot: '#0ea5e9', border: 'border-sky-200',     soft: 'bg-sky-50' },
+  violet:  { text: 'text-violet-600',  dot: '#8b5cf6', border: 'border-violet-200',  soft: 'bg-violet-50' },
+  amber:   { text: 'text-amber-600',   dot: '#f59e0b', border: 'border-amber-200',   soft: 'bg-amber-50' },
+  rose:    { text: 'text-rose-600',    dot: '#f43f5e', border: 'border-rose-200',    soft: 'bg-rose-50' },
+  indigo:  { text: 'text-indigo-600',  dot: '#6366f1', border: 'border-indigo-200',  soft: 'bg-indigo-50' },
+};
+---
+
+<Layout title={tr('Nivel 0 — Las herramientas')} description={tr('Antes del Nivel 1: qué herramientas vas a usar como operador IA, por qué y para qué sirven.')}>
+
+  <!-- Hero -->
+  <section class="pb-12 border-b border-slate-200 hero-enter">
+    <div class="flex items-center gap-3 mb-5">
+      <span class="font-mono text-xs font-bold tracking-widest uppercase px-2.5 py-1 rounded-lg bg-slate-900 text-emerald-400">N0</span>
+      <span class="font-mono text-xs text-slate-400 tracking-widest uppercase">{tr('ANTES DE EMPEZAR · MOONKEY LAB')}</span>
+    </div>
+    <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 leading-[1.05] tracking-tight mb-5">
+      {tr('Las herramientas')}<br/><span class="text-emerald-600">{tr('del operador.')}</span>
+    </h1>
+    <p class="text-slate-600 text-lg leading-relaxed max-w-xl mb-4">
+      {tr('Antes de construir nada, conoce tu caja de herramientas. Esto es el Nivel 0: qué vas a usar, por qué importa y para qué sirve cada cosa. No tienes que instalar nada todavía — solo entender el mapa.')}
+    </p>
+    <p class="text-slate-500 text-sm leading-relaxed max-w-xl border-l-2 border-emerald-300 pl-4">
+      {tr('Si vienes del chat de IA en una web, esto es el salto: un operador no consume IA, la opera desde su máquina con acceso real a sus archivos. Estas ocho herramientas son cómo.')}
+    </p>
+  </section>
+
+  <!-- The tools -->
+  <section class="py-12">
+    <span class="label block mb-8">{tr('TU CAJA DE HERRAMIENTAS')}</span>
+    <div class="grid sm:grid-cols-2 gap-4">
+      {tools.map((t) => {
+        const c = C[t.color];
+        return (
+          <div class={`bg-white border ${c.border} rounded-2xl p-6 shadow-sm card-hover`} data-reveal>
+            <div class="flex items-center gap-3 mb-4">
+              <span class="w-2.5 h-2.5 rounded-full shrink-0" style={`background:${c.dot};box-shadow:0 0 12px ${c.dot}66`}></span>
+              <span class={`font-mono text-xs font-bold ${c.text}`}>{t.n}</span>
+              <h3 class="font-display text-lg font-bold text-slate-900">{t.name}</h3>
+            </div>
+            <div class="space-y-3">
+              <div>
+                <p class={`font-mono text-[10px] tracking-widest uppercase ${c.text} mb-0.5`}>{tr('QUÉ ES')}</p>
+                <p class="text-slate-600 text-sm leading-relaxed">{tr(t.que)}</p>
+              </div>
+              <div>
+                <p class={`font-mono text-[10px] tracking-widest uppercase ${c.text} mb-0.5`}>{tr('POR QUÉ')}</p>
+                <p class="text-slate-600 text-sm leading-relaxed">{tr(t.porque)}</p>
+              </div>
+              <div>
+                <p class={`font-mono text-[10px] tracking-widest uppercase ${c.text} mb-0.5`}>{tr('PARA QUÉ')}</p>
+                <p class="text-slate-600 text-sm leading-relaxed">{tr(t.para)}</p>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </section>
+
+  <!-- How they fit together -->
+  <section class="py-12 border-t border-slate-200">
+    <span class="label block mb-6">{tr('CÓMO ENCAJAN')}</span>
+    <div class="rounded-2xl overflow-hidden" style="background:linear-gradient(150deg,#0b1220 0%,#0f172a 60%,#071a12 100%)">
+      <div class="px-7 sm:px-9 py-9">
+        <p class="text-white text-lg sm:text-xl font-semibold leading-snug max-w-2xl mb-5 font-display tracking-tight">
+          {tr('Ninguna herramienta trabaja sola. Juntas son un sistema.')}
+        </p>
+        <p class="text-slate-400 text-sm leading-relaxed max-w-2xl mb-6">
+          {tr('Operas desde la Terminal y verificas en VS Code. Claude Code construye con el contexto de tu CLAUDE.md y los prompts que le das. Git versiona cada paso, GitHub lo guarda en la nube, y el deploy lo convierte en una web real. Aprender a operar la IA es aprender a mover estas piezas como una sola.')}
+        </p>
+        <div class="flex flex-wrap items-center gap-x-2 gap-y-1.5 font-mono text-xs text-slate-400">
+          <span>Terminal</span><span class="text-emerald-400">+</span>
+          <span>Claude Code</span><span class="text-emerald-400">+</span>
+          <span>VS Code</span><span class="text-emerald-400">→</span>
+          <span>Git / GitHub</span><span class="text-emerald-400">→</span>
+          <span>CLAUDE.md + prompts</span><span class="text-emerald-400">→</span>
+          <span class="text-emerald-300 font-semibold">deploy</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-12 border-t border-slate-200">
+    <span class="label block mb-3">{tr('AHORA SÍ')}</span>
+    <p class="text-slate-600 text-sm leading-relaxed max-w-xl mb-7">
+      {tr('Ya conoces el mapa. En el Nivel 1 instalas y usas cada herramienta de verdad, paso a paso, hasta dejar tu entorno operativo y tu primer proyecto en marcha.')}
+    </p>
+    <div class="flex flex-wrap gap-3">
+      <a href={lp('/modulos')} class="inline-block font-mono text-sm font-medium text-white bg-emerald-500 px-6 py-3 rounded-xl hover:bg-emerald-600 transition-colors shadow-sm">
+        {tr('Empezar Nivel 1 →')}
+      </a>
+      <a href={lp('/programa')} class="inline-block font-mono text-sm text-slate-600 border border-slate-300 px-6 py-3 rounded-xl hover:bg-slate-50 transition-colors">
+        {tr('Ver el programa completo')}
+      </a>
+    </div>
+  </section>
+</Layout>
