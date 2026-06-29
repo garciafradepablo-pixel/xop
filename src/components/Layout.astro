@@ -4,6 +4,7 @@ import Header from './Header.astro';
 import LanguageBar from './LanguageBar.astro';
 import MoonkeyLogo from './MoonkeyLogo.astro';
 import { resolveLocale, localizedPath } from '../i18n/utils';
+import { chromeT } from '../i18n/chrome.i18n';
 
 interface Props {
   title: string;
@@ -16,6 +17,7 @@ import { LOCALES, PREFIX_LOCALES } from '../i18n/config';
 
 const pathname = Astro.url.pathname;
 const locale = resolveLocale(Astro.currentLocale, pathname);
+const c = chromeT(locale);
 const alternates = LOCALES.map((l) => ({ code: l, href: localizedPath(pathname, l) }));
 const esHref = localizedPath(pathname, 'es');
 ---
@@ -69,12 +71,12 @@ const esHref = localizedPath(pathname, 'es');
           <div class="col-span-2 lg:col-span-5">
             <MoonkeyLogo variant="horizontal" size="md" />
             <p class="text-sm text-slate-500 leading-relaxed mt-5 max-w-xs">
-              Aprende, desbloquea Keys y convierte la IA en sistemas reales de trabajo.
+              {c.tagline}
             </p>
             <a href="https://xnlab.io" target="_blank" rel="noopener noreferrer"
                class="inline-flex items-center gap-1.5 mt-5 font-mono text-[11px] tracking-wide text-slate-400 hover:text-emerald-600 transition-colors">
               <span class="w-1 h-1 rounded-full bg-emerald-500"></span>
-              Un laboratorio de XNLAB Studio
+              {c.lab}
               <span aria-hidden="true">↗</span>
             </a>
           </div>
@@ -83,34 +85,34 @@ const esHref = localizedPath(pathname, 'es');
           <nav class="lg:col-span-3" aria-label="Operator Path">
             <p class="font-mono text-[10px] tracking-widest uppercase text-slate-400 mb-4">Operator Path</p>
             <ul class="space-y-2.5 text-sm">
-              <li><a href={localizedPath('/modulos', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Nivel 1 · Foundations</a></li>
-              <li><a href={localizedPath('/advanced', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Nivel 2 · Builder</a></li>
-              <li><a href={localizedPath('/migrador', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Nivel 3 · Mastery</a></li>
-              <li><a href={localizedPath('/prueba-operador', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Test de Operador</a></li>
-              <li><a href={localizedPath('/prompts', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Arsenal de prompts</a></li>
+              <li><a href={localizedPath('/modulos', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">{c.level1}</a></li>
+              <li><a href={localizedPath('/advanced', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">{c.level2}</a></li>
+              <li><a href={localizedPath('/migrador', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">{c.level3}</a></li>
+              <li><a href={localizedPath('/prueba-operador', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">{c.opTest}</a></li>
+              <li><a href={localizedPath('/prompts', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">{c.arsenal}</a></li>
             </ul>
           </nav>
 
           <!-- Ecosystem -->
-          <nav class="lg:col-span-2" aria-label="Ecosistema">
-            <p class="font-mono text-[10px] tracking-widest uppercase text-slate-400 mb-4">Ecosistema</p>
+          <nav class="lg:col-span-2" aria-label={c.ecosystem}>
+            <p class="font-mono text-[10px] tracking-widest uppercase text-slate-400 mb-4">{c.ecosystem}</p>
             <ul class="space-y-2.5 text-sm">
-              <li><a href={localizedPath('/manifiesto', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Manifiesto</a></li>
+              <li><a href={localizedPath('/manifiesto', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">{c.manifesto}</a></li>
               <li><a href={localizedPath('/monkeys', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Monkeys</a></li>
-              <li><a href={localizedPath('/planes', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Planes</a></li>
-              <li><a href={localizedPath('/info', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Info</a></li>
-              <li><a href={localizedPath('/glosario', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Glosario</a></li>
+              <li><a href={localizedPath('/planes', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">{c.plans}</a></li>
+              <li><a href={localizedPath('/info', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">{c.info}</a></li>
+              <li><a href={localizedPath('/glosario', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">{c.glossary}</a></li>
             </ul>
           </nav>
 
           <!-- Account / support -->
-          <nav class="lg:col-span-2" aria-label="Cuenta y soporte">
-            <p class="font-mono text-[10px] tracking-widest uppercase text-slate-400 mb-4">Cuenta</p>
+          <nav class="lg:col-span-2" aria-label={c.account}>
+            <p class="font-mono text-[10px] tracking-widest uppercase text-slate-400 mb-4">{c.account}</p>
             <ul class="space-y-2.5 text-sm">
-              <li><a href={localizedPath('/cuenta', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Mi cuenta</a></li>
-              <li><a href={localizedPath('/login', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Entrar</a></li>
-              <li><a href={localizedPath('/soporte', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Soporte</a></li>
-              <li><a href={localizedPath('/privacidad', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">Privacidad</a></li>
+              <li><a href={localizedPath('/cuenta', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">{c.myAccount}</a></li>
+              <li><a href={localizedPath('/login', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">{c.signIn}</a></li>
+              <li><a href={localizedPath('/soporte', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">{c.support}</a></li>
+              <li><a href={localizedPath('/privacidad', locale)} class="text-slate-500 hover:text-emerald-600 transition-colors">{c.privacy}</a></li>
             </ul>
           </nav>
         </div>
@@ -118,7 +120,7 @@ const esHref = localizedPath(pathname, 'es');
         <!-- Bottom bar -->
         <div class="mt-14 pt-7 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-5">
           <p class="font-mono text-[11px] tracking-widest text-slate-400 order-2 sm:order-1">
-            MOONKEY LAB · MMXXVI — Operator Path sobre XN &amp; Connect
+            MOONKEY LAB · MMXXVI — {c.builtOn}
           </p>
           <div class="order-1 sm:order-2">
             <LanguageBar drop="up" />

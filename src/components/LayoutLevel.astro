@@ -3,6 +3,8 @@ import '../styles/global.css';
 import Header from './Header.astro';
 import LanguageBar from './LanguageBar.astro';
 import { resolveLocale, localizedPath } from '../i18n/utils';
+import { LOCALES } from '../i18n/config';
+import { chromeT } from '../i18n/chrome.i18n';
 
 interface Props {
   title: string;
@@ -16,8 +18,9 @@ const pathname = Astro.url.pathname;
 // detection returns 'es' for every rewritten /en/... page, which left the footer
 // links un-prefixed AND mislabelled <html lang>. resolveLocale fixes both.
 const locale = resolveLocale(Astro.currentLocale, pathname);
+const c = chromeT(locale);
+const alternates = LOCALES.map((l) => ({ code: l, href: localizedPath(pathname, l) }));
 const esHref = localizedPath(pathname, 'es');
-const enHref = localizedPath(pathname, 'en');
 ---
 
 <!DOCTYPE html>
@@ -28,8 +31,9 @@ const enHref = localizedPath(pathname, 'en');
     <meta name="description" content={description} />
     <title>{title} — MOONKEY LAB</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="alternate" hreflang="es" href={esHref} />
-    <link rel="alternate" hreflang="en" href={enHref} />
+    {alternates.map((a) => (
+      <link rel="alternate" hreflang={a.code === 'ch' ? 'de-CH' : a.code} href={a.href} />
+    ))}
     <link rel="alternate" hreflang="x-default" href={esHref} />
   </head>
   <body class="min-h-screen antialiased bg-[#f8fafc] text-slate-900">
@@ -52,22 +56,22 @@ const enHref = localizedPath(pathname, 'en');
       <div class="max-w-3xl mx-auto px-6">
         <div class="text-center mb-8">
           <p class="font-mono text-xs tracking-widest text-slate-400 mb-2">MOONKEY LAB — MMXXVI</p>
-          <p class="text-xs text-slate-400 leading-relaxed">Aprende, desbloquea Keys y convierte IA en sistemas reales de trabajo.</p>
+          <p class="text-xs text-slate-400 leading-relaxed">{c.tagline}</p>
         </div>
         <nav class="flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs font-mono mb-8">
-          <a href={localizedPath('/manifiesto', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">Manifiesto</a>
-          <a href={localizedPath('/info', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">Info</a>
+          <a href={localizedPath('/manifiesto', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">{c.manifesto}</a>
+          <a href={localizedPath('/info', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">{c.info}</a>
           <a href={localizedPath('/monkeys', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">Monkeys</a>
-          <a href={localizedPath('/planes', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">Planes</a>
-          <a href={localizedPath('/soporte', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">Soporte</a>
-          <a href={localizedPath('/prueba-operador', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">Test de Operador</a>
-          <a href={localizedPath('/glosario', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">Glosario</a>
-          <a href={localizedPath('/cuenta', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">Cuenta</a>
-          <a href={localizedPath('/privacidad', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">Privacidad</a>
+          <a href={localizedPath('/planes', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">{c.plans}</a>
+          <a href={localizedPath('/soporte', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">{c.support}</a>
+          <a href={localizedPath('/prueba-operador', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">{c.opTest}</a>
+          <a href={localizedPath('/glosario', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">{c.glossary}</a>
+          <a href={localizedPath('/cuenta', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">{c.account}</a>
+          <a href={localizedPath('/privacidad', locale)} class="text-slate-400 hover:text-emerald-600 transition-colors">{c.privacy}</a>
         </nav>
         <div class="border-t border-slate-100 mb-6"></div>
         <div class="text-center mb-6">
-          <p class="text-xs text-slate-400 font-mono">Operator Path construido sobre XN y Connect.</p>
+          <p class="text-xs text-slate-400 font-mono">{c.builtOn}</p>
         </div>
         <div class="flex justify-center">
           <LanguageBar subtle={true} />

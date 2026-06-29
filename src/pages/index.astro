@@ -2,9 +2,11 @@
 import Layout from '../components/Layout.astro';
 import AnimalIcon from '../components/AnimalIcon.astro';
 import { resolveLocale, localizedPath, useTranslations } from '../i18n/utils';
+import { chromeT } from '../i18n/chrome.i18n';
 
 const locale = resolveLocale(Astro.currentLocale, Astro.url.pathname);
 const t = useTranslations(locale);
+const c = chromeT(locale);
 
 const level1Outcomes = [
   'Terminal, VS Code y Claude Code operativos',
@@ -676,9 +678,10 @@ const caminos = [
     <span class="text-slate-300 text-xs font-mono">MOONKEY LAB · MMXXVI</span>
     <button
       id="reset-progress-btn"
+      data-confirm={c.resetConfirm}
       class="font-mono text-xs text-slate-300 hover:text-rose-400 transition-colors cursor-pointer"
     >
-      Reiniciar progreso
+      {c.resetLabel}
     </button>
   </section>
 
@@ -795,7 +798,7 @@ const caminos = [
     var resetBtn = document.getElementById('reset-progress-btn');
     if (resetBtn) {
       resetBtn.addEventListener('click', function () {
-        if (confirm('¿Reiniciar todo el progreso de MOONKEY LAB?')) {
+        if (confirm(resetBtn.dataset.confirm || '¿Reiniciar todo el progreso de MOONKEY LAB?')) {
           var keys = [
             'moonkey_level_1_completed', 'moonkey_level_2_completed', 'moonkey_level_3_completed',
             'moonkey_level_1_proof_repo', 'moonkey_level_1_proof_url', 'moonkey_synced_uid'
