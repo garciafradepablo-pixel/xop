@@ -2,6 +2,11 @@ import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 
 export default defineConfig({
+  // Canonical brand domain. Activates once moonkeylab.io is registered and
+  // attached as a Custom Domain in Cloudflare Pages. Astro uses this for
+  // absolute/canonical URLs. Until then the site still serves on *.pages.dev.
+  site: 'https://moonkeylab.io',
+
   // Phase 0 i18n foundation — ES stays at root, EN under /en/.
   // 'rewrite' regenerates /en/* pages with EN locale context so t() calls produce EN content.
   // Triggers a cosmetic Astro.request.headers warning in static builds — harmless, build passes.
