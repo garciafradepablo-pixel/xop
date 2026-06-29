@@ -1,23 +1,37 @@
 ---
 import Layout from '../components/Layout.astro';
 import { terminos } from '../data/glosario';
+import { resolveLocale } from '../i18n/utils';
+import { frontTr } from '../data/frontdoor.i18n';
 
-// Rotating accent palette; indexed modulo length so it never runs short
-// regardless of how many terms exist.
+const locale = resolveLocale(Astro.currentLocale, Astro.url.pathname);
+const tr = frontTr('glosario', locale);
+const n = terminos.length;
+
+// Count-bearing chrome strings (interpolation makes the frontTr lookup awkward,
+// so these few are kept as a small inline map).
+const GL: Record<string, { label: string; h1: string; desc: string; intro: string }> = {
+  es: { label: 'GLOSARIO OPERATIVO', h1: 'Glosario', desc: `Los ${n} términos esenciales para cualquier operador IA.`, intro: `Los ${n} términos que cualquier operador IA necesita entender antes de empezar. Definiciones directas, sin academicismos.` },
+  en: { label: 'OPERATIONAL GLOSSARY', h1: 'Glossary', desc: `The ${n} essential terms for any AI operator.`, intro: `The ${n} terms any AI operator needs to understand before starting. Direct definitions, no academic fluff.` },
+  th: { label: 'อภิธานศัพท์ปฏิบัติการ', h1: 'อภิธานศัพท์', desc: `${n} คำศัพท์สำคัญสำหรับผู้ปฏิบัติการ AI ทุกคน`, intro: `${n} คำศัพท์ที่ผู้ปฏิบัติการ AI ทุกคนต้องเข้าใจก่อนเริ่ม คำนิยามตรงไปตรงมา ไม่มีศัพท์วิชาการ` },
+  fr: { label: 'GLOSSAIRE OPÉRATIONNEL', h1: 'Glossaire', desc: `Les ${n} termes essentiels pour tout opérateur IA.`, intro: `Les ${n} termes que tout opérateur IA doit comprendre avant de commencer. Des définitions directes, sans jargon académique.` },
+  it: { label: 'GLOSSARIO OPERATIVO', h1: 'Glossario', desc: `I ${n} termini essenziali per ogni operatore IA.`, intro: `I ${n} termini che ogni operatore IA deve capire prima di iniziare. Definizioni dirette, senza accademismi.` },
+  ch: { label: 'OPERATIVES GLOSSAR', h1: 'Glossar', desc: `Die ${n} wesentlichen Begriffe für jeden KI-Operator.`, intro: `Die ${n} Begriffe, die jeder KI-Operator vor dem Start verstehen muss. Direkte Definitionen, ohne akademischen Ballast.` },
+};
+const G = GL[locale] ?? GL.es;
+
 const accentPalette = [
   'text-emerald-700', 'text-sky-700', 'text-violet-700', 'text-amber-700', 'text-rose-700',
   'text-teal-700', 'text-orange-700', 'text-indigo-700',
 ];
 ---
 
-<Layout title="Glosario" description={`Los ${terminos.length} términos esenciales para cualquier operador IA.`}>
+<Layout title={G.h1} description={G.desc}>
 
   <div class="pb-12 border-b border-slate-200">
-    <span class="label block mb-6">GLOSARIO OPERATIVO</span>
-    <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-4">Glosario</h1>
-    <p class="text-slate-600 text-base leading-relaxed max-w-lg">
-      Los {terminos.length} términos que cualquier operador IA necesita entender antes de empezar. Definiciones directas, sin academicismos.
-    </p>
+    <span class="label block mb-6">{G.label}</span>
+    <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-4">{G.h1}</h1>
+    <p class="text-slate-600 text-base leading-relaxed max-w-lg">{G.intro}</p>
   </div>
 
   <div class="py-12">
@@ -29,7 +43,7 @@ const accentPalette = [
           </div>
           <div class="flex-1 min-w-0">
             <dt class={`font-mono text-sm font-bold mb-1.5 ${accentPalette[i % accentPalette.length]}`}>{t.term}</dt>
-            <dd class="text-slate-500 text-sm leading-relaxed">{t.def}</dd>
+            <dd class="text-slate-500 text-sm leading-relaxed">{tr(t.def)}</dd>
           </div>
         </div>
       ))}

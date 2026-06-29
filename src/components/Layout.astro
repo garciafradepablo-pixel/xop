@@ -249,13 +249,51 @@ const esHref = localizedPath(pathname, 'es');
       })();
     </script>
 
-    <!-- Advanced scroll parallax + snap refinement -->
+    <!-- Scroll-reveal — global IntersectionObserver for [data-reveal] elements.
+         Lives here (not per-page) so every page animates in; without it, pages
+         using data-reveal stay at opacity:0 forever (this was breaking soporte). -->
+    <script is:inline>
+      (function () {
+        var els = document.querySelectorAll('[data-reveal]');
+        if (!els.length) return;
+        function revealAll() { els.forEach(function (el) { el.classList.add('is-visible'); }); }
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
+          revealAll();
+          return;
+        }
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            var el = entry.target;
+            var delay = parseInt(el.getAttribute('data-delay') || '0', 10) || 0;
+            if (delay) setTimeout(function () { el.classList.add('is-visible'); }, delay);
+            else el.classList.add('is-visible');
+            io.unobserve(el);
+          });
+        }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+        els.forEach(function (el) {
+          if (!el.classList.contains('is-visible')) io.observe(el);
+        });
+        // Safety net: nothing must ever stay stuck invisible.
+        window.addEventListener('load', function () {
+          setTimeout(function () {
+            els.forEach(function (el) {
+              var r = el.getBoundingClientRect();
+              if (r.top < window.innerHeight && !el.classList.contains('is-visible')) el.classList.add('is-visible');
+            });
+          }, 700);
+        });
+      })();
+    </script>
+
+    <!-- Advanced scroll parallax -->
     <script is:inline>
       (function () {
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         var raf = null, lastScroll = 0;
         var blobs = document.querySelectorAll('.mk-blob');
-        var sections = document.querySelectorAll('section[style*="background"]');
+        // Full-bleed colour bands (inline background) plus any explicit opt-in.
+        var sections = document.querySelectorAll('section[style*="background"], [data-parallax-band]');
 
         function updateParallax(scroll) {
           // Blob parallax: dramatic but smooth, 0.4x factor (subtle yet noticeable)

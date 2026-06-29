@@ -1,0 +1,212 @@
+---
+import Layout from '../components/Layout.astro';
+import { resolveLocale, localizedPath } from '../i18n/utils';
+import { localizedConstellations, THEME, galaxyStats, nodePosition, localizePower } from '../data/galaxy';
+
+const locale = resolveLocale(Astro.currentLocale, Astro.url.pathname);
+const stats = galaxyStats();
+const cons = localizedConstellations(locale);
+
+const GX: Record<string, Record<string, string>> = {
+  es: { metaTitle: 'La Galaxia', metaDesc: 'MOONKEY LAB es una galaxia de constelaciones de aprendizaje: operar IA, datos, producto, quant, marca y seguridad. Cada track alimenta proyectos reales.', label: 'LA GALAXIA · OPERATOR PATH', h1a: 'No es un curso.', h1b: 'Es una', galaxy: 'galaxia', intro: 'El <strong class="text-slate-700">Operator Core</strong> es el sol: aprender a operar la IA. A su alrededor orbitan constelaciones — datos, producto, quant, marca, seguridad — cada una enseña las habilidades reales detrás de nuestros proyectos.', stConstellations: 'constelaciones', stModules: 'módulos', stLive: 'en vivo', stProjects: 'proyectos alimentados', mapHint: 'Toca una constelación para explorar su track →', constellations: 'LAS CONSTELACIONES', core: 'NÚCLEO', orbit1: 'ÓRBITA I', orbit2: 'ÓRBITA II', explore: 'explorar →', ctaPara: '¿No sabes por dónde entrar? Haz el <strong class="text-slate-800">perfil de operador</strong>: tres minutos y te decimos tu constelación de entrada. O empieza directo por el sol.', ctaProfile: 'Descubre tu constelación →', ctaCore: 'Entrar al Operator Core' },
+  en: { metaTitle: 'The Galaxy', metaDesc: 'MOONKEY LAB is a galaxy of learning constellations: operating AI, data, product, quant, brand and security. Each track powers real projects.', label: 'THE GALAXY · OPERATOR PATH', h1a: "It's not a course.", h1b: "It's a", galaxy: 'galaxy', intro: 'The <strong class="text-slate-700">Operator Core</strong> is the sun: learning to operate AI. Around it orbit constellations — data, product, quant, brand, security — each teaching the real skills behind our projects.', stConstellations: 'constellations', stModules: 'modules', stLive: 'live', stProjects: 'projects powered', mapHint: 'Tap a constellation to explore its track →', constellations: 'THE CONSTELLATIONS', core: 'CORE', orbit1: 'ORBIT I', orbit2: 'ORBIT II', explore: 'explore →', ctaPara: "Not sure where to start? Take the <strong class=\"text-slate-800\">operator profile</strong>: three minutes and we tell you your entry constellation. Or start straight from the sun.", ctaProfile: 'Discover your constellation →', ctaCore: 'Enter the Operator Core' },
+  th: { metaTitle: 'กาแล็กซี', metaDesc: 'MOONKEY LAB คือกาแล็กซีของกลุ่มดาวการเรียนรู้: ปฏิบัติการ AI ข้อมูล โปรดักต์ quant แบรนด์ และความปลอดภัย แต่ละ track ขับเคลื่อนโปรเจกต์จริง', label: 'กาแล็กซี · OPERATOR PATH', h1a: 'ไม่ใช่คอร์สเรียน', h1b: 'มันคือ', galaxy: 'กาแล็กซี', intro: '<strong class="text-slate-700">Operator Core</strong> คือดวงอาทิตย์: เรียนรู้การปฏิบัติการ AI รอบๆ มีกลุ่มดาวโคจร — ข้อมูล โปรดักต์ quant แบรนด์ ความปลอดภัย — แต่ละกลุ่มสอนทักษะจริงเบื้องหลังโปรเจกต์ของเรา', stConstellations: 'กลุ่มดาว', stModules: 'โมดูล', stLive: 'พร้อมใช้', stProjects: 'โปรเจกต์ที่ขับเคลื่อน', mapHint: 'แตะกลุ่มดาวเพื่อสำรวจ track →', constellations: 'กลุ่มดาวทั้งหมด', core: 'แกนกลาง', orbit1: 'วงโคจร I', orbit2: 'วงโคจร II', explore: 'สำรวจ →', ctaPara: 'ไม่รู้จะเริ่มตรงไหน? ทำ<strong class="text-slate-800">แบบประเมินผู้ปฏิบัติการ</strong>: สามนาทีแล้วเราจะบอกกลุ่มดาวเริ่มต้นของคุณ หรือเริ่มจากดวงอาทิตย์เลย', ctaProfile: 'ค้นพบกลุ่มดาวของคุณ →', ctaCore: 'เข้าสู่ Operator Core' },
+  fr: { metaTitle: 'La Galaxie', metaDesc: "MOONKEY LAB est une galaxie de constellations d'apprentissage : opérer l'IA, données, produit, quant, marque et sécurité. Chaque parcours alimente des projets réels.", label: 'LA GALAXIE · OPERATOR PATH', h1a: "Ce n'est pas un cours.", h1b: "C'est une", galaxy: 'galaxie', intro: "L'<strong class=\"text-slate-700\">Operator Core</strong> est le soleil : apprendre à opérer l'IA. Autour gravitent des constellations — données, produit, quant, marque, sécurité — chacune enseigne les compétences réelles derrière nos projets.", stConstellations: 'constellations', stModules: 'modules', stLive: 'en ligne', stProjects: 'projets alimentés', mapHint: 'Touche une constellation pour explorer son parcours →', constellations: 'LES CONSTELLATIONS', core: 'NOYAU', orbit1: 'ORBITE I', orbit2: 'ORBITE II', explore: 'explorer →', ctaPara: "Tu ne sais pas par où entrer ? Fais le <strong class=\"text-slate-800\">profil d'opérateur</strong> : trois minutes et on te dit ta constellation d'entrée. Ou commence directement par le soleil.", ctaProfile: 'Découvre ta constellation →', ctaCore: "Entrer dans l'Operator Core" },
+  it: { metaTitle: 'La Galassia', metaDesc: "MOONKEY LAB è una galassia di costellazioni di apprendimento: operare l'IA, dati, prodotto, quant, brand e sicurezza. Ogni percorso alimenta progetti reali.", label: 'LA GALASSIA · OPERATOR PATH', h1a: 'Non è un corso.', h1b: 'È una', galaxy: 'galassia', intro: "L'<strong class=\"text-slate-700\">Operator Core</strong> è il sole: imparare a operare l'IA. Attorno orbitano costellazioni — dati, prodotto, quant, brand, sicurezza — ognuna insegna le competenze reali dietro i nostri progetti.", stConstellations: 'costellazioni', stModules: 'moduli', stLive: 'attivi', stProjects: 'progetti alimentati', mapHint: 'Tocca una costellazione per esplorare il suo percorso →', constellations: 'LE COSTELLAZIONI', core: 'NUCLEO', orbit1: 'ORBITA I', orbit2: 'ORBITA II', explore: 'esplora →', ctaPara: "Non sai da dove entrare? Fai il <strong class=\"text-slate-800\">profilo operatore</strong>: tre minuti e ti diciamo la tua costellazione d'ingresso. O parti direttamente dal sole.", ctaProfile: 'Scopri la tua costellazione →', ctaCore: "Entra nell'Operator Core" },
+  ch: { metaTitle: 'Die Galaxie', metaDesc: 'MOONKEY LAB ist eine Galaxie aus Lern-Konstellationen: KI bedienen, Daten, Produkt, Quant, Marke und Sicherheit. Jeder Track versorgt echte Projekte.', label: 'DIE GALAXIE · OPERATOR PATH', h1a: 'Kein Kurs.', h1b: 'Eine', galaxy: 'Galaxie', intro: 'Der <strong class="text-slate-700">Operator Core</strong> ist die Sonne: lernen, KI zu bedienen. Darum kreisen Konstellationen — Daten, Produkt, Quant, Marke, Sicherheit — jede lehrt die echten Fähigkeiten hinter unseren Projekten.', stConstellations: 'Konstellationen', stModules: 'Module', stLive: 'live', stProjects: 'Projekte versorgt', mapHint: 'Tippe auf eine Konstellation, um ihren Track zu erkunden →', constellations: 'DIE KONSTELLATIONEN', core: 'KERN', orbit1: 'ORBIT I', orbit2: 'ORBIT II', explore: 'erkunden →', ctaPara: 'Du weisst nicht, wo du einsteigen sollst? Mach das <strong class="text-slate-800">Operator-Profil</strong>: drei Minuten und wir nennen dir deine Einstiegs-Konstellation. Oder starte direkt bei der Sonne.', ctaProfile: 'Entdecke deine Konstellation →', ctaCore: 'Zum Operator Core' },
+};
+const G = GX[locale] ?? GX.es;
+
+// Map geometry
+const SIZE = 1000;
+const C = SIZE / 2;
+const RINGS: [number, number, number] = [0, 235, 410];
+
+const nodes = cons.map((c) => ({
+  c,
+  pos: nodePosition(C, C, c.orbit, c.angle, RINGS),
+  theme: THEME[c.theme],
+  href: localizedPath(`/constelacion/${c.id}`, locale),
+}));
+
+// Deterministic decorative star field (SSG — no hydration, stable per build).
+const stars = Array.from({ length: 46 }, (_, i) => {
+  const a = (i * 137.5) % 360;            // golden-angle spread
+  const r = 70 + ((i * 53) % 430);        // pseudo-radius
+  const rad = (a * Math.PI) / 180;
+  return {
+    x: C + r * Math.cos(rad),
+    y: C + r * Math.sin(rad),
+    s: 0.6 + ((i * 7) % 18) / 10,          // size
+    o: 0.18 + ((i * 11) % 50) / 100,       // opacity
+    d: (i % 7) * 0.4,                       // twinkle delay
+  };
+});
+---
+
+<Layout title={G.metaTitle} description={G.metaDesc}>
+
+  <!-- Hero -->
+  <section class="text-center max-w-2xl mx-auto hero-enter">
+    <span class="label block mb-3">{G.label}</span>
+    <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 leading-[1.05] mb-5">
+      {G.h1a}<br/>{G.h1b} <span class="text-emerald-600">{G.galaxy}</span>.
+    </h1>
+    <p class="text-slate-500 text-base leading-relaxed mb-8" set:html={G.intro}></p>
+    <!-- Stats -->
+    <div class="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 font-mono text-xs text-slate-400">
+      <span><span class="text-slate-900 font-bold text-lg">{stats.constellations}</span> {G.stConstellations}</span>
+      <span class="w-px h-4 bg-slate-200 hidden sm:block"></span>
+      <span><span class="text-slate-900 font-bold text-lg">{stats.modules}</span> {G.stModules}</span>
+      <span class="w-px h-4 bg-slate-200 hidden sm:block"></span>
+      <span><span class="text-emerald-600 font-bold text-lg">{stats.live}</span> {G.stLive}</span>
+      <span class="w-px h-4 bg-slate-200 hidden sm:block"></span>
+      <span><span class="text-slate-900 font-bold text-lg">{stats.projects.length}</span> {G.stProjects}</span>
+    </div>
+  </section>
+
+  <!-- The galaxy map -->
+  <section class="my-12" aria-label="Mapa de la galaxia" data-reveal="scale">
+    <div class="mk-galaxy relative mx-auto" style="max-width: 760px;">
+      <svg viewBox={`0 0 ${SIZE} ${SIZE}`} class="w-full h-auto select-none" role="img" aria-label="Mapa orbital: el Operator Core en el centro con seis constelaciones de aprendizaje en órbita.">
+        <defs>
+          <radialGradient id="sun-glow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="rgba(16,185,129,0.9)"/>
+            <stop offset="40%" stop-color="rgba(16,185,129,0.35)"/>
+            <stop offset="100%" stop-color="rgba(16,185,129,0)"/>
+          </radialGradient>
+          <radialGradient id="vignette" cx="50%" cy="50%" r="50%">
+            <stop offset="60%" stop-color="rgba(255,255,255,0)"/>
+            <stop offset="100%" stop-color="rgba(248,250,252,0.85)"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Orbit rings -->
+        <g class="mk-orbits" fill="none" stroke="rgba(15,23,42,0.10)" stroke-width="1.25">
+          <circle cx={C} cy={C} r={RINGS[1]} stroke-dasharray="2 9"/>
+          <circle cx={C} cy={C} r={RINGS[2]} stroke-dasharray="2 9"/>
+        </g>
+
+        <!-- Star field (slow rotation) -->
+        <g class="mk-stars">
+          {stars.map((st) => (
+            <circle cx={st.x} cy={st.y} r={st.s} fill="#0f172a" opacity={st.o}>
+              <animate attributeName="opacity" values={`${st.o};${st.o * 0.25};${st.o}`} dur="3.5s" begin={`${st.d}s`} repeatCount="indefinite"/>
+            </circle>
+          ))}
+        </g>
+
+        <!-- Connecting lines core → each node -->
+        <g stroke-width="1.25" fill="none">
+          {nodes.filter((n) => n.c.orbit > 0).map((n) => (
+            <line x1={C} y1={C} x2={n.pos.x} y2={n.pos.y} stroke={n.theme.dot} opacity="0.22"/>
+          ))}
+        </g>
+
+        <!-- The sun: Operator Core -->
+        <g>
+          <circle cx={C} cy={C} r="150" fill="url(#sun-glow)" class="mk-pulse"/>
+          <a href={nodes[0].href} aria-label="Operator Core — el núcleo">
+            <circle cx={C} cy={C} r="46" fill="#10b981"/>
+            <circle cx={C} cy={C} r="46" fill="none" stroke="#fff" stroke-width="2" opacity="0.7"/>
+            <text x={C} y={C - 2} text-anchor="middle" fill="#fff" font-family="'Space Grotesk',sans-serif" font-weight="700" font-size="19">Operator</text>
+            <text x={C} y={C + 20} text-anchor="middle" fill="#fff" font-family="'Space Grotesk',sans-serif" font-weight="700" font-size="19">Core</text>
+          </a>
+        </g>
+
+        <!-- Orbiting constellations -->
+        {nodes.filter((n) => n.c.orbit > 0).map((n) => {
+          const below = n.pos.y < C + 30;
+          const ty = below ? n.pos.y + 52 : n.pos.y + 50;
+          return (
+            <a href={n.href} class="mk-node" aria-label={`${n.c.name} — ${n.c.tagline}`}>
+              <circle cx={n.pos.x} cy={n.pos.y} r="34" fill={n.theme.glow} class="mk-node-glow"/>
+              <circle cx={n.pos.x} cy={n.pos.y} r="15" fill={n.theme.dot}/>
+              <circle cx={n.pos.x} cy={n.pos.y} r="15" fill="none" stroke="#fff" stroke-width="2" opacity="0.85"/>
+              <text x={n.pos.x} y={ty} text-anchor="middle" fill="#0f172a" font-family="'Space Grotesk',sans-serif" font-weight="700" font-size="23">{n.c.name}</text>
+              <text x={n.pos.x} y={ty + 22} text-anchor="middle" fill="#64748b" font-family="'JetBrains Mono',monospace" font-size="15">{n.c.tagline}</text>
+            </a>
+          );
+        })}
+
+        <rect x="0" y="0" width={SIZE} height={SIZE} fill="url(#vignette)" pointer-events="none"/>
+      </svg>
+    </div>
+    <p class="text-center font-mono text-[11px] text-slate-400 mt-2">{G.mapHint}</p>
+  </section>
+
+  <!-- Constellation cards (the accessible, functional navigation) -->
+  <section class="py-6">
+    <span class="label block mb-6 text-center">{G.constellations}</span>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {cons.map((c, i) => {
+        const th = THEME[c.theme];
+        const live = c.modules.filter((m) => m.status === 'live').length;
+        return (
+          <a
+            href={localizedPath(`/constelacion/${c.id}`, locale)}
+            class={`group glass card-hover rounded-2xl p-6 border-t-2 ${th.border} flex flex-col`}
+            data-reveal
+            data-delay={i * 60}
+          >
+            <div class="flex items-center justify-between mb-3">
+              <span class={`w-2.5 h-2.5 rounded-full`} style={`background:${th.dot};box-shadow:0 0 12px ${th.glow}`}></span>
+              <span class="font-mono text-[10px] tracking-widest uppercase text-slate-400">
+                {c.orbit === 0 ? G.core : c.orbit === 1 ? G.orbit1 : G.orbit2}
+              </span>
+            </div>
+            <h3 class={`font-display text-lg font-bold text-slate-900 mb-0.5`}>{c.name}</h3>
+            <p class={`font-mono text-xs ${th.text} mb-3`}>{c.tagline}</p>
+            <p class="text-slate-500 text-sm leading-relaxed mb-4 flex-1">{c.mission}</p>
+            <div class="flex flex-wrap gap-1.5 mb-4">
+              {c.powers.map((p) => (
+                <span class={`font-mono text-[10px] px-2 py-0.5 rounded-full border ${th.chip}`}>{localizePower(p, locale)}</span>
+              ))}
+            </div>
+            <div class="flex items-center justify-between border-t border-slate-100 pt-3 mt-auto">
+              <span class="font-mono text-[11px] text-slate-400">
+                {c.modules.length} {G.stModules}{live > 0 ? ` · ${live} ${G.stLive}` : ''}
+              </span>
+              <span class={`font-mono text-xs ${th.text} opacity-0 group-hover:opacity-100 transition-opacity`}>{G.explore}</span>
+            </div>
+          </a>
+        );
+      })}
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-14 text-center">
+    <p class="text-slate-600 text-sm leading-relaxed max-w-lg mx-auto mb-7" set:html={G.ctaPara}></p>
+    <div class="flex flex-wrap gap-3 justify-center">
+      <a href={localizedPath('/perfil', locale)} class="inline-block font-mono text-sm font-medium text-white bg-emerald-500 px-6 py-3 rounded-xl hover:bg-emerald-600 transition-colors shadow-sm">
+        {G.ctaProfile}
+      </a>
+      <a href={localizedPath('/modulos', locale)} class="inline-block font-mono text-sm text-slate-600 border border-slate-300 px-6 py-3 rounded-xl hover:bg-slate-50 transition-colors">
+        {G.ctaCore}
+      </a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .mk-pulse { transform-origin: center; animation: mk-sun-pulse 4.5s ease-in-out infinite; }
+  @keyframes mk-sun-pulse {
+    0%, 100% { opacity: 0.85; transform: scale(1); }
+    50%      { opacity: 1;    transform: scale(1.06); }
+  }
+  .mk-stars { transform-origin: 500px 500px; animation: mk-spin 240s linear infinite; }
+  @keyframes mk-spin { to { transform: rotate(360deg); } }
+
+  .mk-node { cursor: pointer; }
+  .mk-node circle { transition: transform 0.3s cubic-bezier(0.16,1,0.3,1); transform-origin: center; transform-box: fill-box; }
+  .mk-node-glow { opacity: 0.5; transition: opacity 0.3s ease, transform 0.3s ease; }
+  .mk-node:hover .mk-node-glow { opacity: 0.9; transform: scale(1.25); }
+  .mk-node text { transition: fill 0.2s ease; }
+  .mk-node:focus-visible { outline: none; }
+  .mk-node:focus-visible circle:nth-child(2) { stroke: #0f172a; stroke-width: 3; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mk-pulse, .mk-stars { animation: none; }
+  }
+</style>

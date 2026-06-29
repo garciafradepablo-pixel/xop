@@ -1,38 +1,22 @@
 ---
 import Layout from '../components/Layout.astro';
 import PromptBlock from '../components/PromptBlock.astro';
+import { resolveLocale } from '../i18n/utils';
+import { frontTr } from '../data/frontdoor.i18n';
+
+const locale = resolveLocale(Astro.currentLocale, Astro.url.pathname);
+const tr = frontTr('prompts', locale);
 
 const categorias = [
-  {
-    id: 'sistema',
-    label: 'SISTEMA',
-    desc: 'Para configurar Claude y estructurar proyectos.',
-    prompts: ['PROMPT 01'],
-  },
-  {
-    id: 'estrategia',
-    label: 'ESTRATEGIA',
-    desc: 'Para tomar decisiones y auditar ideas.',
-    prompts: ['PROMPT 02'],
-  },
-  {
-    id: 'tecnico',
-    label: 'TÉCNICO',
-    desc: 'Para diseñar y construir automatizaciones.',
-    prompts: ['PROMPT 03'],
-  },
-  {
-    id: 'operativo',
-    label: 'OPERATIVO',
-    desc: 'Para documentar y sistematizar procesos.',
-    prompts: ['PROMPT 04', 'PROMPT 05'],
-  },
+  { id: 'sistema', label: 'SISTEMA', desc: 'Para configurar Claude y estructurar proyectos.', prompts: ['PROMPT 01'] },
+  { id: 'estrategia', label: 'ESTRATEGIA', desc: 'Para tomar decisiones y auditar ideas.', prompts: ['PROMPT 02'] },
+  { id: 'tecnico', label: 'TÉCNICO', desc: 'Para diseñar y construir automatizaciones.', prompts: ['PROMPT 03'] },
+  { id: 'operativo', label: 'OPERATIVO', desc: 'Para documentar y sistematizar procesos.', prompts: ['PROMPT 04', 'PROMPT 05'] },
 ];
 
 const prompts = [
   {
-    tag: 'PROMPT 01',
-    cat: 'sistema',
+    tag: 'PROMPT 01', cat: 'sistema',
     when: 'Al iniciar un proyecto nuevo o cuando Claude no sabe cómo comportarse en tu repositorio.',
     title: 'Crear un CLAUDE.md',
     prompt: `Actúa como arquitecto de proyectos digitales.
@@ -48,8 +32,7 @@ Crea un archivo CLAUDE.md para este proyecto. El archivo debe incluir:
 Sé conciso. No más de 40 líneas. Sin decoración innecesaria.`,
   },
   {
-    tag: 'PROMPT 02',
-    cat: 'estrategia',
+    tag: 'PROMPT 02', cat: 'estrategia',
     when: 'Cuando tienes una idea que quieres ejecutar pero no estás seguro de si merece la pena o cómo estructurarla.',
     title: 'Auditar una idea de negocio',
     prompt: `Actúa como un analista de negocio directo y sin complacencia.
@@ -66,8 +49,7 @@ Quiero que la audites con esta estructura:
 No me digas lo que quiero oír. Dime lo que necesito saber.`,
   },
   {
-    tag: 'PROMPT 03',
-    cat: 'tecnico',
+    tag: 'PROMPT 03', cat: 'tecnico',
     when: 'Cuando identificas un proceso manual repetitivo y quieres que Claude diseñe la arquitectura de automatización antes de escribir código.',
     title: 'Diseñar una automatización',
     prompt: `Actúa como un ingeniero de automatización.
@@ -85,8 +67,7 @@ Diseña:
 5. Cómo lo probaría antes de confiar en él`,
   },
   {
-    tag: 'PROMPT 04',
-    cat: 'operativo',
+    tag: 'PROMPT 04', cat: 'operativo',
     when: 'Cuando terminas un proceso o flujo de trabajo y necesitas dejarlo documentado para que otro —o tú mismo en tres meses— pueda ejecutarlo sin preguntar.',
     title: 'Documentar un proceso',
     prompt: `Actúa como redactor técnico especializado en documentación operativa.
@@ -103,8 +84,7 @@ Crea una documentación en Markdown que incluya:
 Formato: Markdown claro. Sin jerga innecesaria. Que lo pueda seguir alguien que nunca lo ha hecho.`,
   },
   {
-    tag: 'PROMPT 05',
-    cat: 'operativo',
+    tag: 'PROMPT 05', cat: 'operativo',
     when: 'Cuando llevas tiempo repitiendo una tarea y quieres convertirla en un sistema delegable, automatizable o documentado antes de que crezca más.',
     title: 'Convertir tarea repetitiva en sistema',
     prompt: `Actúa como diseñador de sistemas de trabajo.
@@ -124,13 +104,13 @@ Ayúdame a convertirla en un sistema replicable:
 ];
 ---
 
-<Layout title="Arsenal de Prompts" description="Plantillas de trabajo listas para usar con Claude. Prompts operativos para MOONKEY LAB.">
+<Layout title={tr('Arsenal de Prompts')} description={tr('Plantillas de trabajo listas para usar con Claude. Prompts operativos para MOONKEY LAB.')}>
 
   <div class="pb-12 border-b border-slate-200">
-    <span class="label block mb-6">ARSENAL DE PROMPTS</span>
+    <span class="label block mb-6">{tr('ARSENAL DE PROMPTS')}</span>
     <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-4">Arsenal</h1>
     <p class="text-slate-600 text-base leading-relaxed max-w-lg">
-      Plantillas estructuradas para tareas reales. No son prompts genéricos: cada uno tiene un rol, una estructura y una intención concreta. Cópialos, adapta las partes entre corchetes y úsalos directamente con Claude.
+      {tr('Plantillas estructuradas para tareas reales. No son prompts genéricos: cada uno tiene un rol, una estructura y una intención concreta. Cópialos, adapta las partes entre corchetes y úsalos directamente con Claude.')}
     </p>
   </div>
 
@@ -140,19 +120,19 @@ Ayúdame a convertirla en un sistema replicable:
       return (
         <div>
           <div class="flex items-baseline gap-3 mb-2 border-b border-slate-200 pb-3">
-            <span class="font-mono text-[10px] tracking-widest uppercase font-bold text-emerald-600">{cat.label}</span>
-            <span class="text-slate-400 text-xs">{cat.desc}</span>
+            <span class="font-mono text-[10px] tracking-widest uppercase font-bold text-emerald-600">{tr(cat.label)}</span>
+            <span class="text-slate-400 text-xs">{tr(cat.desc)}</span>
           </div>
           <div class="mt-6 space-y-6">
             {catPrompts.map(p => (
               <div>
                 {p.when && (
                   <div class="flex items-start gap-2 mb-3 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5">
-                    <span class="font-mono text-[10px] tracking-widest uppercase text-slate-400 shrink-0 mt-0.5">CUÁNDO</span>
-                    <p class="text-xs text-slate-500 leading-relaxed">{p.when}</p>
+                    <span class="font-mono text-[10px] tracking-widest uppercase text-slate-400 shrink-0 mt-0.5">{tr('CUÁNDO')}</span>
+                    <p class="text-xs text-slate-500 leading-relaxed">{tr(p.when)}</p>
                   </div>
                 )}
-                <PromptBlock tag={p.tag} title={p.title} prompt={p.prompt} />
+                <PromptBlock tag={p.tag} title={tr(p.title)} prompt={tr(p.prompt)} />
               </div>
             ))}
           </div>
@@ -163,7 +143,7 @@ Ayúdame a convertirla en un sistema replicable:
 
   <div class="pb-16 border-t border-slate-200 pt-8">
     <p class="text-slate-400 text-xs font-mono">
-      Los textos entre [corchetes] son variables que debes reemplazar con tu contexto real.
+      {tr('Los textos entre [corchetes] son variables que debes reemplazar con tu contexto real.')}
     </p>
   </div>
 

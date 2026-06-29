@@ -1,0 +1,105 @@
+---
+import Layout from '../components/Layout.astro';
+import { resolveLocale, localizedPath } from '../i18n/utils';
+import { localizedConstellations, THEME, galaxyStats, localizePower } from '../data/galaxy';
+import { lessonCount } from '../data/galaxy.curriculum';
+import { getLocalizedLesson } from '../data/galaxy.curriculum.i18n';
+
+const locale = resolveLocale(Astro.currentLocale, Astro.url.pathname);
+const cons = localizedConstellations(locale);
+const stats = galaxyStats();
+const totalLessons = cons.reduce((n, c) => n + lessonCount(c.id), 0);
+
+const PG: Record<string, Record<string, string>> = {
+  es: { label: 'EL PROGRAMA', t1: 'Un máster en', t2: 'operar la IA', intro: 'No es una lista de vídeos. Es un programa estructurado: seis dominios, treinta y siete módulos, cada uno con una lección real y un entregable que construyes. El sílabo completo, a la vista.', arc: 'El camino: empiezas por el <strong class="text-slate-800">Operator Core</strong> — la base que todo lo demás da por supuesta — y desde ahí orbitas hacia el dominio que tu trabajo necesita. No hay atajos; hay progresión.', stConst: 'constelaciones', stMods: 'módulos', stLessons: 'lecciones', stProjects: 'proyectos alimentados', powers: 'Alimenta', explore: 'Explorar la constelación →', core: 'NÚCLEO', orbit1: 'ÓRBITA I', orbit2: 'ÓRBITA II', ctaText: '¿No sabes por dónde empezar? Haz el perfil de operador y te decimos tu punto de entrada.', ctaProfile: 'Descubre tu constelación →', ctaCore: 'Entrar al Operator Core' },
+  en: { label: 'THE PROGRAM', t1: 'A master’s in', t2: 'operating AI', intro: 'Not a list of videos. A structured program: six domains, thirty-seven modules, each with a real lesson and a deliverable you build. The full syllabus, in plain sight.', arc: 'The path: you start at the <strong class="text-slate-800">Operator Core</strong> — the base everything else assumes — and from there you orbit toward the domain your work needs. No shortcuts; progression.', stConst: 'constellations', stMods: 'modules', stLessons: 'lessons', stProjects: 'projects powered', powers: 'Powers', explore: 'Explore the constellation →', core: 'CORE', orbit1: 'ORBIT I', orbit2: 'ORBIT II', ctaText: 'Not sure where to start? Take the operator profile and we tell you your entry point.', ctaProfile: 'Discover your constellation →', ctaCore: 'Enter the Operator Core' },
+  th: { label: 'หลักสูตร', t1: 'ปริญญาโทด้าน', t2: 'การปฏิบัติการ AI', intro: 'ไม่ใช่รายการวิดีโอ แต่เป็นหลักสูตรที่มีโครงสร้าง: หกโดเมน สามสิบเจ็ดโมดูล แต่ละโมดูลมีบทเรียนจริงและสิ่งที่คุณต้องสร้าง หลักสูตรเต็มรูปแบบ เห็นได้ชัดเจน', arc: 'เส้นทาง: เริ่มจาก <strong class="text-slate-800">Operator Core</strong> — ฐานที่ทุกอย่างถือว่ามีอยู่แล้ว — จากนั้นโคจรไปยังโดเมนที่งานของคุณต้องการ ไม่มีทางลัด มีแต่ความก้าวหน้า', stConst: 'กลุ่มดาว', stMods: 'โมดูล', stLessons: 'บทเรียน', stProjects: 'โปรเจกต์ที่ขับเคลื่อน', powers: 'ขับเคลื่อน', explore: 'สำรวจกลุ่มดาว →', core: 'แกนกลาง', orbit1: 'วงโคจร I', orbit2: 'วงโคจร II', ctaText: 'ไม่รู้จะเริ่มตรงไหน? ทำแบบประเมินผู้ปฏิบัติการแล้วเราจะบอกจุดเริ่มต้นของคุณ', ctaProfile: 'ค้นพบกลุ่มดาวของคุณ →', ctaCore: 'เข้าสู่ Operator Core' },
+  fr: { label: 'LE PROGRAMME', t1: 'Un master pour', t2: 'opérer l’IA', intro: 'Pas une liste de vidéos. Un programme structuré : six domaines, trente-sept modules, chacun avec une vraie leçon et un livrable que tu construis. Le syllabus complet, à la vue de tous.', arc: 'Le parcours : tu commences par l’<strong class="text-slate-800">Operator Core</strong> — la base que tout le reste présuppose — puis tu gravites vers le domaine dont ton travail a besoin. Pas de raccourcis ; une progression.', stConst: 'constellations', stMods: 'modules', stLessons: 'leçons', stProjects: 'projets alimentés', powers: 'Alimente', explore: 'Explorer la constellation →', core: 'NOYAU', orbit1: 'ORBITE I', orbit2: 'ORBITE II', ctaText: 'Tu ne sais pas par où commencer ? Fais le profil d’opérateur et on te dit ton point d’entrée.', ctaProfile: 'Découvre ta constellation →', ctaCore: 'Entrer dans l’Operator Core' },
+  it: { label: 'IL PROGRAMMA', t1: 'Un master per', t2: 'operare l’IA', intro: 'Non un elenco di video. Un programma strutturato: sei domini, trentasette moduli, ognuno con una lezione vera e una consegna che costruisci. Il syllabus completo, in chiaro.', arc: 'Il percorso: parti dall’<strong class="text-slate-800">Operator Core</strong> — la base che tutto il resto dà per scontata — e da lì orbiti verso il dominio che il tuo lavoro richiede. Niente scorciatoie; progressione.', stConst: 'costellazioni', stMods: 'moduli', stLessons: 'lezioni', stProjects: 'progetti alimentati', powers: 'Alimenta', explore: 'Esplora la costellazione →', core: 'NUCLEO', orbit1: 'ORBITA I', orbit2: 'ORBITA II', ctaText: 'Non sai da dove iniziare? Fai il profilo operatore e ti diciamo il tuo punto d’ingresso.', ctaProfile: 'Scopri la tua costellazione →', ctaCore: 'Entra nell’Operator Core' },
+  ch: { label: 'DAS PROGRAMM', t1: 'Ein Master im', t2: 'Bedienen von KI', intro: 'Keine Videoliste. Ein strukturiertes Programm: sechs Domänen, siebenunddreissig Module, jedes mit einer echten Lektion und einem Ergebnis, das du baust. Der ganze Lehrplan, offen sichtbar.', arc: 'Der Weg: du startest beim <strong class="text-slate-800">Operator Core</strong> — der Basis, die alles andere voraussetzt — und kreist von dort zur Domäne, die deine Arbeit braucht. Keine Abkürzungen; Fortschritt.', stConst: 'Konstellationen', stMods: 'Module', stLessons: 'Lektionen', stProjects: 'Projekte versorgt', powers: 'Versorgt', explore: 'Konstellation erkunden →', core: 'KERN', orbit1: 'ORBIT I', orbit2: 'ORBIT II', ctaText: 'Du weisst nicht, wo du anfangen sollst? Mach das Operator-Profil und wir nennen dir deinen Einstieg.', ctaProfile: 'Entdecke deine Konstellation →', ctaCore: 'Zum Operator Core' },
+};
+const G = PG[locale] ?? PG.es;
+const orbitName = (o: number) => o === 0 ? G.core : o === 1 ? G.orbit1 : G.orbit2;
+---
+
+<Layout title={`${G.t1} ${G.t2}`} description="El programa completo de MOONKEY LAB: 6 dominios, 37 módulos de máster para operadores IA, cada uno con lección y entregable real.">
+
+  <!-- Hero -->
+  <section class="max-w-2xl hero-enter">
+    <span class="label block mb-3">{G.label}</span>
+    <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 leading-[1.05] mb-5">
+      {G.t1} <span class="text-emerald-600">{G.t2}</span>.
+    </h1>
+    <p class="text-slate-500 text-base leading-relaxed mb-6">{G.intro}</p>
+    <div class="flex flex-wrap items-center gap-x-7 gap-y-2 font-mono text-xs text-slate-400 mb-6">
+      <span><span class="text-slate-900 font-bold text-lg">{stats.constellations}</span> {G.stConst}</span>
+      <span class="w-px h-4 bg-slate-200 hidden sm:block"></span>
+      <span><span class="text-slate-900 font-bold text-lg">{stats.modules}</span> {G.stMods}</span>
+      <span class="w-px h-4 bg-slate-200 hidden sm:block"></span>
+      <span><span class="text-emerald-600 font-bold text-lg">{totalLessons}</span> {G.stLessons}</span>
+      <span class="w-px h-4 bg-slate-200 hidden sm:block"></span>
+      <span><span class="text-slate-900 font-bold text-lg">{stats.projects.length}</span> {G.stProjects}</span>
+    </div>
+    <p class="text-slate-500 text-sm leading-relaxed max-w-xl border-l-2 border-emerald-300 pl-4" set:html={G.arc}></p>
+  </section>
+
+  <!-- The syllabus: every constellation, every module -->
+  <div class="py-12 space-y-12">
+    {cons.map((c) => {
+      const cth = THEME[c.theme];
+      return (
+        <section data-reveal>
+          <div class="flex items-start gap-3 mb-5 pb-4 border-b border-slate-200">
+            <span class="w-3 h-3 rounded-full mt-1.5 shrink-0" style={`background:${cth.dot};box-shadow:0 0 14px ${cth.glow}`}></span>
+            <div class="flex-1">
+              <div class="flex items-baseline gap-3 flex-wrap">
+                <h2 class="font-display text-2xl font-bold text-slate-900">{c.name}</h2>
+                <span class={`font-mono text-xs ${cth.text}`}>{c.tagline}</span>
+                <span class="font-mono text-[10px] tracking-widest uppercase text-slate-300">{orbitName(c.orbit)}</span>
+              </div>
+              <p class="text-slate-500 text-sm leading-relaxed mt-1 max-w-2xl">{c.mission}</p>
+              <div class="flex flex-wrap gap-1.5 mt-2">
+                <span class="font-mono text-[10px] tracking-widest uppercase text-slate-400 mr-1 self-center">{G.powers}</span>
+                {c.powers.map((p) => (
+                  <span class={`font-mono text-[10px] px-2 py-0.5 rounded-full border ${cth.chip}`}>{localizePower(p, locale)}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <ol class="space-y-2">
+            {c.modules.map((m) => {
+              const lesson = getLocalizedLesson(c.id, m.code, locale);
+              return (
+                <li class="flex items-start gap-4 bg-white border border-slate-200 rounded-xl px-5 py-3.5 hover:border-slate-300 transition-colors">
+                  <span class={`font-mono text-xs font-bold shrink-0 mt-0.5 ${cth.text}`}>{m.code}</span>
+                  <div class="flex-1 min-w-0">
+                    <p class="font-semibold text-slate-900 text-sm mb-0.5">{m.title}</p>
+                    <p class="text-slate-500 text-xs leading-relaxed">{lesson ? lesson.objetivo : m.blurb}</p>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+
+          <a href={localizedPath(`/constelacion/${c.id}`, locale)} class={`inline-block mt-4 font-mono text-xs font-medium ${cth.text} border ${cth.border} px-4 py-2 rounded-lg hover:bg-slate-50 transition-colors`}>
+            {G.explore}
+          </a>
+        </section>
+      );
+    })}
+  </div>
+
+  <!-- CTA -->
+  <section class="py-12 text-center border-t border-slate-200">
+    <p class="text-slate-600 text-sm leading-relaxed max-w-lg mx-auto mb-7">{G.ctaText}</p>
+    <div class="flex flex-wrap gap-3 justify-center">
+      <a href={localizedPath('/perfil', locale)} class="inline-block font-mono text-sm font-medium text-white bg-emerald-500 px-6 py-3 rounded-xl hover:bg-emerald-600 transition-colors shadow-sm">
+        {G.ctaProfile}
+      </a>
+      <a href={localizedPath('/modulos', locale)} class="inline-block font-mono text-sm text-slate-600 border border-slate-300 px-6 py-3 rounded-xl hover:bg-slate-50 transition-colors">
+        {G.ctaCore}
+      </a>
+    </div>
+  </section>
+</Layout>

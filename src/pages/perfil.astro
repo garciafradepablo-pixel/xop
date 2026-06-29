@@ -1,0 +1,419 @@
+---
+import Layout from '../components/Layout.astro';
+import { resolveLocale, localizedPath } from '../i18n/utils';
+import { localizedConstellations } from '../data/galaxy';
+
+const locale = resolveLocale(Astro.currentLocale, Astro.url.pathname);
+const L = (locale === 'es' || locale === 'en' || locale === 'th' || locale === 'fr' || locale === 'it' || locale === 'ch') ? locale : 'es';
+
+// ── UI strings per locale ────────────────────────────────────────────────
+const STR: Record<string, Record<string, string>> = {
+  es: {
+    metaTitle: 'Tu perfil de operador',
+    metaDesc: 'Un diagnóstico rápido que identifica tus virtudes, aptitudes y necesidades, y te da tu constelación de entrada a la galaxia MOONKEY.',
+    label: 'PERFIL DE OPERADOR', t1: '¿Por dónde', t2: 'empiezas tú?',
+    intro: 'Tres minutos. Identificamos tus <strong class="text-slate-700">virtudes</strong>, tus <strong class="text-slate-700">aptitudes</strong> y tus <strong class="text-slate-700">necesidades</strong>, y te damos tu <strong class="text-emerald-700">constelación de entrada</strong> a la galaxia — el camino más corto entre dónde estás y lo que quieres construir.',
+    refNote: 'Te invitó un operador de MOONKEY. Tu perfil llegará a quien te trajo.',
+    s1: '01 · VIRTUDES', s1p: '¿Cómo trabajas? Elige las que más te representen.',
+    s2: '02 · APTITUDES', s2p: '¿En qué punto estás hoy?', s2dp: '¿Qué dominas o te interesa? (varios)',
+    s3: '03 · NECESIDADES', s3p: '¿Qué quieres conseguir? Esto define tu órbita.', s3tp: '¿Cuánto tiempo a la semana?',
+    noteL: '¿Qué quieres construir?', opt: '(opcional)', noteP: 'Una idea, un proyecto, un problema que quieres resolver…',
+    s4: '04 · CONEXIÓN', s4p: 'Para guardarte el sitio y poder escribirte.', nameP: 'Tu nombre',
+    submit: 'Revelar mi constelación →', privacyPre: 'Datos de primera mano, con tu consentimiento. Ver', privacyWord: 'privacidad',
+    rLabel: 'TU CONSTELACIÓN DE ENTRADA', baseLabel: 'TU BASE · EL SOL',
+    baseDesc: 'Todos empiezan aquí: la base que cualquier constelación da por supuesta. Operar la IA con criterio.', baseBtn: 'Entrar al Operator Core →',
+    orbitLabel: 'TU ÓRBITA · POR DÓNDE CRECES', orbitSteps: 'Tus tres primeros pasos en esta órbita:', orbitBtn: 'Explorar la constelación →',
+    back: '← Ver la galaxia completa',
+  },
+  en: {
+    metaTitle: 'Your operator profile',
+    metaDesc: 'A quick diagnostic that identifies your virtues, aptitudes and needs, and gives you your entry constellation into the MOONKEY galaxy.',
+    label: 'OPERATOR PROFILE', t1: 'Where do', t2: 'you begin?',
+    intro: 'Three minutes. We identify your <strong class="text-slate-700">virtues</strong>, your <strong class="text-slate-700">aptitudes</strong> and your <strong class="text-slate-700">needs</strong>, and give you your <strong class="text-emerald-700">entry constellation</strong> into the galaxy — the shortest path between where you are and what you want to build.',
+    refNote: 'A MOONKEY operator invited you. Your profile will reach whoever brought you in.',
+    s1: '01 · VIRTUES', s1p: 'How do you work? Pick the ones that fit you best.',
+    s2: '02 · APTITUDES', s2p: 'Where are you today?', s2dp: 'What do you know or want to learn? (multiple)',
+    s3: '03 · NEEDS', s3p: 'What do you want to achieve? This sets your orbit.', s3tp: 'How much time per week?',
+    noteL: 'What do you want to build?', opt: '(optional)', noteP: 'An idea, a project, a problem you want to solve…',
+    s4: '04 · CONNECTION', s4p: 'So we can save your spot and reach you.', nameP: 'Your name',
+    submit: 'Reveal my constellation →', privacyPre: 'First-party data, with your consent. See', privacyWord: 'privacy',
+    rLabel: 'YOUR ENTRY CONSTELLATION', baseLabel: 'YOUR BASE · THE SUN',
+    baseDesc: 'Everyone starts here: the base every constellation takes for granted. Operating AI with judgment.', baseBtn: 'Enter the Operator Core →',
+    orbitLabel: 'YOUR ORBIT · WHERE YOU GROW', orbitSteps: 'Your first three steps in this orbit:', orbitBtn: 'Explore the constellation →',
+    back: '← See the full galaxy',
+  },
+  th: {
+    metaTitle: 'โปรไฟล์ผู้ปฏิบัติการของคุณ',
+    metaDesc: 'แบบประเมินสั้นๆ ที่ระบุจุดแข็ง ความถนัด และความต้องการของคุณ แล้วมอบกลุ่มดาวเริ่มต้นในกาแล็กซี MOONKEY ให้คุณ',
+    label: 'โปรไฟล์ผู้ปฏิบัติการ', t1: 'คุณจะเริ่ม', t2: 'จากตรงไหน?',
+    intro: 'สามนาที เราจะระบุ<strong class="text-slate-700">จุดแข็ง</strong> <strong class="text-slate-700">ความถนัด</strong> และ<strong class="text-slate-700">ความต้องการ</strong>ของคุณ แล้วมอบ<strong class="text-emerald-700">กลุ่มดาวเริ่มต้น</strong>ในกาแล็กซีให้คุณ — เส้นทางที่สั้นที่สุดระหว่างจุดที่คุณอยู่กับสิ่งที่คุณอยากสร้าง',
+    refNote: 'ผู้ปฏิบัติการของ MOONKEY เชิญคุณมา โปรไฟล์ของคุณจะส่งถึงผู้ที่พาคุณมา',
+    s1: '01 · จุดแข็ง', s1p: 'คุณทำงานอย่างไร? เลือกข้อที่ตรงกับคุณมากที่สุด',
+    s2: '02 · ความถนัด', s2p: 'วันนี้คุณอยู่จุดไหน?', s2dp: 'คุณเชี่ยวชาญหรือสนใจอะไร? (เลือกได้หลายข้อ)',
+    s3: '03 · ความต้องการ', s3p: 'คุณอยากบรรลุอะไร? สิ่งนี้กำหนดวงโคจรของคุณ', s3tp: 'สัปดาห์ละเท่าไหร่?',
+    noteL: 'คุณอยากสร้างอะไร?', opt: '(ไม่บังคับ)', noteP: 'ไอเดีย โปรเจกต์ หรือปัญหาที่คุณอยากแก้…',
+    s4: '04 · การเชื่อมต่อ', s4p: 'เพื่อเก็บที่ของคุณไว้และติดต่อคุณได้', nameP: 'ชื่อของคุณ',
+    submit: 'เผยกลุ่มดาวของฉัน →', privacyPre: 'ข้อมูลจากคุณโดยตรง ด้วยความยินยอมของคุณ ดู', privacyWord: 'ความเป็นส่วนตัว',
+    rLabel: 'กลุ่มดาวเริ่มต้นของคุณ', baseLabel: 'ฐานของคุณ · ดวงอาทิตย์',
+    baseDesc: 'ทุกคนเริ่มที่นี่: ฐานที่ทุกกลุ่มดาวถือว่ามีอยู่แล้ว การปฏิบัติการ AI อย่างมีวิจารณญาณ', baseBtn: 'เข้าสู่ Operator Core →',
+    orbitLabel: 'วงโคจรของคุณ · ที่ที่คุณเติบโต', orbitSteps: 'สามก้าวแรกของคุณในวงโคจรนี้:', orbitBtn: 'สำรวจกลุ่มดาว →',
+    back: '← ดูกาแล็กซีทั้งหมด',
+  },
+  fr: {
+    metaTitle: 'Ton profil d\'opérateur',
+    metaDesc: 'Un diagnostic rapide qui identifie tes vertus, tes aptitudes et tes besoins, et te donne ta constellation d\'entrée dans la galaxie MOONKEY.',
+    label: 'PROFIL D\'OPÉRATEUR', t1: 'Par où', t2: 'commences-tu ?',
+    intro: 'Trois minutes. Nous identifions tes <strong class="text-slate-700">vertus</strong>, tes <strong class="text-slate-700">aptitudes</strong> et tes <strong class="text-slate-700">besoins</strong>, et te donnons ta <strong class="text-emerald-700">constellation d\'entrée</strong> dans la galaxie — le chemin le plus court entre où tu es et ce que tu veux construire.',
+    refNote: 'Un opérateur MOONKEY t\'a invité. Ton profil parviendra à celui qui t\'a amené.',
+    s1: '01 · VERTUS', s1p: 'Comment travailles-tu ? Choisis celles qui te représentent le mieux.',
+    s2: '02 · APTITUDES', s2p: 'Où en es-tu aujourd\'hui ?', s2dp: 'Que maîtrises-tu ou qu\'est-ce qui t\'intéresse ? (plusieurs)',
+    s3: '03 · BESOINS', s3p: 'Que veux-tu accomplir ? Cela définit ton orbite.', s3tp: 'Combien de temps par semaine ?',
+    noteL: 'Que veux-tu construire ?', opt: '(facultatif)', noteP: 'Une idée, un projet, un problème que tu veux résoudre…',
+    s4: '04 · CONNEXION', s4p: 'Pour te garder ta place et pouvoir t\'écrire.', nameP: 'Ton nom',
+    submit: 'Révéler ma constellation →', privacyPre: 'Données de première main, avec ton consentement. Voir', privacyWord: 'confidentialité',
+    rLabel: 'TA CONSTELLATION D\'ENTRÉE', baseLabel: 'TA BASE · LE SOLEIL',
+    baseDesc: 'Tout le monde commence ici : la base que chaque constellation présuppose. Opérer l\'IA avec discernement.', baseBtn: 'Entrer dans l\'Operator Core →',
+    orbitLabel: 'TON ORBITE · OÙ TU GRANDIS', orbitSteps: 'Tes trois premiers pas dans cette orbite :', orbitBtn: 'Explorer la constellation →',
+    back: '← Voir toute la galaxie',
+  },
+  it: {
+    metaTitle: 'Il tuo profilo operatore',
+    metaDesc: 'Una diagnosi rapida che identifica le tue virtù, attitudini e bisogni, e ti dà la tua costellazione d\'ingresso nella galassia MOONKEY.',
+    label: 'PROFILO OPERATORE', t1: 'Da dove', t2: 'inizi tu?',
+    intro: 'Tre minuti. Identifichiamo le tue <strong class="text-slate-700">virtù</strong>, le tue <strong class="text-slate-700">attitudini</strong> e i tuoi <strong class="text-slate-700">bisogni</strong>, e ti diamo la tua <strong class="text-emerald-700">costellazione d\'ingresso</strong> nella galassia — la via più breve tra dove sei e ciò che vuoi costruire.',
+    refNote: 'Ti ha invitato un operatore MOONKEY. Il tuo profilo arriverà a chi ti ha portato.',
+    s1: '01 · VIRTÙ', s1p: 'Come lavori? Scegli quelle che ti rappresentano di più.',
+    s2: '02 · ATTITUDINI', s2p: 'A che punto sei oggi?', s2dp: 'Cosa padroneggi o ti interessa? (più di una)',
+    s3: '03 · BISOGNI', s3p: 'Cosa vuoi ottenere? Questo definisce la tua orbita.', s3tp: 'Quanto tempo a settimana?',
+    noteL: 'Cosa vuoi costruire?', opt: '(facoltativo)', noteP: 'Un\'idea, un progetto, un problema che vuoi risolvere…',
+    s4: '04 · CONNESSIONE', s4p: 'Per tenerti il posto e poterti scrivere.', nameP: 'Il tuo nome',
+    submit: 'Rivela la mia costellazione →', privacyPre: 'Dati di prima mano, con il tuo consenso. Vedi', privacyWord: 'privacy',
+    rLabel: 'LA TUA COSTELLAZIONE D\'INGRESSO', baseLabel: 'LA TUA BASE · IL SOLE',
+    baseDesc: 'Tutti partono da qui: la base che ogni costellazione dà per scontata. Operare l\'IA con criterio.', baseBtn: 'Entra nell\'Operator Core →',
+    orbitLabel: 'LA TUA ORBITA · DOVE CRESCI', orbitSteps: 'I tuoi primi tre passi in questa orbita:', orbitBtn: 'Esplora la costellazione →',
+    back: '← Vedi tutta la galassia',
+  },
+  ch: {
+    metaTitle: 'Dein Operator-Profil',
+    metaDesc: 'Eine kurze Diagnose, die deine Stärken, Fähigkeiten und Bedürfnisse erkennt und dir deine Einstiegs-Konstellation in der MOONKEY-Galaxie gibt.',
+    label: 'OPERATOR-PROFIL', t1: 'Wo fängst', t2: 'du an?',
+    intro: 'Drei Minuten. Wir erkennen deine <strong class="text-slate-700">Stärken</strong>, deine <strong class="text-slate-700">Fähigkeiten</strong> und deine <strong class="text-slate-700">Bedürfnisse</strong> und geben dir deine <strong class="text-emerald-700">Einstiegs-Konstellation</strong> in der Galaxie — der kürzeste Weg zwischen dem, wo du stehst, und dem, was du bauen willst.',
+    refNote: 'Ein MOONKEY-Operator hat dich eingeladen. Dein Profil erreicht den, der dich gebracht hat.',
+    s1: '01 · STÄRKEN', s1p: 'Wie arbeitest du? Wähle die, die am besten zu dir passen.',
+    s2: '02 · FÄHIGKEITEN', s2p: 'Wo stehst du heute?', s2dp: 'Was beherrschst du oder interessiert dich? (mehrere)',
+    s3: '03 · BEDÜRFNISSE', s3p: 'Was willst du erreichen? Das bestimmt deine Umlaufbahn.', s3tp: 'Wie viel Zeit pro Woche?',
+    noteL: 'Was willst du bauen?', opt: '(optional)', noteP: 'Eine Idee, ein Projekt, ein Problem, das du lösen willst…',
+    s4: '04 · VERBINDUNG', s4p: 'Damit wir dir deinen Platz sichern und dich erreichen können.', nameP: 'Dein Name',
+    submit: 'Meine Konstellation enthüllen →', privacyPre: 'Daten aus erster Hand, mit deiner Zustimmung. Siehe', privacyWord: 'Datenschutz',
+    rLabel: 'DEINE EINSTIEGS-KONSTELLATION', baseLabel: 'DEINE BASIS · DIE SONNE',
+    baseDesc: 'Alle starten hier: die Basis, die jede Konstellation voraussetzt. KI mit Urteilsvermögen bedienen.', baseBtn: 'Zum Operator Core →',
+    orbitLabel: 'DEINE UMLAUFBAHN · WO DU WÄCHST', orbitSteps: 'Deine ersten drei Schritte in dieser Umlaufbahn:', orbitBtn: 'Konstellation erkunden →',
+    back: '← Die ganze Galaxie ansehen',
+  },
+};
+const S = STR[L];
+
+// Client-side messages per locale (injected as JSON for the script).
+const MSGS: Record<string, Record<string, string>> = {
+  es: { vVirtue: 'Elige al menos una virtud.', vApt: 'Indica en qué punto estás.', vGoal: 'Elige qué quieres conseguir.', vEmail: 'Revisa el email.', savedRef: 'Perfil guardado y enviado a quien te invitó. ✓', savedPlain: 'Perfil guardado. ✓', savedErr: 'Tu constelación está calculada. (No se pudo guardar el perfil ahora — reinténtalo más tarde.)' },
+  en: { vVirtue: 'Pick at least one virtue.', vApt: 'Tell us where you are.', vGoal: 'Pick what you want to achieve.', vEmail: 'Check the email.', savedRef: 'Profile saved and sent to whoever invited you. ✓', savedPlain: 'Profile saved. ✓', savedErr: 'Your constellation is calculated. (Could not save the profile now — try again later.)' },
+  th: { vVirtue: 'เลือกจุดแข็งอย่างน้อยหนึ่งข้อ', vApt: 'บอกเราว่าคุณอยู่จุดไหน', vGoal: 'เลือกสิ่งที่คุณอยากบรรลุ', vEmail: 'ตรวจสอบอีเมล', savedRef: 'บันทึกโปรไฟล์และส่งถึงผู้ที่เชิญคุณแล้ว ✓', savedPlain: 'บันทึกโปรไฟล์แล้ว ✓', savedErr: 'คำนวณกลุ่มดาวของคุณแล้ว (บันทึกโปรไฟล์ไม่สำเร็จตอนนี้ — ลองใหม่ภายหลัง)' },
+  fr: { vVirtue: 'Choisis au moins une vertu.', vApt: 'Indique où tu en es.', vGoal: 'Choisis ce que tu veux accomplir.', vEmail: 'Vérifie l\'e-mail.', savedRef: 'Profil enregistré et envoyé à celui qui t\'a invité. ✓', savedPlain: 'Profil enregistré. ✓', savedErr: 'Ta constellation est calculée. (Impossible d\'enregistrer le profil maintenant — réessaie plus tard.)' },
+  it: { vVirtue: 'Scegli almeno una virtù.', vApt: 'Indica a che punto sei.', vGoal: 'Scegli cosa vuoi ottenere.', vEmail: 'Controlla l\'email.', savedRef: 'Profilo salvato e inviato a chi ti ha invitato. ✓', savedPlain: 'Profilo salvato. ✓', savedErr: 'La tua costellazione è calcolata. (Impossibile salvare il profilo ora — riprova più tardi.)' },
+  ch: { vVirtue: 'Wähle mindestens eine Stärke.', vApt: 'Sag uns, wo du stehst.', vGoal: 'Wähle, was du erreichen willst.', vEmail: 'Prüfe die E-Mail.', savedRef: 'Profil gespeichert und an deinen Einlader gesendet. ✓', savedPlain: 'Profil gespeichert. ✓', savedErr: 'Deine Konstellation ist berechnet. (Profil konnte jetzt nicht gespeichert werden — versuch es später.)' },
+};
+
+// ── Options: canonical value `v` (stored in DB → consistent pipeline) + localized label ──
+const tr = (m: Record<string, string>) => m[L] ?? m.es;
+const VIRTUES = [
+  { v: 'Sistemático',  l: { es:'Sistemático', en:'Systematic', th:'เป็นระบบ', fr:'Méthodique', it:'Sistematico', ch:'Systematisch' } },
+  { v: 'Creativo',     l: { es:'Creativo', en:'Creative', th:'สร้างสรรค์', fr:'Créatif', it:'Creativo', ch:'Kreativ' } },
+  { v: 'Persistente',  l: { es:'Persistente', en:'Persistent', th:'มุ่งมั่น', fr:'Persévérant', it:'Tenace', ch:'Beharrlich' } },
+  { v: 'Analítico',    l: { es:'Analítico', en:'Analytical', th:'ชอบวิเคราะห์', fr:'Analytique', it:'Analitico', ch:'Analytisch' } },
+  { v: 'Curioso',      l: { es:'Curioso', en:'Curious', th:'อยากรู้อยากเห็น', fr:'Curieux', it:'Curioso', ch:'Neugierig' } },
+  { v: 'Autónomo',     l: { es:'Autónomo', en:'Autonomous', th:'พึ่งตัวเอง', fr:'Autonome', it:'Autonomo', ch:'Eigenständig' } },
+  { v: 'Colaborativo', l: { es:'Colaborativo', en:'Collaborative', th:'ทำงานเป็นทีม', fr:'Collaboratif', it:'Collaborativo', ch:'Kooperativ' } },
+  { v: 'Detallista',   l: { es:'Detallista', en:'Detail-oriented', th:'ใส่ใจรายละเอียด', fr:'Minutieux', it:'Attento ai dettagli', ch:'Detailorientiert' } },
+  { v: 'Estratégico',  l: { es:'Estratégico', en:'Strategic', th:'มองกลยุทธ์', fr:'Stratégique', it:'Strategico', ch:'Strategisch' } },
+  { v: 'Resolutivo',   l: { es:'Resolutivo', en:'Decisive', th:'แก้ปัญหาเก่ง', fr:'Efficace', it:'Risolutivo', ch:'Lösungsorientiert' } },
+].map((o) => ({ v: o.v, label: tr(o.l) }));
+
+const DOMAINS = [
+  { v: 'Código',             l: { es:'Código', en:'Code', th:'โค้ด', fr:'Code', it:'Codice', ch:'Code' } },
+  { v: 'Diseño',             l: { es:'Diseño', en:'Design', th:'ดีไซน์', fr:'Design', it:'Design', ch:'Design' } },
+  { v: 'Datos',              l: { es:'Datos', en:'Data', th:'ข้อมูล', fr:'Données', it:'Dati', ch:'Daten' } },
+  { v: 'Mercados / Trading', l: { es:'Mercados / Trading', en:'Markets / Trading', th:'ตลาด / เทรด', fr:'Marchés / Trading', it:'Mercati / Trading', ch:'Märkte / Trading' } },
+  { v: 'Marca / Contenido',  l: { es:'Marca / Contenido', en:'Brand / Content', th:'แบรนด์ / คอนเทนต์', fr:'Marque / Contenu', it:'Brand / Contenuti', ch:'Marke / Content' } },
+  { v: 'Automatización',     l: { es:'Automatización', en:'Automation', th:'ระบบอัตโนมัติ', fr:'Automatisation', it:'Automazione', ch:'Automatisierung' } },
+  { v: 'Producto / SaaS',    l: { es:'Producto / SaaS', en:'Product / SaaS', th:'โปรดักต์ / SaaS', fr:'Produit / SaaS', it:'Prodotto / SaaS', ch:'Produkt / SaaS' } },
+  { v: 'Seguridad',          l: { es:'Seguridad', en:'Security', th:'ความปลอดภัย', fr:'Sécurité', it:'Sicurezza', ch:'Sicherheit' } },
+  { v: 'Ninguno aún',        l: { es:'Ninguno aún', en:'None yet', th:'ยังไม่มี', fr:'Aucun encore', it:'Nessuno ancora', ch:'Noch keins' } },
+].map((o) => ({ v: o.v, label: tr(o.l) }));
+
+const APTITUDES = [
+  { v: 'empezando', t: { es:'Estoy empezando', en:'Just starting', th:'เพิ่งเริ่มต้น', fr:'Je débute', it:'Sto iniziando', ch:'Ich fange an' }, d: { es:'Poca o ninguna experiencia técnica.', en:'Little or no technical experience.', th:'มีประสบการณ์ทางเทคนิคน้อยหรือไม่มีเลย', fr:'Peu ou pas d\'expérience technique.', it:'Poca o nessuna esperienza tecnica.', ch:'Wenig oder keine technische Erfahrung.' } },
+  { v: 'construyo', t: { es:'Ya construyo cosas con IA', en:'I already build with AI', th:'ฉันสร้างสิ่งต่างๆ ด้วย AI แล้ว', fr:'Je construis déjà avec l\'IA', it:'Costruisco già con l\'IA', ch:'Ich baue schon mit KI' }, d: { es:'Uso IA para crear, pero sin sistema.', en:'I use AI to create, but without a system.', th:'ใช้ AI สร้างงาน แต่ยังไม่มีระบบ', fr:'J\'utilise l\'IA pour créer, mais sans système.', it:'Uso l\'IA per creare, ma senza un sistema.', ch:'Ich nutze KI zum Erstellen, aber ohne System.' } },
+  { v: 'opero', t: { es:'Opero sistemas reales', en:'I operate real systems', th:'ฉันดูแลระบบจริง', fr:'J\'exploite des systèmes réels', it:'Gestisco sistemi reali', ch:'Ich betreibe echte Systeme' }, d: { es:'Mantengo proyectos en producción.', en:'I keep projects in production.', th:'ดูแลโปรเจกต์ที่ใช้งานจริง', fr:'Je maintiens des projets en production.', it:'Mantengo progetti in produzione.', ch:'Ich halte Projekte in Produktion.' } },
+  { v: 'dirijo', t: { es:'Formo o dirijo equipo', en:'I train or lead a team', th:'ฉันฝึกหรือนำทีม', fr:'Je forme ou dirige une équipe', it:'Formo o dirigo un team', ch:'Ich bilde aus oder führe ein Team' }, d: { es:'Lidero personas o procesos.', en:'I lead people or processes.', th:'นำคนหรือกระบวนการ', fr:'Je dirige des personnes ou des processus.', it:'Guido persone o processi.', ch:'Ich führe Menschen oder Prozesse.' } },
+].map((o) => ({ v: o.v, t: tr(o.t), d: tr(o.d) }));
+
+const GOALS = [
+  { v: 'operar-ia', c: 'operator-core', t: { es:'Operar la IA como un profesional', en:'Operate AI like a professional', th:'ปฏิบัติการ AI อย่างมืออาชีพ', fr:'Opérer l\'IA comme un professionnel', it:'Operare l\'IA come un professionista', ch:'KI wie ein Profi bedienen' } },
+  { v: 'producto', c: 'builders', t: { es:'Construir y lanzar productos', en:'Build and ship products', th:'สร้างและเปิดตัวโปรดักต์', fr:'Construire et lancer des produits', it:'Costruire e lanciare prodotti', ch:'Produkte bauen und launchen' } },
+  { v: 'datos', c: 'data-systems', t: { es:'Dominar datos, backend y automatización', en:'Master data, backend and automation', th:'เชี่ยวชาญข้อมูล แบ็กเอนด์ และระบบอัตโนมัติ', fr:'Maîtriser données, backend et automatisation', it:'Padroneggiare dati, backend e automazione', ch:'Daten, Backend und Automatisierung meistern' } },
+  { v: 'mercados', c: 'signal', t: { es:'Investigar mercados, trading, quant', en:'Research markets, trading, quant', th:'วิจัยตลาด เทรด quant', fr:'Étudier marchés, trading, quant', it:'Studiare mercati, trading, quant', ch:'Märkte, Trading, Quant erforschen' } },
+  { v: 'marca', c: 'brand-surface', t: { es:'Diseño, marca, contenido y voz', en:'Design, brand, content and voice', th:'ดีไซน์ แบรนด์ คอนเทนต์ และน้ำเสียง', fr:'Design, marque, contenu et voix', it:'Design, brand, contenuti e voce', ch:'Design, Marke, Content und Stimme' } },
+  { v: 'seguridad', c: 'ops-security', t: { es:'Seguridad, operaciones e infraestructura', en:'Security, operations and infrastructure', th:'ความปลอดภัย ปฏิบัติการ และโครงสร้างพื้นฐาน', fr:'Sécurité, opérations et infrastructure', it:'Sicurezza, operazioni e infrastruttura', ch:'Sicherheit, Betrieb und Infrastruktur' } },
+].map((o) => ({ v: o.v, c: o.c, t: tr(o.t) }));
+
+const TIMES = [
+  { v: 'Menos de 2h', l: { es:'Menos de 2h', en:'Less than 2h', th:'น้อยกว่า 2 ชม.', fr:'Moins de 2h', it:'Meno di 2h', ch:'Weniger als 2h' } },
+  { v: '2–5h',  l: { es:'2–5h', en:'2–5h', th:'2–5 ชม.', fr:'2–5h', it:'2–5h', ch:'2–5h' } },
+  { v: '5–10h', l: { es:'5–10h', en:'5–10h', th:'5–10 ชม.', fr:'5–10h', it:'5–10h', ch:'5–10h' } },
+  { v: 'Más de 10h', l: { es:'Más de 10h', en:'More than 10h', th:'มากกว่า 10 ชม.', fr:'Plus de 10h', it:'Più di 10h', ch:'Mehr als 10h' } },
+].map((o) => ({ v: o.v, label: tr(o.l) }));
+
+// Compact constellation map for the client-side result renderer + client messages.
+const CONST_MAP = Object.fromEntries(localizedConstellations(L).map((c) => [c.id, {
+  name: c.name, tagline: c.tagline, dot: { emerald:'#10b981', sky:'#0ea5e9', violet:'#8b5cf6', amber:'#f59e0b', rose:'#f43f5e', indigo:'#6366f1' }[c.theme],
+  text: c.theme,
+  modules: c.modules.slice(0, 3).map((m) => m.title),
+  href: localizedPath(`/constelacion/${c.id}`, L),
+}]));
+const CLIENT = { CONST: CONST_MAP, MSG: MSGS[L] };
+const modulosHref = localizedPath('/modulos', L);
+const galaxiaHref = localizedPath('/galaxia', L);
+const loginHref = localizedPath('/login', L);
+const privacyHref = localizedPath('/privacidad', L);
+---
+
+<Layout title={S.metaTitle} description={S.metaDesc}>
+
+  <!-- Hero -->
+  <section class="max-w-2xl hero-enter">
+    <span class="label block mb-3">{S.label}</span>
+    <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 leading-[1.05] mb-4">
+      {S.t1}<br/>{S.t2}
+    </h1>
+    <p class="text-slate-500 text-base leading-relaxed mb-5" set:html={S.intro}></p>
+    <div id="ref-note" class="hidden items-center gap-2 font-mono text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-2.5 max-w-md">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
+      <span>{S.refNote}</span>
+    </div>
+  </section>
+
+  <form id="perfil-form" class="py-10 space-y-12 max-w-2xl" novalidate>
+
+    <!-- 1 · VIRTUDES -->
+    <fieldset>
+      <legend class="label block mb-1">{S.s1}</legend>
+      <p class="text-slate-500 text-sm mb-4">{S.s1p}</p>
+      <div class="flex flex-wrap gap-2" data-chips="virtues" role="group" aria-label={S.s1}>
+        {VIRTUES.map((v) => (
+          <button type="button" class="chip" data-value={v.v} aria-pressed="false">{v.label}</button>
+        ))}
+      </div>
+    </fieldset>
+
+    <!-- 2 · APTITUDES -->
+    <fieldset>
+      <legend class="label block mb-1">{S.s2}</legend>
+      <p class="text-slate-500 text-sm mb-4">{S.s2p}</p>
+      <div class="grid sm:grid-cols-2 gap-3" data-radio="aptitude" role="radiogroup" aria-label={S.s2}>
+        {APTITUDES.map((a) => (
+          <button type="button" class="opt text-left" data-value={a.v} role="radio" aria-checked="false">
+            <span class="block font-semibold text-slate-900 text-sm mb-0.5">{a.t}</span>
+            <span class="block text-slate-500 text-xs leading-relaxed">{a.d}</span>
+          </button>
+        ))}
+      </div>
+      <p class="text-slate-500 text-sm mt-6 mb-3">{S.s2dp}</p>
+      <div class="flex flex-wrap gap-2" data-chips="domains" role="group" aria-label={S.s2dp}>
+        {DOMAINS.map((d) => (
+          <button type="button" class="chip" data-value={d.v} aria-pressed="false">{d.label}</button>
+        ))}
+      </div>
+    </fieldset>
+
+    <!-- 3 · NECESIDADES -->
+    <fieldset>
+      <legend class="label block mb-1">{S.s3}</legend>
+      <p class="text-slate-500 text-sm mb-4">{S.s3p}</p>
+      <div class="space-y-2.5" data-radio="goal" role="radiogroup" aria-label={S.s3}>
+        {GOALS.map((g) => (
+          <button type="button" class="opt flex items-center gap-3 w-full text-left" data-value={g.v} data-constellation={g.c} role="radio" aria-checked="false">
+            <span class="font-mono text-[10px] text-slate-300 shrink-0 w-4 chip-mark">○</span>
+            <span class="font-medium text-slate-800 text-sm">{g.t}</span>
+          </button>
+        ))}
+      </div>
+
+      <p class="text-slate-500 text-sm mt-6 mb-3">{S.s3tp}</p>
+      <div class="flex flex-wrap gap-2" data-radio="time" role="radiogroup" aria-label={S.s3tp}>
+        {TIMES.map((tm) => (
+          <button type="button" class="chip" data-value={tm.v} role="radio" aria-checked="false">{tm.label}</button>
+        ))}
+      </div>
+
+      <label for="note" class="block text-slate-500 text-sm mt-6 mb-2">{S.noteL} <span class="text-slate-400">{S.opt}</span></label>
+      <textarea id="note" rows="3" maxlength="400" class="w-full text-sm bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-400 transition-colors" placeholder={S.noteP}></textarea>
+    </fieldset>
+
+    <!-- 4 · CONEXIÓN -->
+    <fieldset>
+      <legend class="label block mb-1">{S.s4}</legend>
+      <p class="text-slate-500 text-sm mb-4">{S.s4p} <span class="text-slate-400">{S.opt}</span></p>
+      <div class="grid sm:grid-cols-2 gap-3">
+        <input id="name" type="text" autocomplete="given-name" maxlength="80" class="text-sm bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-400 transition-colors" placeholder={S.nameP} />
+        <input id="email" type="email" autocomplete="email" maxlength="120" class="text-sm bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-400 transition-colors" placeholder="tu@email.com" />
+      </div>
+    </fieldset>
+
+    <div>
+      <p id="perfil-error" class="hidden text-sm text-rose-600 font-mono mb-3" role="alert"></p>
+      <button type="submit" id="perfil-submit" class="w-full sm:w-auto font-mono text-sm font-semibold text-white bg-emerald-500 px-8 py-4 rounded-xl hover:bg-emerald-600 transition-colors shadow-sm cursor-pointer border-0">
+        {S.submit}
+      </button>
+      <p class="font-mono text-[11px] text-slate-400 mt-3">
+        {S.privacyPre} <a href={privacyHref} class="underline hover:text-slate-600">{S.privacyWord}</a>.
+      </p>
+    </div>
+  </form>
+
+  <!-- RESULT -->
+  <section id="perfil-result" class="hidden py-8 max-w-2xl">
+    <div class="glass rounded-2xl p-7 border-t-2 border-emerald-300">
+      <span class="label block mb-4">{S.rLabel}</span>
+
+      <div class="flex items-start gap-3 mb-6 pb-6 border-b border-slate-200/70">
+        <span class="w-3 h-3 rounded-full mt-1 shrink-0" style="background:#10b981;box-shadow:0 0 14px rgba(16,185,129,0.55)"></span>
+        <div>
+          <p class="font-mono text-[10px] tracking-widest uppercase text-slate-400 mb-1">{S.baseLabel}</p>
+          <h3 class="font-display text-xl font-bold text-slate-900">Operator Core</h3>
+          <p class="text-slate-500 text-sm leading-relaxed mt-1">{S.baseDesc}</p>
+          <a href={modulosHref} class="inline-block mt-3 font-mono text-xs font-medium text-emerald-700 border border-emerald-200 px-4 py-2 rounded-lg hover:bg-emerald-50 transition-colors">{S.baseBtn}</a>
+        </div>
+      </div>
+
+      <div class="flex items-start gap-3">
+        <span id="orbit-dot" class="w-3 h-3 rounded-full mt-1 shrink-0"></span>
+        <div class="flex-1">
+          <p class="font-mono text-[10px] tracking-widest uppercase text-slate-400 mb-1">{S.orbitLabel}</p>
+          <h3 id="orbit-name" class="font-display text-xl font-bold text-slate-900"></h3>
+          <p id="orbit-tagline" class="font-mono text-xs mb-2"></p>
+          <p class="text-slate-500 text-xs leading-relaxed mb-2">{S.orbitSteps}</p>
+          <ul id="orbit-modules" class="space-y-1 mb-3"></ul>
+          <a id="orbit-link" href="#" class="inline-block font-mono text-xs font-medium text-slate-700 border border-slate-300 px-4 py-2 rounded-lg hover:bg-slate-50 transition-colors">{S.orbitBtn}</a>
+        </div>
+      </div>
+
+      <p id="perfil-saved" class="font-mono text-[11px] text-slate-400 mt-6 pt-5 border-t border-slate-200/70"></p>
+    </div>
+
+    <div class="text-center mt-8">
+      <a href={galaxiaHref} class="font-mono text-xs text-slate-400 hover:text-slate-700 transition-colors">{S.back}</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .chip { font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 7px 14px; border-radius: 9999px; border: 1px solid #e2e8f0; background: #fff; color: #475569; cursor: pointer; transition: all 0.18s ease; }
+  .chip:hover { border-color: #6ee7b7; color: #0f172a; }
+  .chip[aria-pressed="true"], .chip[aria-checked="true"] { background: #ecfdf5; border-color: #34d399; color: #047857; font-weight: 600; }
+  .chip:focus-visible, .opt:focus-visible { outline: none; box-shadow: 0 0 0 2px #34d399; }
+  .opt { border: 1px solid #e2e8f0; background: #fff; border-radius: 14px; padding: 14px 16px; cursor: pointer; transition: all 0.18s ease; }
+  .opt:hover { border-color: #cbd5e1; background: #f8fafc; }
+  .opt[aria-checked="true"] { border-color: #34d399; background: #ecfdf5; box-shadow: 0 1px 0 rgba(16,185,129,0.1); }
+  .opt[aria-checked="true"] .chip-mark { color: #10b981; }
+</style>
+
+<script>
+  import { supabase } from '../lib/supabase';
+
+  const cfg = JSON.parse(document.getElementById('perfil-data')?.textContent || '{}');
+  const CONST = cfg.CONST || {};
+  const MSG = cfg.MSG || {};
+  const TEXT_COLOR: Record<string, string> = { emerald:'#059669', sky:'#0284c7', violet:'#7c3aed', amber:'#d97706', rose:'#e11d48', indigo:'#4f46e5' };
+
+  document.querySelectorAll('[data-chips]').forEach((group) => {
+    group.addEventListener('click', (e) => {
+      const b = (e.target as Element).closest('.chip') as HTMLElement | null;
+      if (!b) return;
+      b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+    });
+  });
+  document.querySelectorAll('[data-radio]').forEach((group) => {
+    group.addEventListener('click', (e) => {
+      const b = (e.target as Element).closest('[role="radio"], .opt, .chip') as HTMLElement | null;
+      if (!b || !group.contains(b)) return;
+      group.querySelectorAll('[role="radio"], .opt, .chip').forEach((o) => o.setAttribute('aria-checked', 'false'));
+      b.setAttribute('aria-checked', 'true');
+    });
+  });
+
+  const picks = (sel: string) => Array.from(document.querySelectorAll(`${sel} [aria-pressed="true"]`)).map((e) => (e as HTMLElement).dataset.value || '');
+  const picked = (sel: string) => { const e = document.querySelector(`${sel} [aria-checked="true"]`) as HTMLElement | null; return e ? (e.dataset.value || '') : ''; };
+  const pickedEl = (sel: string) => document.querySelector(`${sel} [aria-checked="true"]`) as HTMLElement | null;
+
+  const form = document.getElementById('perfil-form') as HTMLFormElement | null;
+  const errEl = document.getElementById('perfil-error');
+  const resultEl = document.getElementById('perfil-result');
+
+  try { if (localStorage.getItem('moonkey_ref')) document.getElementById('ref-note')?.classList.replace('hidden', 'flex'); } catch (e) {}
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const virtues = picks('[data-chips="virtues"]');
+    const domains = picks('[data-chips="domains"]');
+    const aptitude = picked('[data-radio="aptitude"]');
+    const goalEl = pickedEl('[data-radio="goal"]');
+    const goal = goalEl?.dataset.value || '';
+    const constellation = goalEl?.dataset.constellation || 'operator-core';
+    const time = picked('[data-radio="time"]');
+    const note = (document.getElementById('note') as HTMLTextAreaElement)?.value.trim() || null;
+    const name = (document.getElementById('name') as HTMLInputElement)?.value.trim() || null;
+    const email = (document.getElementById('email') as HTMLInputElement)?.value.trim() || null;
+
+    const problems = [];
+    if (virtues.length === 0) problems.push(MSG.vVirtue);
+    if (!aptitude) problems.push(MSG.vApt);
+    if (!goal) problems.push(MSG.vGoal);
+    if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) problems.push(MSG.vEmail);
+    if (problems.length) {
+      if (errEl) { errEl.textContent = problems.join(' '); errEl.classList.remove('hidden'); }
+      return;
+    }
+    if (errEl) errEl.classList.add('hidden');
+
+    let ref = null, userId = null;
+    try { ref = localStorage.getItem('moonkey_ref'); } catch (e) {}
+    const locale = document.documentElement.lang || 'es';
+
+    const c = CONST[constellation] || CONST['operator-core'];
+    const dot = document.getElementById('orbit-dot');
+    if (dot) dot.setAttribute('style', `background:${c.dot};box-shadow:0 0 14px ${c.dot}88`);
+    const nameEl = document.getElementById('orbit-name'); if (nameEl) nameEl.textContent = c.name;
+    const tagEl = document.getElementById('orbit-tagline'); if (tagEl) { tagEl.textContent = c.tagline; tagEl.style.color = TEXT_COLOR[c.text] || '#475569'; }
+    const ul = document.getElementById('orbit-modules');
+    if (ul) ul.innerHTML = c.modules.map((m: string) => `<li class="flex items-start gap-2 text-xs text-slate-600"><span class="text-slate-300 font-mono shrink-0">—</span>${m.replace(/</g,'&lt;')}</li>`).join('');
+    const link = document.getElementById('orbit-link') as HTMLAnchorElement | null;
+    if (link) link.href = c.href;
+
+    resultEl?.classList.remove('hidden');
+    resultEl?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    const savedEl = document.getElementById('perfil-saved');
+    try { const { data } = await supabase!.auth.getSession(); userId = data?.session?.user?.id ?? null; } catch (e) {}
+
+    if (supabase) {
+      const { error } = await supabase.from('operator_intake').insert({
+        ref_code: ref, name, email, virtues, aptitude, domains,
+        goal, blocker: null, time_week: time || null, recommended: constellation, note, locale, user_id: userId,
+      });
+      if (savedEl) savedEl.textContent = error ? MSG.savedErr : (ref ? MSG.savedRef : MSG.savedPlain);
+      if (error) console.warn('[intake] save failed:', error.message);
+    }
+  });
+</script>
+
+<script id="perfil-data" type="application/json" set:html={JSON.stringify(CLIENT)} is:inline></script>

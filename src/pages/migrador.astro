@@ -3,6 +3,12 @@ import LayoutLevel from '../components/LayoutLevel.astro';
 import PromptBlock from '../components/PromptBlock.astro';
 import FlowDiagram from '../components/FlowDiagram.astro';
 import InsightBox from '../components/InsightBox.astro';
+import { resolveLocale, localizedPath } from '../i18n/utils';
+import { frontTr } from '../data/frontdoor.i18n';
+
+const locale = resolveLocale(Astro.currentLocale, Astro.url.pathname);
+const tr = frontTr('migrador', locale);
+const lp = (p: string) => localizedPath(p, locale);
 
 const promptExtraerChatGPT = `Actúa como archivista de conocimiento operativo.
 
@@ -124,21 +130,21 @@ const serviciosComerciales = [
   <div slot="sidebar">
     <!-- Locked card (hidden when N2 complete) -->
     <div id="sb-n3-locked" class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 text-center">
-      <span class="font-mono text-xs text-amber-600 tracking-widest uppercase block mb-0.5">NIVEL 3</span>
+      <span class="font-mono text-xs text-amber-600 tracking-widest uppercase block mb-0.5">{tr('NIVEL 3')}</span>
       <p class="text-sm font-semibold text-slate-500 leading-snug mb-3">Migration System</p>
-      <p class="text-xs text-slate-400 leading-relaxed mb-3">Completa Nivel 2 para desbloquear este nivel.</p>
-      <a href="/advanced" class="font-mono text-xs text-amber-600 hover:underline">→ Ir a Nivel 2</a>
+      <p class="text-xs text-slate-400 leading-relaxed mb-3">{tr('Completa Nivel 2 para desbloquear este nivel.')}</p>
+      <a href={lp('/advanced')} class="font-mono text-xs text-amber-600 hover:underline">{tr('→ Ir a Nivel 2')}</a>
     </div>
     <!-- Unlocked sidebar (shown when N2 complete) -->
     <div id="sb-n3-unlocked" class="hidden bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
       <div class="px-4 py-3 border-b border-slate-100">
-        <span class="font-mono text-xs text-amber-600 tracking-widest uppercase block mb-0.5">NIVEL 3</span>
+        <span class="font-mono text-xs text-amber-600 tracking-widest uppercase block mb-0.5">{tr('NIVEL 3')}</span>
         <p class="font-semibold text-slate-900 leading-snug text-sm">Migration System</p>
-        <p id="sb-l3-status" class="font-mono text-xs text-amber-600 mt-0.5">Disponible</p>
+        <p id="sb-l3-status" class="font-mono text-xs text-amber-600 mt-0.5">{tr('Disponible')}</p>
       </div>
       <div class="px-4 py-3 border-b border-slate-100">
         <div class="flex items-center justify-between mb-1.5">
-          <span class="font-mono text-xs text-slate-400">Progreso</span>
+          <span class="font-mono text-xs text-slate-400">{tr('Progreso')}</span>
           <span id="sb-l3-count" class="font-mono text-xs text-slate-500">0/8</span>
         </div>
         <div class="bg-slate-100 rounded-full h-1.5 overflow-hidden">
@@ -161,20 +167,20 @@ const serviciosComerciales = [
               class="sb-mod-btn w-4 h-4 rounded border border-slate-200 shrink-0 text-xs flex items-center justify-center hover:border-amber-400 transition-colors bg-white leading-none"
               data-mkey={`moonkey_level_3_section_${s.key}`}
               type="button"
-              title={`Marcar "${s.label}" completado`}
+              title={`${tr('Marcar')} "${tr(s.label)}" ${tr('completado')}`}
             ></button>
             <a
               href={`#${s.anchor}`}
               class="flex-1 text-xs text-slate-500 hover:text-slate-900 px-1 py-1 rounded hover:bg-slate-50 transition-colors truncate"
             >
-              {s.label}
+              {tr(s.label)}
             </a>
           </div>
         ))}
       </nav>
       <div class="p-3 border-t border-slate-100">
         <a href="#completar-n3" class="block w-full text-center font-mono text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 px-3 py-2 rounded-lg hover:bg-amber-100 transition-colors">
-          Finalizar Nivel 3 →
+          {tr('Finalizar Nivel 3 →')}
         </a>
       </div>
     </div>
@@ -198,7 +204,7 @@ const serviciosComerciales = [
         { anchor: 'completar-n3', label: 'Finalización' },
       ].map(s => (
         <a href={`#${s.anchor}`} class="text-xs text-slate-600 hover:text-amber-600 py-1 transition-colors truncate">
-          {s.label}
+          {tr(s.label)}
         </a>
       ))}
     </nav>
@@ -206,20 +212,20 @@ const serviciosComerciales = [
 
   <!-- PREVIEW (always visible) -->
   <section class="pb-12 border-b border-slate-200">
-    <span class="font-mono text-xs text-amber-600 tracking-widest uppercase block mb-2">NIVEL 3 · MOONKEY LAB</span>
+    <span class="font-mono text-xs text-amber-600 tracking-widest uppercase block mb-2">{tr('NIVEL 3 · MOONKEY LAB')}</span>
     <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-4">
       ChatGPT → Claude<br/>Migration System
     </h1>
     <p class="text-slate-600 text-base leading-relaxed max-w-xl mb-8">
-      No migras chats. Migras conocimiento operativo. Convierte conversaciones, prompts, decisiones y workflows dispersos en un sistema estructurado para trabajar con Claude Code.
+      {tr('No migras chats. Migras conocimiento operativo. Convierte conversaciones, prompts, decisiones y workflows dispersos en un sistema estructurado para trabajar con Claude Code.')}
     </p>
     <div class="bg-amber-50 border border-amber-200 rounded-xl p-5">
-      <p class="font-mono text-xs text-amber-600 uppercase tracking-widest mb-3">Lo que construirás</p>
+      <p class="font-mono text-xs text-amber-600 uppercase tracking-widest mb-3">{tr('Lo que construirás')}</p>
       <div class="grid sm:grid-cols-2 gap-2">
         {sistemaClaude.map(s => (
           <div class="flex items-start gap-2 text-xs text-slate-600">
             <code class="bg-white border border-amber-200 text-amber-700 font-mono px-1.5 py-0.5 rounded shrink-0">{s.archivo}</code>
-            <span class="text-slate-500 leading-relaxed">{s.desc}</span>
+            <span class="text-slate-500 leading-relaxed">{tr(s.desc)}</span>
           </div>
         ))}
       </div>
@@ -227,31 +233,31 @@ const serviciosComerciales = [
   </section>
 
   <FlowDiagram
-    title="Diagrama — Cómo migras de ChatGPT a Claude Code"
+    title={tr('Diagrama — Cómo migras de ChatGPT a Claude Code')}
     color="amber"
     nodes={[
-      { label: 'Chats y prompts dispersos', sub: 'Historial en ChatGPT, notas, documentos' },
-      { label: 'Extracción de contexto', sub: 'Qué sabes, cómo trabajas, qué proyectos tienes' },
-      { label: 'Clasificación de proyectos y workflows', sub: 'Activos, pausados, automatizables' },
-      { label: 'Conversión a CLAUDE.md + README + /prompts', sub: 'Conocimiento estructurado y reutilizable' },
-      { label: 'Backlog de automatizaciones', sub: 'Tareas priorizadas por impacto y esfuerzo' },
-      { label: 'Sistema operativo en Claude Code', sub: 'Listo para trabajar con contexto desde el día 1' },
+      { label: tr('Chats y prompts dispersos'), sub: tr('Historial en ChatGPT, notas, documentos') },
+      { label: tr('Extracción de contexto'), sub: tr('Qué sabes, cómo trabajas, qué proyectos tienes') },
+      { label: tr('Clasificación de proyectos y workflows'), sub: tr('Activos, pausados, automatizables') },
+      { label: tr('Conversión a CLAUDE.md + README + /prompts'), sub: tr('Conocimiento estructurado y reutilizable') },
+      { label: tr('Backlog de automatizaciones'), sub: tr('Tareas priorizadas por impacto y esfuerzo') },
+      { label: tr('Sistema operativo en Claude Code'), sub: tr('Listo para trabajar con contexto desde el día 1') },
     ]}
   />
 
   <!-- LOCK OVERLAY -->
   <div id="migrador-lock-overlay" class="py-16 text-center">
     <div class="bg-white border-2 border-amber-200 rounded-2xl px-8 py-10 max-w-md mx-auto shadow-sm">
-      <span class="font-mono text-xs text-slate-400 tracking-widest uppercase block mb-4">CONTENIDO BLOQUEADO</span>
-      <h2 class="text-xl font-bold text-slate-900 mb-3">Completa Nivel 2 para desbloquear</h2>
+      <span class="font-mono text-xs text-slate-400 tracking-widest uppercase block mb-4">{tr('CONTENIDO BLOQUEADO')}</span>
+      <h2 class="text-xl font-bold text-slate-900 mb-3">{tr('Completa Nivel 2 para desbloquear')}</h2>
       <p class="text-slate-500 text-sm leading-relaxed mb-6">
-        El Migration System se desbloquea cuando completas el Advanced Operator Playbook. Este nivel asume que ya sabes operar Claude Code con criterio profesional.
+        {tr('El Migration System se desbloquea cuando completas el Advanced Operator Playbook. Este nivel asume que ya sabes operar Claude Code con criterio profesional.')}
       </p>
       <a
-        href="/advanced"
+        href={lp('/advanced')}
         class="inline-block font-mono text-sm font-semibold text-white bg-violet-500 px-6 py-3 rounded-xl hover:bg-violet-600 transition-colors"
       >
-        Ir a Nivel 2 — Advanced Operator Playbook →
+        {tr('Ir a Nivel 2 — Advanced Operator Playbook →')}
       </a>
     </div>
   </div>
@@ -261,9 +267,9 @@ const serviciosComerciales = [
 
     <!-- Qué migras realmente -->
     <section id="que-migras" class="py-12 border-b border-slate-200 scroll-mt-28">
-      <span class="label block mb-6">QUÉ ESTÁS MIGRANDO REALMENTE</span>
+      <span class="label block mb-6">{tr('QUÉ ESTÁS MIGRANDO REALMENTE')}</span>
       <p class="text-slate-600 text-sm leading-relaxed mb-6">
-        La migración no es copiar y pegar conversaciones. Es extraer el conocimiento que existe solo en tus chats y convertirlo en algo que Claude Code puede usar como sistema.
+        {tr('La migración no es copiar y pegar conversaciones. Es extraer el conocimiento que existe solo en tus chats y convertirlo en algo que Claude Code puede usar como sistema.')}
       </p>
       <div class="grid sm:grid-cols-2 gap-3">
         {[
@@ -277,28 +283,28 @@ const serviciosComerciales = [
           { label: 'Memoria',    desc: 'Lo que aprendiste y no está escrito en ningún lado' },
         ].map(item => (
           <div class="bg-white border border-amber-100 rounded-xl px-4 py-3">
-            <p class="font-mono text-xs text-amber-600 font-bold mb-0.5">{item.label}</p>
-            <p class="text-slate-500 text-xs leading-relaxed">{item.desc}</p>
+            <p class="font-mono text-xs text-amber-600 font-bold mb-0.5">{tr(item.label)}</p>
+            <p class="text-slate-500 text-xs leading-relaxed">{tr(item.desc)}</p>
           </div>
         ))}
       </div>
     </section>
 
-    <InsightBox type="error">El error más común: intentar migrar todo. El valor está en migrar lo que vale — los prompts que ya funcionan, los workflows que se repiten, las decisiones que costaron tiempo entender. El ruido acumulado en chats no merece estructura.</InsightBox>
+    <InsightBox type="error">{tr('El error más común: intentar migrar todo. El valor está en migrar lo que vale — los prompts que ya funcionan, los workflows que se repiten, las decisiones que costaron tiempo entender. El ruido acumulado en chats no merece estructura.')}</InsightBox>
 
     <!-- Inventario -->
     <section id="inventario" class="py-12 border-b border-slate-200 scroll-mt-28">
-      <span class="label block mb-2">INVENTARIO DE CONOCIMIENTO</span>
-      <p class="text-slate-500 text-sm mb-8">Antes de migrar, necesitas saber qué tienes. Marca lo que ya existe en tu caso:</p>
+      <span class="label block mb-2">{tr('INVENTARIO DE CONOCIMIENTO')}</span>
+      <p class="text-slate-500 text-sm mb-8">{tr('Antes de migrar, necesitas saber qué tienes. Marca lo que ya existe en tu caso:')}</p>
       <div class="space-y-6">
         {inventario.map(cat => (
           <div>
-            <p class="font-mono text-xs text-amber-600 uppercase tracking-widest mb-3">{cat.cat}</p>
+            <p class="font-mono text-xs text-amber-600 uppercase tracking-widest mb-3">{tr(cat.cat)}</p>
             <div class="space-y-2">
               {cat.items.map(item => (
                 <label class="flex items-start gap-3 bg-white border border-slate-200 rounded-xl px-4 py-3 cursor-pointer hover:border-amber-200 transition-colors">
                   <input type="checkbox" class="mt-0.5 shrink-0 accent-amber-500" />
-                  <span class="text-slate-600 text-sm leading-relaxed">{item}</span>
+                  <span class="text-slate-600 text-sm leading-relaxed">{tr(item)}</span>
                 </label>
               ))}
             </div>
@@ -309,42 +315,42 @@ const serviciosComerciales = [
 
     <!-- Clasificación -->
     <section id="clasificacion" class="py-12 border-b border-slate-200 scroll-mt-28">
-      <span class="label block mb-6">CLASIFICACIÓN DE PROYECTOS</span>
-      <p class="text-slate-500 text-sm mb-8">Antes de migrar un proyecto, clasifícalo. El estado define qué hacer con él:</p>
+      <span class="label block mb-6">{tr('CLASIFICACIÓN DE PROYECTOS')}</span>
+      <p class="text-slate-500 text-sm mb-8">{tr('Antes de migrar un proyecto, clasifícalo. El estado define qué hacer con él:')}</p>
       <div class="grid sm:grid-cols-2 gap-3">
         {clasificacion.map(c => (
           <div class={`${c.bg} border ${c.border} rounded-xl px-4 py-4`}>
-            <p class={`font-mono text-xs font-bold mb-1 ${c.color}`}>{c.label}</p>
-            <p class="text-slate-500 text-xs leading-relaxed">{c.desc}</p>
+            <p class={`font-mono text-xs font-bold mb-1 ${c.color}`}>{tr(c.label)}</p>
+            <p class="text-slate-500 text-xs leading-relaxed">{tr(c.desc)}</p>
           </div>
         ))}
       </div>
     </section>
 
-    <InsightBox type="remember">Cuando clasificas un proyecto como "Descartado", ciérralo con una nota. No basta con moverlo a una carpeta. Una línea con el motivo evita que vuelvas a él en 3 meses preguntándote por qué no siguió adelante.</InsightBox>
+    <InsightBox type="remember">{tr('Cuando clasificas un proyecto como "Descartado", ciérralo con una nota. No basta con moverlo a una carpeta. Una línea con el motivo evita que vuelvas a él en 3 meses preguntándote por qué no siguió adelante.')}</InsightBox>
 
     <!-- Calculadora manual -->
     <section id="calculadora" class="py-12 border-b border-slate-200 scroll-mt-28">
-      <span class="label block mb-2">CALCULADORA DE PERFIL</span>
-      <p class="text-slate-500 text-sm mb-8">Evalúa tu situación actual para identificar tu perfil de migración. No hace falta calcular nada: lee cada fila y decide tu nivel actual.</p>
+      <span class="label block mb-2">{tr('CALCULADORA DE PERFIL')}</span>
+      <p class="text-slate-500 text-sm mb-8">{tr('Evalúa tu situación actual para identificar tu perfil de migración. No hace falta calcular nada: lee cada fila y decide tu nivel actual.')}</p>
       <div class="space-y-2 mb-8">
         <div class="flex bg-white border border-slate-200 rounded-xl overflow-hidden text-xs font-mono">
-          <div class="w-44 px-4 py-2.5 bg-slate-50 border-r border-slate-200 text-slate-500 uppercase tracking-widest text-xs">Variable</div>
+          <div class="w-44 px-4 py-2.5 bg-slate-50 border-r border-slate-200 text-slate-500 uppercase tracking-widest text-xs">{tr('Variable')}</div>
           <div class="flex-1 grid grid-cols-3">
-            <div class="px-3 py-2.5 border-r border-slate-100 text-center text-amber-600 font-bold">BAJO</div>
-            <div class="px-3 py-2.5 border-r border-slate-100 text-center text-orange-600 font-bold">MEDIO</div>
-            <div class="px-3 py-2.5 text-center text-rose-600 font-bold">ALTO</div>
+            <div class="px-3 py-2.5 border-r border-slate-100 text-center text-amber-600 font-bold">{tr('BAJO')}</div>
+            <div class="px-3 py-2.5 border-r border-slate-100 text-center text-orange-600 font-bold">{tr('MEDIO')}</div>
+            <div class="px-3 py-2.5 text-center text-rose-600 font-bold">{tr('ALTO')}</div>
           </div>
         </div>
         {matrizVars.map(v => (
           <div class="flex bg-white border border-slate-200 rounded-xl overflow-hidden">
             <div class="w-44 shrink-0 px-4 py-3 bg-slate-50 border-r border-slate-200">
-              <p class="text-slate-700 text-xs leading-tight">{v.label}</p>
+              <p class="text-slate-700 text-xs leading-tight">{tr(v.label)}</p>
             </div>
             <div class="flex-1 grid grid-cols-3">
-              <div class="px-3 py-3 border-r border-slate-100 text-center text-slate-500 text-xs">{v.bajo}</div>
-              <div class="px-3 py-3 border-r border-slate-100 text-center text-slate-500 text-xs">{v.medio}</div>
-              <div class="px-3 py-3 text-center text-slate-500 text-xs">{v.alto}</div>
+              <div class="px-3 py-3 border-r border-slate-100 text-center text-slate-500 text-xs">{tr(v.bajo)}</div>
+              <div class="px-3 py-3 border-r border-slate-100 text-center text-slate-500 text-xs">{tr(v.medio)}</div>
+              <div class="px-3 py-3 text-center text-slate-500 text-xs">{tr(v.alto)}</div>
             </div>
           </div>
         ))}
@@ -353,27 +359,27 @@ const serviciosComerciales = [
 
     <!-- Perfiles -->
     <section id="perfiles" class="py-12 border-b border-slate-200 scroll-mt-28">
-      <span class="label block mb-8">RESULTADO SUGERIDO</span>
+      <span class="label block mb-8">{tr('RESULTADO SUGERIDO')}</span>
       <div class="space-y-4">
         {perfiles.map(p => (
           <div class={`${p.bg} border-2 ${p.border} rounded-2xl p-6`}>
-            <h3 class={`font-bold text-base mb-4 ${p.color}`}>{p.label}</h3>
+            <h3 class={`font-bold text-base mb-4 ${p.color}`}>{tr(p.label)}</h3>
             <div class="grid sm:grid-cols-2 gap-4 text-xs">
               <div>
-                <p class="font-mono text-slate-400 uppercase tracking-widest mb-1">Para quién</p>
-                <p class="text-slate-600 leading-relaxed">{p.for}</p>
+                <p class="font-mono text-slate-400 uppercase tracking-widest mb-1">{tr('Para quién')}</p>
+                <p class="text-slate-600 leading-relaxed">{tr(p.for)}</p>
               </div>
               <div>
-                <p class="font-mono text-slate-400 uppercase tracking-widest mb-1">Qué migrar primero</p>
-                <p class="text-slate-600 leading-relaxed">{p.primero}</p>
+                <p class="font-mono text-slate-400 uppercase tracking-widest mb-1">{tr('Qué migrar primero')}</p>
+                <p class="text-slate-600 leading-relaxed">{tr(p.primero)}</p>
               </div>
               <div>
-                <p class="font-mono text-slate-400 uppercase tracking-widest mb-1">Tiempo estimado</p>
-                <p class="text-slate-600 leading-relaxed">{p.tiempo}</p>
+                <p class="font-mono text-slate-400 uppercase tracking-widest mb-1">{tr('Tiempo estimado')}</p>
+                <p class="text-slate-600 leading-relaxed">{tr(p.tiempo)}</p>
               </div>
               <div>
-                <p class="font-mono text-slate-400 uppercase tracking-widest mb-1">Entregable final</p>
-                <p class="text-slate-600 leading-relaxed">{p.resultado}</p>
+                <p class="font-mono text-slate-400 uppercase tracking-widest mb-1">{tr('Entregable final')}</p>
+                <p class="text-slate-600 leading-relaxed">{tr(p.resultado)}</p>
               </div>
             </div>
           </div>
@@ -383,13 +389,13 @@ const serviciosComerciales = [
 
     <!-- Conversión a sistema -->
     <section id="sistema" class="py-12 border-b border-slate-200 scroll-mt-28">
-      <span class="label block mb-2">CONVERSIÓN A SISTEMA CLAUDE CODE</span>
-      <p class="text-slate-500 text-sm mb-8">Cada tipo de conocimiento migrado va a un destino específico:</p>
+      <span class="label block mb-2">{tr('CONVERSIÓN A SISTEMA CLAUDE CODE')}</span>
+      <p class="text-slate-500 text-sm mb-8">{tr('Cada tipo de conocimiento migrado va a un destino específico:')}</p>
       <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm divide-y divide-slate-100">
         {sistemaClaude.map(s => (
           <div class="flex items-start gap-5 px-6 py-4">
             <code class="bg-amber-50 border border-amber-200 text-amber-700 font-mono text-xs px-2 py-1 rounded shrink-0 mt-0.5">{s.archivo}</code>
-            <p class="text-slate-600 text-sm leading-relaxed">{s.desc}</p>
+            <p class="text-slate-600 text-sm leading-relaxed">{tr(s.desc)}</p>
           </div>
         ))}
       </div>
@@ -397,38 +403,38 @@ const serviciosComerciales = [
 
     <!-- Prompts -->
     <section id="prompts-migracion" class="py-12 border-b border-slate-200 scroll-mt-28">
-      <span class="label block mb-8">PROMPTS DE MIGRACIÓN</span>
-      <PromptBlock tag="PROMPT N3-01" title="Extraer conocimiento operativo desde ChatGPT" prompt={promptExtraerChatGPT} />
-      <PromptBlock tag="PROMPT N3-02" title="Convertir material disperso en CLAUDE.md" prompt={promptConvertirCLAUDEmd} />
-      <PromptBlock tag="PROMPT N3-03" title="Crear plan de migración por proyecto" prompt={promptPlanMigracion} />
+      <span class="label block mb-8">{tr('PROMPTS DE MIGRACIÓN')}</span>
+      <PromptBlock tag="PROMPT N3-01" title={tr('Extraer conocimiento operativo desde ChatGPT')} prompt={tr(promptExtraerChatGPT)} />
+      <PromptBlock tag="PROMPT N3-02" title={tr('Convertir material disperso en CLAUDE.md')} prompt={tr(promptConvertirCLAUDEmd)} />
+      <PromptBlock tag="PROMPT N3-03" title={tr('Crear plan de migración por proyecto')} prompt={tr(promptPlanMigracion)} />
     </section>
 
     <!-- CTA comercial -->
     <section class="py-12 border-b border-slate-200">
       <div class="bg-slate-900 rounded-2xl px-8 py-10">
-        <span class="font-mono text-xs tracking-widest uppercase text-amber-400 block mb-4">SERVICIO</span>
-        <h2 class="text-2xl font-bold text-white mb-3">Podemos migrar tu sistema contigo.</h2>
+        <span class="font-mono text-xs tracking-widest uppercase text-amber-400 block mb-4">{tr('SERVICIO')}</span>
+        <h2 class="text-2xl font-bold text-white mb-3">{tr('Podemos migrar tu sistema contigo.')}</h2>
         <p class="text-slate-400 text-sm leading-relaxed mb-8 max-w-lg">
-          Si tienes conocimiento disperso en ChatGPT, Notion, emails o documentos y quieres convertirlo en un sistema operativo con Claude Code, lo hacemos juntos.
+          {tr('Si tienes conocimiento disperso en ChatGPT, Notion, emails o documentos y quieres convertirlo en un sistema operativo con Claude Code, lo hacemos juntos.')}
         </p>
         <ul class="space-y-2 mb-8">
           {serviciosComerciales.map(s => (
             <li class="flex items-center gap-3 text-slate-300 text-sm">
               <span class="text-amber-400 font-mono text-xs shrink-0">—</span>
-              {s}
+              {tr(s)}
             </li>
           ))}
         </ul>
-        <a href="/onboarding" class="inline-block font-mono text-sm font-medium text-slate-900 bg-amber-400 px-6 py-3 rounded-xl hover:bg-amber-300 transition-colors">
-          Ver cómo trabajar juntos →
+        <a href={lp('/onboarding')} class="inline-block font-mono text-sm font-medium text-slate-900 bg-amber-400 px-6 py-3 rounded-xl hover:bg-amber-300 transition-colors">
+          {tr('Ver cómo trabajar juntos →')}
         </a>
       </div>
     </section>
 
     <!-- Completion -->
     <div id="completar-n3" class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-7 mt-4 scroll-mt-28">
-      <span class="font-mono text-xs text-amber-600 tracking-widest uppercase block mb-2">NIVEL 3 — CHECKLIST DE FINALIZACIÓN</span>
-      <p class="text-slate-600 text-sm leading-relaxed mb-6">Completa estos puntos antes de marcar el nivel:</p>
+      <span class="font-mono text-xs text-amber-600 tracking-widest uppercase block mb-2">{tr('NIVEL 3 — CHECKLIST DE FINALIZACIÓN')}</span>
+      <p class="text-slate-600 text-sm leading-relaxed mb-6">{tr('Completa estos puntos antes de marcar el nivel:')}</p>
       <ul class="space-y-2.5 mb-8">
         {[
           'Inventario de conocimiento completado (qué tienes y dónde)',
@@ -442,7 +448,7 @@ const serviciosComerciales = [
         ].map(item => (
           <li class="flex items-start gap-3 text-sm text-slate-600">
             <span class="text-amber-500 font-mono shrink-0 mt-0.5 text-base leading-4">✓</span>
-            {item}
+            {tr(item)}
           </li>
         ))}
       </ul>
@@ -451,19 +457,19 @@ const serviciosComerciales = [
         id="btn-complete-l3"
         class="w-full font-mono text-sm font-semibold text-white bg-amber-500 px-6 py-4 rounded-xl hover:bg-amber-600 transition-colors cursor-pointer border-0"
       >
-        Marcar Nivel 3 como completado →
+        {tr('Marcar Nivel 3 como completado →')}
       </button>
 
       <div id="msg-complete-l3" class="hidden">
         <div class="bg-amber-500 text-white rounded-xl px-6 py-5 text-center mb-4">
-          <p class="font-mono text-xs tracking-widest uppercase mb-1.5 opacity-80">NIVEL 3 COMPLETADO</p>
-          <p class="font-semibold text-base">MOONKEY LAB completado</p>
+          <p class="font-mono text-xs tracking-widest uppercase mb-1.5 opacity-80">{tr('NIVEL 3 COMPLETADO')}</p>
+          <p class="font-semibold text-base">{tr('MOONKEY LAB completado')}</p>
         </div>
         <a
-          href="/"
+          href={lp('/')}
           class="block w-full text-center font-mono text-sm font-semibold text-emerald-700 border-2 border-emerald-300 bg-emerald-50 px-6 py-4 rounded-xl hover:bg-emerald-100 transition-colors"
         >
-          Volver al inicio — ver logro completado →
+          {tr('Volver al inicio — ver logro completado →')}
         </a>
       </div>
     </div>

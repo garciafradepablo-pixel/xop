@@ -1099,8 +1099,9 @@ const jsStrings = {
       }
       var rl = document.getElementById('proof-repo-link');
       var ul = document.getElementById('proof-url-link');
-      if (rl) rl.href = repo;
-      if (ul) ul.href = url;
+      // Re-validate the scheme before trusting stored values as live hrefs.
+      if (rl) rl.href = isGithubRepo(repo) ? repo : '#';
+      if (ul) ul.href = isLiveUrl(url) ? url : '#';
       var rt = document.getElementById('proof-repo-text'); if (rt) rt.textContent = repo;
       var ut = document.getElementById('proof-url-text');  if (ut) ut.textContent = url;
     }
@@ -1152,40 +1153,88 @@ const jsStrings = {
 </script>
 
 <script>
-  // N1 proof capture — on a valid submission, also record it in Supabase so the
-  // founder actually receives the proof (repo + live URL + who + ref + locale).
-  // Additive: the localStorage UX flow above is unchanged; if this fails, nothing breaks.
+  // N1 proof capture — record a valid submission in Supabase so the founder
+  // actually receives the proof. RLS requires an authenticated session and binds
+  // the row to the caller (proofs_insert_self). So this is HONEST about outcome:
+  // logged out → saved locally but not delivered; logged in → delivered, with a
+  // visible confirmation. No more silent "Delivered ✓" when the cloud write failed.
   import { supabase } from '../lib/supabase';
   (function () {
     if (!supabase) return;
     const btn = document.getElementById('btn-submit-proof');
     const repoInput = document.getElementById('proof-repo');
     const urlInput = document.getElementById('proof-url');
+    const deliveredEl = document.getElementById('proof-delivered');
     if (!btn || !repoInput || !urlInput) return;
 
-    const isRepo = (v) => /^https:\/\/github\.com\/[^/\s]+\/[^/\s]+/i.test(v.trim());
-    const isUrl = (v) => /^https?:\/\/[^\s.]+\.[^\s]+/i.test(v.trim());
+    const isRepo = (v) => /^https:\/\/github\.com\/[a-zA-Z0-9._-]+\/[a-zA-Z0-9._-]+\/?$/i.test(v.trim());
+    const isUrl = (v) => {
+      try { const u = new URL(v.trim()); return u.protocol === 'http:' || u.protocol === 'https:'; }
+      catch (e) { return false; }
+    };
+
+    const es = (document.documentElement.lang || 'es') === 'es';
+    const MSG = {
+      sending:   es ? 'Registrando entrega…' : 'Recording your delivery…',
+      ok:        es ? 'Entrega registrada en tu cuenta ✓' : 'Delivery recorded in your account ✓',
+      needLogin: es ? 'Guardada localmente. Inicia sesión para que tu entrega llegue al equipo →'
+                    : 'Saved locally. Log in so your delivery reaches the team →',
+      error:     es ? 'No se pudo registrar la entrega. Reintenta más tarde.'
+                    : 'Could not record the delivery. Try again later.',
+    };
+
+    // A small status line appended once to the delivered card.
+    function statusNode() {
+      let n = document.getElementById('proof-cloud-status');
+      if (!n && deliveredEl) {
+        n = document.createElement('p');
+        n.id = 'proof-cloud-status';
+        n.className = 'font-mono text-[11px] mt-3 leading-relaxed';
+        deliveredEl.appendChild(n);
+      }
+      return n;
+    }
+    function setStatus(text, tone, href) {
+      const n = statusNode();
+      if (!n) return;
+      const color = tone === 'ok' ? 'text-emerald-600' : tone === 'error' ? 'text-rose-600' : 'text-amber-600';
+      n.className = 'font-mono text-[11px] mt-3 leading-relaxed ' + color;
+      if (href) {
+        const loginHref = (document.documentElement.lang && document.documentElement.lang !== 'es')
+          ? '/' + document.documentElement.lang + '/login' : '/login';
+        n.innerHTML = '';
+        const a = document.createElement('a');
+        a.href = loginHref; a.textContent = text; a.className = 'underline hover:text-amber-700';
+        n.appendChild(a);
+      } else {
+        n.textContent = text;
+      }
+    }
 
     btn.addEventListener('click', async () => {
       const repo = (repoInput.value || '').trim();
       const live = (urlInput.value || '').trim();
       if (!isRepo(repo) || !isUrl(live)) return; // invalid → inline script shows the error
 
-      let email = null, userId = null, ref = null, locale = 'es';
+      let userId = null, email = null, ref = null;
       try {
         const { data } = await supabase.auth.getSession();
-        email = data?.session?.user?.email ?? null;
         userId = data?.session?.user?.id ?? null;
+        email = data?.session?.user?.email ?? null;
       } catch (e) {}
-      try { ref = localStorage.getItem('moonkey_ref'); } catch (e) {}
-      try { locale = document.documentElement.lang || 'es'; } catch (e) {}
 
-      try {
-        await supabase.from('proofs').insert({
-          level: 'N1', repo_url: repo, live_url: live,
-          email, user_id: userId, ref_code: ref, locale,
-        });
-      } catch (e) { console.warn('[proof] capture skipped:', e); }
+      if (!userId) { setStatus(MSG.needLogin, 'warn', true); return; }
+
+      try { ref = localStorage.getItem('moonkey_ref'); } catch (e) {}
+      const locale = (document.documentElement.lang || 'es');
+
+      setStatus(MSG.sending, 'warn');
+      const { error } = await supabase.from('proofs').insert({
+        level: 'N1', repo_url: repo, live_url: live,
+        email, user_id: userId, ref_code: ref, locale,
+      });
+      if (error) { console.warn('[proof] capture failed:', error.message); setStatus(MSG.error, 'error'); }
+      else { setStatus(MSG.ok, 'ok'); }
     });
   })();
 </script>

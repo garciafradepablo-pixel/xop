@@ -1,59 +1,57 @@
 ---
 import Layout from '../components/Layout.astro';
+import { resolveLocale, localizedPath } from '../i18n/utils';
+import { frontTr } from '../data/frontdoor.i18n';
+
+const locale = resolveLocale(Astro.currentLocale, Astro.url.pathname);
+const tr = frontTr('privacidad', locale);
+const lp = (p: string) => localizedPath(p, locale);
+
+const datos = [
+  { title: 'Progreso de módulos', who: 'Todos los usuarios', desc: 'Las casillas de módulos completados se guardan en tu navegador (localStorage). No se envían a ningún servidor hasta que tengas cuenta.' },
+  { title: 'Email', who: 'Si te registras o envías feedback', desc: 'Si creas una cuenta o dejas tu email en el formulario de feedback, lo guardamos para contactarte sobre el programa piloto y el acceso al Nivel 2.' },
+  { title: 'Feedback', who: 'Si lo envías voluntariamente', desc: 'Las respuestas al formulario de feedback del Nivel 1: qué ayudó, qué fue confuso, si quieres acceso avanzado. Siempre voluntario.' },
+  { title: 'Interés en colaboración o acceso avanzado', who: 'Si lo marcas en el formulario', desc: 'Si indicas que quieres colaborar con el ecosistema MOONKEY o acceder a niveles avanzados, guardamos esa preferencia para contactarte.' },
+];
+
+const noHacemos = [
+  'No vendemos ni cedemos datos a terceros.',
+  'No usamos tracking publicitario.',
+  'No hacemos perfilado automatizado.',
+  'No guardamos contraseñas (usamos magic link sin contraseña).',
+  'No guardamos información de pago — no hay pagos todavía.',
+];
+
+const paraQue = [
+  { label: 'Mejorar el programa piloto', desc: 'El feedback ayuda a identificar qué módulos necesitan mejoras antes de escalar.' },
+  { label: 'Avisar de nuevos niveles', desc: 'Si dejaste tu email, te avisamos cuando se abra el Nivel 2 o el acceso avanzado.' },
+  { label: 'Gestionar el acceso piloto', desc: 'Los perfiles de Monkeys piloto se usan para coordinar el acceso y las oportunidades de colaboración.' },
+];
 ---
 
-<Layout
-  title="Privacidad"
-  description="Política de privacidad de MOONKEY LAB. Qué datos guardamos y por qué."
->
+<Layout title={tr('Privacidad')} description={tr('Política de privacidad de MOONKEY LAB. Qué datos guardamos y por qué.')}>
   <section class="pb-10 border-b border-slate-200">
-    <span class="label block mb-3">PRIVACIDAD</span>
-    <h1 class="text-2xl font-bold text-slate-900 mb-3">Qué guardamos y por qué.</h1>
+    <span class="label block mb-3">{tr('PRIVACIDAD')}</span>
+    <h1 class="text-2xl font-bold text-slate-900 mb-3">{tr('Qué guardamos y por qué.')}</h1>
     <p class="text-slate-500 text-sm leading-relaxed max-w-md">
-      MOONKEY LAB es un proyecto piloto. Esta página explica de forma honesta qué datos se recogen y cómo se usan. Sin lenguaje legal oscuro.
+      {tr('MOONKEY LAB es un proyecto piloto. Esta página explica de forma honesta qué datos se recogen y cómo se usan. Sin lenguaje legal oscuro.')}
     </p>
   </section>
 
   <!-- What we collect -->
   <section class="py-10 border-b border-slate-200">
-    <span class="label block mb-5">QUÉ DATOS SE GUARDAN</span>
-
+    <span class="label block mb-5">{tr('QUÉ DATOS SE GUARDAN')}</span>
     <div class="space-y-4 max-w-xl">
-      {[
-        {
-          title: 'Progreso de módulos',
-          who: 'Todos los usuarios',
-          desc: 'Las casillas de módulos completados se guardan en tu navegador (localStorage). No se envían a ningún servidor hasta que tengas cuenta.',
-          icon: '⬡',
-        },
-        {
-          title: 'Email',
-          who: 'Si te registras o envías feedback',
-          desc: 'Si creas una cuenta o dejas tu email en el formulario de feedback, lo guardamos para contactarte sobre el programa piloto y el acceso al Nivel 2.',
-          icon: '⬡',
-        },
-        {
-          title: 'Feedback',
-          who: 'Si lo envías voluntariamente',
-          desc: 'Las respuestas al formulario de feedback del Nivel 1: qué ayudó, qué fue confuso, si quieres acceso avanzado. Siempre voluntario.',
-          icon: '⬡',
-        },
-        {
-          title: 'Interés en colaboración o acceso avanzado',
-          who: 'Si lo marcas en el formulario',
-          desc: 'Si indicas que quieres colaborar con el ecosistema MOONKEY o acceder a niveles avanzados, guardamos esa preferencia para contactarte.',
-          icon: '⬡',
-        },
-      ].map(item => (
+      {datos.map(item => (
         <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
           <div class="flex items-start gap-3">
             <span class="text-emerald-400 font-mono text-sm shrink-0 mt-0.5">—</span>
             <div>
               <div class="flex items-center gap-2 mb-1">
-                <h3 class="font-semibold text-slate-900 text-sm">{item.title}</h3>
-                <span class="font-mono text-[10px] text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">{item.who}</span>
+                <h3 class="font-semibold text-slate-900 text-sm">{tr(item.title)}</h3>
+                <span class="font-mono text-[10px] text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">{tr(item.who)}</span>
               </div>
-              <p class="text-slate-500 text-xs leading-relaxed">{item.desc}</p>
+              <p class="text-slate-500 text-xs leading-relaxed">{tr(item.desc)}</p>
             </div>
           </div>
         </div>
@@ -63,19 +61,13 @@ import Layout from '../components/Layout.astro';
 
   <!-- What we DON'T do -->
   <section class="py-10 border-b border-slate-200">
-    <span class="label block mb-5">QUÉ NO HACEMOS</span>
+    <span class="label block mb-5">{tr('QUÉ NO HACEMOS')}</span>
     <div class="bg-white border border-slate-200 rounded-2xl p-6 max-w-xl shadow-sm">
       <ul class="space-y-2.5">
-        {[
-          'No vendemos ni cedemos datos a terceros.',
-          'No usamos tracking publicitario.',
-          'No hacemos perfilado automatizado.',
-          'No guardamos contraseñas (usamos magic link sin contraseña).',
-          'No guardamos información de pago — no hay pagos todavía.',
-        ].map(item => (
+        {noHacemos.map(item => (
           <li class="flex items-start gap-2.5 text-xs text-slate-600 leading-relaxed">
             <span class="text-emerald-400 font-mono shrink-0 mt-0.5">✓</span>
-            {item}
+            {tr(item)}
           </li>
         ))}
       </ul>
@@ -84,18 +76,14 @@ import Layout from '../components/Layout.astro';
 
   <!-- For what purpose -->
   <section class="py-10 border-b border-slate-200">
-    <span class="label block mb-5">PARA QUÉ SE USAN</span>
+    <span class="label block mb-5">{tr('PARA QUÉ SE USAN')}</span>
     <div class="space-y-3 max-w-xl">
-      {[
-        { label: 'Mejorar el programa piloto', desc: 'El feedback ayuda a identificar qué módulos necesitan mejoras antes de escalar.' },
-        { label: 'Avisar de nuevos niveles', desc: 'Si dejaste tu email, te avisamos cuando se abra el Nivel 2 o el acceso avanzado.' },
-        { label: 'Gestionar el acceso piloto', desc: 'Los perfiles de Monkeys piloto se usan para coordinar el acceso y las oportunidades de colaboración.' },
-      ].map(item => (
+      {paraQue.map(item => (
         <div class="flex items-start gap-3">
           <span class="text-emerald-400 font-mono text-sm shrink-0 mt-0.5">—</span>
           <div>
-            <p class="font-medium text-slate-900 text-sm mb-0.5">{item.label}</p>
-            <p class="text-slate-500 text-xs leading-relaxed">{item.desc}</p>
+            <p class="font-medium text-slate-900 text-sm mb-0.5">{tr(item.label)}</p>
+            <p class="text-slate-500 text-xs leading-relaxed">{tr(item.desc)}</p>
           </div>
         </div>
       ))}
@@ -104,18 +92,18 @@ import Layout from '../components/Layout.astro';
 
   <!-- Rights -->
   <section class="py-10 border-b border-slate-200">
-    <span class="label block mb-5">TUS DERECHOS</span>
+    <span class="label block mb-5">{tr('TUS DERECHOS')}</span>
     <div class="max-w-xl space-y-4">
       <p class="text-slate-600 text-sm leading-relaxed">
-        Puedes pedir en cualquier momento que borremos tu cuenta y los datos asociados. También puedes pedir una copia de los datos que tenemos sobre ti.
+        {tr('Puedes pedir en cualquier momento que borremos tu cuenta y los datos asociados. También puedes pedir una copia de los datos que tenemos sobre ti.')}
       </p>
       <div class="bg-slate-50 border border-slate-200 rounded-xl px-5 py-4">
-        <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-2">CONTACTO</p>
+        <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-2">{tr('CONTACTO')}</p>
         <p class="text-xs text-slate-600 leading-relaxed">
-          Para solicitar borrado o acceso a tus datos, usa el formulario de soporte. Respondemos a todas las solicitudes dentro de los plazos legales aplicables.
+          {tr('Para solicitar borrado o acceso a tus datos, usa el formulario de soporte. Respondemos a todas las solicitudes dentro de los plazos legales aplicables.')}
         </p>
-        <a href="/soporte" class="inline-block mt-3 font-mono text-xs font-medium text-emerald-600 border border-emerald-200 px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-colors">
-          Ir a Soporte →
+        <a href={lp('/soporte')} class="inline-block mt-3 font-mono text-xs font-medium text-emerald-600 border border-emerald-200 px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-colors">
+          {tr('Ir a Soporte →')}
         </a>
       </div>
     </div>
@@ -123,13 +111,13 @@ import Layout from '../components/Layout.astro';
 
   <!-- Hosting note -->
   <section class="py-10">
-    <span class="label block mb-5">INFRAESTRUCTURA</span>
+    <span class="label block mb-5">{tr('INFRAESTRUCTURA')}</span>
     <div class="max-w-xl space-y-3">
       <p class="text-slate-600 text-sm leading-relaxed">
-        MOONKEY LAB se despliega sobre Cloudflare Pages (CDN y hosting) y Supabase (base de datos y autenticación, cuando está activo). Ambos tienen sus propias políticas de privacidad.
+        {tr('MOONKEY LAB se despliega sobre Cloudflare Pages (CDN y hosting) y Supabase (base de datos y autenticación, cuando está activo). Ambos tienen sus propias políticas de privacidad.')}
       </p>
       <p class="text-slate-500 text-xs leading-relaxed font-mono">
-        Última revisión: MMXXVI · MOONKEY LAB · Proyecto piloto en construcción activa.
+        {tr('Última revisión: MMXXVI · MOONKEY LAB · Proyecto piloto en construcción activa.')}
       </p>
     </div>
   </section>

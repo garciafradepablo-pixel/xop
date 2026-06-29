@@ -1,6 +1,12 @@
 ---
 import Layout from '../components/Layout.astro';
 
+// SECURITY MODEL (static SSG — there is no server-side request handler here):
+// The real access boundary is Postgres RLS, NOT this page. profiles/progress/
+// feedback/proofs SELECT policies are scoped to self-or-admin (is_admin()), so a
+// non-admin who loads this HTML and replays the queries gets ZERO other rows.
+// Rank writes go through update_operator_rank() which re-checks role in Postgres.
+// The client gate below is UX only (hides the panel) — it is not the security layer.
 const configured = !!(
   import.meta.env.PUBLIC_SUPABASE_URL &&
   import.meta.env.PUBLIC_SUPABASE_ANON_KEY
@@ -65,13 +71,20 @@ const configured = !!(
         <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-4">OPERADORES REGISTRADOS</p>
         <div id="admin-users-list" class="space-y-3 max-w-2xl"></div>
 
+        <!-- Talent pipeline — operator profiler intakes (referrals) -->
+        <div class="flex items-center justify-between max-w-2xl mt-12 mb-4">
+          <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase">PIPELINE DE TALENTO · PERFILES DE ENTRADA</p>
+          <span id="intake-count" class="font-mono text-[10px] text-slate-400"></span>
+        </div>
+        <div id="admin-intake-list" class="space-y-2 max-w-2xl"></div>
+
         <!-- Technical note -->
         <div class="bg-slate-50 border border-slate-200 rounded-xl px-5 py-4 max-w-2xl mt-8">
           <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-2">NOTA TÉCNICA</p>
           <p class="text-xs text-slate-500 leading-relaxed">
-            Cambios de rango validados server-side vía RPC <code class="font-mono bg-slate-100 px-1 rounded text-[11px]">update_operator_rank</code>.
-            Los campos <code class="font-mono bg-slate-100 px-1 rounded text-[11px]">role</code> y <code class="font-mono bg-slate-100 px-1 rounded text-[11px]">founder_badge</code> se modifican directamente en Supabase.
-            Pendiente: endurecer <code class="font-mono bg-slate-100 px-1 rounded text-[11px]">profiles_self_update</code> con RPC de escritura segura en fase 2.
+            Lectura y escritura protegidas por RLS (<code class="font-mono bg-slate-100 px-1 rounded text-[11px]">self-or-admin</code>): un no-admin no puede leer filas ajenas.
+            Rangos vía RPC <code class="font-mono bg-slate-100 px-1 rounded text-[11px]">update_operator_rank</code> (revalida rol en Postgres).
+            <code class="font-mono bg-slate-100 px-1 rounded text-[11px]">role</code> y <code class="font-mono bg-slate-100 px-1 rounded text-[11px]">founder_badge</code> son inmutables para no-admins (trigger <code class="font-mono bg-slate-100 px-1 rounded text-[11px]">guard_privileged_profile_columns</code>).
           </p>
         </div>
       </div>
@@ -204,12 +217,16 @@ const configured = !!(
     panelEl?.classList.remove('hidden');
 
     // Load all data in parallel
-    const [profilesRes, feedbackRes, progressRes] = await Promise.all([
+    const [profilesRes, feedbackRes, progressRes, intakeRes] = await Promise.all([
       supabase.from('profiles').select(
         'id, email, role, nickname, operator_goal, experience_level, operator_rank, operator_rank_notes, founder_badge, created_at'
       ),
       supabase.from('feedback').select('id', { count: 'exact' }),
       supabase.from('progress').select('user_id, level_1_completed'),
+      supabase.from('operator_intake')
+        .select('created_at, ref_code, name, email, virtues, aptitude, domains, goal, time_week, recommended, note')
+        .order('created_at', { ascending: false })
+        .limit(60),
     ]);
 
     const profiles = (profilesRes.data ?? []) as Profile[];
@@ -239,6 +256,38 @@ const configured = !!(
     });
 
     listEl.innerHTML = profiles.map(renderUserCard).join('');
+
+    // ── Talent pipeline: operator profiler intakes ──
+    const CONST_LABEL: Record<string, string> = {
+      'operator-core': 'Operator Core', 'data-systems': 'Data & Systems', 'builders': 'Builders',
+      'signal': 'Signal', 'brand-surface': 'Brand & Surface', 'ops-security': 'Ops & Security',
+    };
+    const intakes = (intakeRes.data ?? []) as any[];
+    const intakeListEl = document.getElementById('admin-intake-list');
+    const intakeCountEl = document.getElementById('intake-count');
+    if (intakeCountEl) intakeCountEl.textContent = intakes.length ? `${intakes.length} perfiles` : '';
+    if (intakeListEl) {
+      intakeListEl.innerHTML = intakes.length === 0
+        ? '<p class="text-sm text-slate-400 font-mono">Aún no hay perfiles de entrada.</p>'
+        : intakes.map((r) => {
+            const when = r.created_at ? new Date(r.created_at).toLocaleDateString() : '';
+            const virtues = Array.isArray(r.virtues) ? r.virtues.slice(0, 4).join(' · ') : '';
+            const domains = Array.isArray(r.domains) ? r.domains.join(', ') : '';
+            const rec = CONST_LABEL[r.recommended] ?? r.recommended ?? '—';
+            return `
+              <div class="bg-white border border-slate-200 rounded-xl px-5 py-4">
+                <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                  ${r.name ? `<span class="text-sm font-semibold text-slate-900">${esc(r.name)}</span>` : '<span class="text-sm text-slate-400 italic">Anónimo</span>'}
+                  ${r.email ? `<span class="font-mono text-[11px] text-slate-500">${esc(r.email)}</span>` : ''}
+                  ${r.ref_code ? `<span class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700">ref ${esc(r.ref_code)}</span>` : '<span class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-slate-50 border border-slate-200 text-slate-400">directo</span>'}
+                  <span class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-violet-50 border border-violet-200 text-violet-700">→ ${esc(rec)}</span>
+                  <span class="font-mono text-[10px] text-slate-300 ml-auto">${esc(when)}</span>
+                </div>
+                <p class="font-mono text-[11px] text-slate-500 mb-1">${esc(virtues)}${domains ? ` &nbsp;·&nbsp; ${esc(domains)}` : ''}${r.time_week ? ` &nbsp;·&nbsp; ${esc(r.time_week)}/sem` : ''}</p>
+                ${r.note ? `<p class="text-xs text-slate-400 leading-relaxed truncate max-w-xl">${esc(r.note)}</p>` : ''}
+              </div>`;
+          }).join('');
+    }
 
     // Event delegation — handles save for any user card
     listEl.addEventListener('click', async (e) => {

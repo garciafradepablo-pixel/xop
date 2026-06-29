@@ -493,7 +493,9 @@ const t = useTranslations(locale);
 
       // ── Invite link (stable code derived from user id — no backend write needed) ──
       const myCode = session.user.id.replace(/-/g, '').slice(0, 8).toUpperCase();
-      const inviteLink = `${location.origin}/?ref=${myCode}`;
+      // Land referred visitors on the operator profiler — they get a personalised
+      // entry constellation, and their profile reaches you attributed to this code.
+      const inviteLink = `${location.origin}/perfil?ref=${myCode}`;
       const inviteInput = document.getElementById('invite-link') as HTMLInputElement | null;
       if (inviteInput) inviteInput.value = inviteLink;
       document.getElementById('invite-login-prompt')?.classList.add('hidden');

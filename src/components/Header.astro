@@ -6,10 +6,13 @@ import { resolveLocale, localizedPath, useTranslations } from '../i18n/utils';
 const currentPath = Astro.url.pathname;
 const locale = resolveLocale(Astro.currentLocale, currentPath);
 const t = useTranslations(locale);
-const isRuta = currentPath === '/ruta-7-dias' || currentPath === '/ruta-7-dias/';
+
+const progLabel = ({ es: 'Programa', en: 'Program', th: 'หลักสูตร', fr: 'Programme', it: 'Programma', ch: 'Programm' } as Record<string, string>)[locale] ?? 'Programa';
 
 const navLinks = [
   { href: localizedPath('/', locale),         label: t('nav.home'), exact: true },
+  { href: localizedPath('/galaxia', locale),  label: 'Galaxia' },
+  { href: localizedPath('/programa', locale), label: progLabel },
   { href: localizedPath('/modulos', locale),  label: 'N1' },
   { href: localizedPath('/advanced', locale), label: 'N2' },
   { href: localizedPath('/migrador', locale), label: 'N3' },
@@ -25,8 +28,7 @@ const isActive = (href: string, exact?: boolean) => {
   const base = href.replace(/^\/(en|th|fr|it|ch)/, '') || '/';
   return (
     currentPath === href ||
-    (base !== '/' && currentPath.startsWith(base)) ||
-    (href === localizedPath('/modulos', locale) && isRuta)
+    (base !== '/' && currentPath.startsWith(base))
   );
 };
 

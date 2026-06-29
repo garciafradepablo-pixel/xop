@@ -1,11 +1,27 @@
 ---
 import Layout from '../components/Layout.astro';
 import MoonkeyLogo from '../components/MoonkeyLogo.astro';
+import { resolveLocale, localizedPath } from '../i18n/utils';
+import { frontTr } from '../data/frontdoor.i18n';
+
+const locale = resolveLocale(Astro.currentLocale, Astro.url.pathname);
+const tr = frontTr('monkeys', locale);
+const lp = (p: string) => localizedPath(p, locale);
 
 const supabaseConfigured = !!(
   import.meta.env.PUBLIC_SUPABASE_URL &&
   import.meta.env.PUBLIC_SUPABASE_ANON_KEY
 );
+
+// Strings used by the roster <script> — injected as JSON below.
+const ROSTER_I18N = {
+  rankMonkey: tr('Monkey · en formación'),
+  rankGorilla: tr('Gorilla · ejecuta con fuerza'),
+  rankPanda: tr('Panda · domina su sistema'),
+  empty: tr('Sin operadores registrados aún.'),
+  operator: tr('Operador'),
+  founder: tr('Founder · XNLAB Studio'),
+};
 
 const keys = [
   {
@@ -64,24 +80,24 @@ const rankDefs = [
 ];
 ---
 
-<Layout title="The Monkey Lab" description="Programa piloto de operadores MOONKEY LAB. Avanza por el Operator Path y construye sistemas reales con IA.">
+<Layout title={tr('The Monkey Lab')} description={tr('Programa piloto de operadores MOONKEY LAB. Avanza por el Operator Path y construye sistemas reales con IA.')}>
 
   <!-- Hero -->
   <section class="pb-12 border-b border-slate-200">
     <span class="label block mb-6">THE MONKEY LAB</span>
     <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 leading-tight mb-5">
-      Bienvenido al Lab.<br/>
-      <span class="text-emerald-600">Monkeys en formación.</span>
+      {tr('Bienvenido al Lab.')}<br/>
+      <span class="text-emerald-600">{tr('Monkeys en formación.')}</span>
     </h1>
     <p class="text-slate-600 text-base leading-relaxed max-w-xl mb-5">
-      MOONKEY LAB forma operadores que aprenden a construir con IA de forma sistemática. Los llamamos Monkeys: aprendices ágiles, curiosos y constructores de sistemas reales.
+      {tr('MOONKEY LAB forma operadores que aprenden a construir con IA de forma sistemática. Los llamamos Monkeys: aprendices ágiles, curiosos y constructores de sistemas reales.')}
     </p>
     <p class="text-slate-900 text-xl font-bold leading-snug max-w-xl mb-6">
-      No completas módulos.<br/>
-      <span class="text-emerald-600">Evolucionas dentro de la jungla.</span>
+      {tr('No completas módulos.')}<br/>
+      <span class="text-emerald-600">{tr('Evolucionas dentro de la jungla.')}</span>
     </p>
     <div class="bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 inline-flex items-center gap-3">
-      <span class="font-mono text-xs text-slate-400">ETIMOLOGÍA</span>
+      <span class="font-mono text-xs text-slate-400">{tr('ETIMOLOGÍA')}</span>
       <span class="w-px h-4 bg-slate-300"></span>
       <span class="text-sm text-slate-600 font-medium">Moon</span>
       <span class="text-slate-300 text-xs">+</span>
@@ -89,27 +105,27 @@ const rankDefs = [
       <span class="text-slate-300 text-xs">+</span>
       <span class="text-sm text-emerald-600 font-bold">Key</span>
       <span class="w-px h-4 bg-slate-300"></span>
-      <span class="text-xs text-slate-400 font-mono">visión · agilidad · acceso</span>
+      <span class="text-xs text-slate-400 font-mono">{tr('visión · agilidad · acceso')}</span>
     </div>
   </section>
 
   <!-- La jungla está creciendo -->
   <section class="py-10 border-b border-slate-200">
     <div class="border-l-4 border-emerald-400 bg-emerald-50 rounded-r-2xl pl-6 pr-6 py-6 max-w-2xl">
-      <p class="font-mono text-[10px] tracking-widest text-emerald-700 uppercase mb-3">LA JUNGLA ESTÁ CRECIENDO</p>
+      <p class="font-mono text-[10px] tracking-widest text-emerald-700 uppercase mb-3">{tr('LA JUNGLA ESTÁ CRECIENDO')}</p>
       <p class="text-slate-800 text-base leading-relaxed font-medium mb-2">
-        Cada operador que completa el camino deja una señal para el siguiente.
+        {tr('Cada operador que completa el camino deja una señal para el siguiente.')}
       </p>
       <p class="text-slate-500 text-sm leading-relaxed">
-        MOONKEY LAB no es una lista de módulos: es una jungla de agentes aprendiendo a operar sistemas reales.
+        {tr('MOONKEY LAB no es una lista de módulos: es una jungla de agentes aprendiendo a operar sistemas reales.')}
       </p>
       <div class="flex flex-wrap gap-x-2 gap-y-1 mt-4 items-center text-xs font-mono text-slate-400">
-        <span>Aprendes</span><span class="text-emerald-500">→</span>
-        <span>desbloqueas rango</span><span class="text-emerald-500">→</span>
-        <span>recibes badge</span><span class="text-emerald-500">→</span>
-        <span>compartes avance</span><span class="text-emerald-500">→</span>
-        <span>entra otro</span><span class="text-emerald-500">→</span>
-        <span class="text-emerald-700 font-semibold">crece la jungla</span>
+        <span>{tr('Aprendes')}</span><span class="text-emerald-500">→</span>
+        <span>{tr('desbloqueas rango')}</span><span class="text-emerald-500">→</span>
+        <span>{tr('recibes badge')}</span><span class="text-emerald-500">→</span>
+        <span>{tr('compartes avance')}</span><span class="text-emerald-500">→</span>
+        <span>{tr('entra otro')}</span><span class="text-emerald-500">→</span>
+        <span class="text-emerald-700 font-semibold">{tr('crece la jungla')}</span>
       </div>
     </div>
   </section>
@@ -120,7 +136,7 @@ const rankDefs = [
       {moduleStats.map(s => (
         <div class="stat-pill">
           <p class="text-2xl font-bold text-slate-900 font-mono mb-1">{s.value}</p>
-          <p class="text-xs text-slate-500">{s.label}</p>
+          <p class="text-xs text-slate-500">{tr(s.label)}</p>
         </div>
       ))}
     </div>
@@ -128,16 +144,16 @@ const rankDefs = [
 
   <!-- Piloto actual — rank stats + XNLAB copy -->
   <section class="py-10 border-b border-slate-200">
-    <span class="label block mb-2">PILOTO ACTUAL</span>
+    <span class="label block mb-2">{tr('PILOTO ACTUAL')}</span>
     <p class="text-slate-600 text-sm leading-relaxed max-w-xl mb-1">
-      MOONKEY LAB es el laboratorio de operadores IA de XNLAB.
+      {tr('MOONKEY LAB es el laboratorio de operadores IA de XNLAB.')}
     </p>
-    <p class="text-slate-400 text-xs font-mono mb-6">Los rangos no se autodeclaran: se validan desde XNLAB.</p>
+    <p class="text-slate-400 text-xs font-mono mb-6">{tr('Los rangos no se autodeclaran: se validan desde XNLAB.')}</p>
 
     <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 max-w-2xl">
       <div class="bg-white border border-slate-200 rounded-xl p-4 text-center shadow-sm">
         <p id="stat-total" class="text-2xl font-bold font-mono text-slate-900 mb-1">—</p>
-        <p class="text-[10px] font-mono text-slate-400 uppercase tracking-wide">Operadores</p>
+        <p class="text-[10px] font-mono text-slate-400 uppercase tracking-wide">{tr('Operadores')}</p>
       </div>
       <div class="bg-white border border-slate-200 rounded-xl p-4 text-center shadow-sm">
         <p id="stat-monkey" class="text-2xl font-bold font-mono text-slate-600 mb-1">—</p>
@@ -160,49 +176,49 @@ const rankDefs = [
 
   <!-- Rangos oficiales -->
   <section class="py-10 border-b border-slate-200">
-    <span class="label block mb-2">RANGOS OFICIALES</span>
-    <p class="text-xs text-slate-400 font-mono mb-6">Los rangos son asignados por XNLAB según progreso real en el Operator Path. No se autodeclaran.</p>
+    <span class="label block mb-2">{tr('RANGOS OFICIALES')}</span>
+    <p class="text-xs text-slate-400 font-mono mb-6">{tr('Los rangos son asignados por XNLAB según progreso real en el Operator Path. No se autodeclaran.')}</p>
     <div class="grid sm:grid-cols-3 gap-4 max-w-2xl">
       <div class="bg-white border-2 border-slate-200 rounded-xl p-5 shadow-sm">
         <p class="font-mono text-xs font-bold text-slate-700 mb-1">Monkey</p>
-        <p class="text-sm font-semibold text-slate-900 mb-2">En formación</p>
-        <p class="text-xs text-slate-500 leading-relaxed">Construye los cimientos. Cada módulo completado deja rastro en la jungla.</p>
+        <p class="text-sm font-semibold text-slate-900 mb-2">{tr('En formación')}</p>
+        <p class="text-xs text-slate-500 leading-relaxed">{tr('Construye los cimientos. Cada módulo completado deja rastro en la jungla.')}</p>
       </div>
       <div class="bg-violet-50 border-2 border-violet-200 rounded-xl p-5 shadow-sm">
         <p class="font-mono text-xs font-bold text-violet-700 mb-1">Gorilla</p>
-        <p class="text-sm font-semibold text-slate-900 mb-2">Ejecuta con fuerza</p>
-        <p class="text-xs text-slate-500 leading-relaxed">Opera sistemas complejos. Arquitectura, debugging, deploy sin supervisión.</p>
+        <p class="text-sm font-semibold text-slate-900 mb-2">{tr('Ejecuta con fuerza')}</p>
+        <p class="text-xs text-slate-500 leading-relaxed">{tr('Opera sistemas complejos. Arquitectura, debugging, deploy sin supervisión.')}</p>
       </div>
       <div class="bg-emerald-50 border-2 border-emerald-200 rounded-xl p-5 shadow-sm">
         <p class="font-mono text-xs font-bold text-emerald-700 mb-1">Panda</p>
-        <p class="text-sm font-semibold text-slate-900 mb-2">Domina su sistema</p>
-        <p class="text-xs text-slate-500 leading-relaxed">Autonomía total. Sistema de prompts propio, workflows delegables.</p>
+        <p class="text-sm font-semibold text-slate-900 mb-2">{tr('Domina su sistema')}</p>
+        <p class="text-xs text-slate-500 leading-relaxed">{tr('Autonomía total. Sistema de prompts propio, workflows delegables.')}</p>
       </div>
     </div>
   </section>
 
   <!-- Arquetipos de jungla -->
   <section class="py-10 border-b border-slate-200">
-    <span class="label block mb-1">ARQUETIPOS DE JUNGLA</span>
-    <p class="text-xs text-slate-400 font-mono mb-6">Roles simbólicos — narrativa visual, no rangos operativos actuales.</p>
+    <span class="label block mb-1">{tr('ARQUETIPOS DE JUNGLA')}</span>
+    <p class="text-xs text-slate-400 font-mono mb-6">{tr('Roles simbólicos — narrativa visual, no rangos operativos actuales.')}</p>
     <div class="grid sm:grid-cols-2 gap-4 max-w-2xl">
       <div class="bg-amber-50 border-2 border-amber-200 rounded-xl p-5 shadow-sm">
         <p class="font-mono text-xs font-bold text-amber-700 mb-1">Lion</p>
-        <p class="text-sm font-semibold text-slate-900 mb-2">Lidera</p>
-        <p class="text-xs text-slate-500 leading-relaxed">Coordina operadores, dirige células de trabajo y sostiene la dirección estratégica del ecosistema.</p>
+        <p class="text-sm font-semibold text-slate-900 mb-2">{tr('Lidera')}</p>
+        <p class="text-xs text-slate-500 leading-relaxed">{tr('Coordina operadores, dirige células de trabajo y sostiene la dirección estratégica del ecosistema.')}</p>
       </div>
       <div class="bg-slate-900 border-2 border-slate-700 rounded-xl p-5 shadow-sm">
         <p class="font-mono text-xs font-bold text-emerald-400 mb-1">Elephant</p>
         <p class="text-sm font-semibold text-white mb-2">Founder Archetype</p>
-        <p class="text-xs text-slate-400 leading-relaxed">Memoria viva del ecosistema. Arquitectura madre. Quien construyó la jungla para que otros puedan aprender.</p>
+        <p class="text-xs text-slate-400 leading-relaxed">{tr('Memoria viva del ecosistema. Arquitectura madre. Quien construyó la jungla para que otros puedan aprender.')}</p>
       </div>
     </div>
   </section>
 
   <!-- Badges de jungla -->
   <section class="py-10 border-b border-slate-200">
-    <span class="label block mb-2">BADGES DE JUNGLA</span>
-    <p class="text-xs text-slate-400 font-mono mb-6">Sistema de reconocimiento visual — próxima fase de gamificación.</p>
+    <span class="label block mb-2">{tr('BADGES DE JUNGLA')}</span>
+    <p class="text-xs text-slate-400 font-mono mb-6">{tr('Sistema de reconocimiento visual — próxima fase de gamificación.')}</p>
     <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-w-2xl">
       {[
         { symbol: '🦉', name: 'Owl',    trait: 'Estrategia',      desc: 'Pensamiento sistémico. Ve el bosque, no solo el árbol.' },
@@ -215,8 +231,8 @@ const rankDefs = [
         <div class="bg-white border border-slate-200 rounded-xl px-4 py-3.5 shadow-sm flex items-start gap-3">
           <span class="text-xl shrink-0 mt-0.5">{b.symbol}</span>
           <div>
-            <p class="font-mono text-xs font-bold text-slate-700 mb-0.5">{b.name} <span class="text-slate-400 font-normal">— {b.trait}</span></p>
-            <p class="text-[11px] text-slate-400 leading-relaxed">{b.desc}</p>
+            <p class="font-mono text-xs font-bold text-slate-700 mb-0.5">{b.name} <span class="text-slate-400 font-normal">— {tr(b.trait)}</span></p>
+            <p class="text-[11px] text-slate-400 leading-relaxed">{tr(b.desc)}</p>
           </div>
         </div>
       ))}
@@ -226,31 +242,31 @@ const rankDefs = [
   <!-- Efecto espora -->
   <section class="py-10 border-b border-slate-200">
     <div class="bg-slate-900 rounded-2xl px-7 py-6 max-w-2xl">
-      <p class="font-mono text-[10px] tracking-widest text-emerald-400 uppercase mb-3">EFECTO ESPORA</p>
+      <p class="font-mono text-[10px] tracking-widest text-emerald-400 uppercase mb-3">{tr('EFECTO ESPORA')}</p>
       <p class="text-white text-sm leading-relaxed max-w-lg">
-        Cuando un operador avanza, no solo desbloquea contenido: deja una ruta más clara para que otro entre, aprenda y suba de rango.
+        {tr('Cuando un operador avanza, no solo desbloquea contenido: deja una ruta más clara para que otro entre, aprenda y suba de rango.')}
       </p>
     </div>
   </section>
 
   <!-- Operadores registrados — filled by script -->
   <section id="operators-section" class="py-10 border-b border-slate-200 hidden">
-    <span class="label block mb-2">OPERADORES</span>
-    <p class="text-xs text-slate-400 font-mono mb-5">Registrados en el programa piloto.</p>
+    <span class="label block mb-2">{tr('OPERADORES')}</span>
+    <p class="text-xs text-slate-400 font-mono mb-5">{tr('Registrados en el programa piloto.')}</p>
     <div id="operators-list" class="space-y-2 max-w-2xl"></div>
-    <p id="operators-error" class="hidden text-sm text-slate-400 font-mono mt-4">No se pudieron cargar los operadores todavía.</p>
+    <p id="operators-error" class="hidden text-sm text-slate-400 font-mono mt-4">{tr('No se pudieron cargar los operadores todavía.')}</p>
   </section>
 
   <!-- Qué es un Monkey -->
   <section class="py-12 border-b border-slate-200">
-    <span class="label block mb-6">QUÉ ES UN MONKEY</span>
+    <span class="label block mb-6">{tr('QUÉ ES UN MONKEY')}</span>
     <div class="grid sm:grid-cols-2 gap-4">
       {rasgos.map(r => (
         <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex items-start gap-3">
           <span class="text-emerald-400 text-sm mt-0.5 shrink-0">—</span>
           <div>
-            <h3 class="font-semibold text-slate-900 text-sm mb-1.5">{r.title}</h3>
-            <p class="text-slate-500 text-xs leading-relaxed">{r.desc}</p>
+            <h3 class="font-semibold text-slate-900 text-sm mb-1.5">{tr(r.title)}</h3>
+            <p class="text-slate-500 text-xs leading-relaxed">{tr(r.desc)}</p>
           </div>
         </div>
       ))}
@@ -258,29 +274,29 @@ const rankDefs = [
 
     <!-- Insight box inline -->
     <div class="mt-6 border-l-4 border-emerald-400 bg-emerald-50 rounded-r-xl pl-4 pr-4 py-3.5">
-      <p class="font-mono text-[10px] uppercase tracking-widest font-bold mb-1.5 text-emerald-700">MENTALIDAD CLAVE</p>
-      <p class="text-sm leading-relaxed text-slate-700">Un Monkey no espera que la IA sea perfecta. Aprende a guiarla, corregirla y construir sistemas que funcionen en el mundo real, no en demos.</p>
+      <p class="font-mono text-[10px] uppercase tracking-widest font-bold mb-1.5 text-emerald-700">{tr('MENTALIDAD CLAVE')}</p>
+      <p class="text-sm leading-relaxed text-slate-700">{tr('Un Monkey no espera que la IA sea perfecta. Aprende a guiarla, corregirla y construir sistemas que funcionen en el mundo real, no en demos.')}</p>
     </div>
   </section>
 
   <!-- Keys de progreso -->
   <section class="py-12 border-b border-slate-200">
-    <span class="label block mb-2">LAS KEYS DE PROGRESO</span>
+    <span class="label block mb-2">{tr('LAS KEYS DE PROGRESO')}</span>
     <p class="text-slate-500 text-sm mb-8 max-w-xl">
-      Cada nivel completado desbloquea una Key. Las Keys son el registro del Operator Path — el camino de formación de la metodología MOONKEY XN.
+      {tr('Cada nivel completado desbloquea una Key. Las Keys son el registro del Operator Path — el camino de formación de la metodología MOONKEY XN.')}
     </p>
     <div class="space-y-3">
       {keys.map((k, i) => (
-        <a href={k.href} class={`flex items-stretch gap-0 ${k.bg} border ${k.border} rounded-xl overflow-hidden hover:shadow-md transition-shadow group`}>
+        <a href={lp(k.href)} class={`flex items-stretch gap-0 ${k.bg} border ${k.border} rounded-xl overflow-hidden hover:shadow-md transition-shadow group`}>
           <div class={`${k.accent} opacity-90 w-1 shrink-0`}></div>
           <div class="flex items-start gap-4 px-5 py-4 flex-1">
             <div class="shrink-0 mt-0.5">
               <span class={`font-mono text-xs font-bold ${k.color}`}>{k.tag}</span>
-              <p class={`font-mono text-[10px] text-slate-400 mt-0.5`}>{k.modules} módulos</p>
+              <p class={`font-mono text-[10px] text-slate-400 mt-0.5`}>{k.modules} {tr('módulos')}</p>
             </div>
             <div class="flex-1">
               <p class={`font-semibold text-sm mb-1 ${k.color}`}>{k.title}</p>
-              <p class="text-slate-500 text-xs leading-relaxed">{k.desc}</p>
+              <p class="text-slate-500 text-xs leading-relaxed">{tr(k.desc)}</p>
             </div>
             <span aria-hidden="true" class={`font-mono text-sm shrink-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity ${k.color}`}>→</span>
           </div>
@@ -291,15 +307,13 @@ const rankDefs = [
 
   <!-- De Monkey a Moonkey -->
   <section class="py-12 border-b border-slate-200">
-    <span class="label block mb-6">DE MONKEY A MOONKEY</span>
+    <span class="label block mb-6">{tr('DE MONKEY A MOONKEY')}</span>
     <div class="bg-slate-900 rounded-2xl overflow-hidden">
       <div class="px-8 py-10">
-        <span class="font-mono text-[10px] tracking-widest uppercase text-emerald-400 block mb-4">OPERATOR PATH COMPLETO</span>
-        <h2 class="text-2xl font-bold text-white mb-3 leading-snug">
-          Completa las 3 Keys.<br/>Conviértete en Moonkey.
-        </h2>
+        <span class="font-mono text-[10px] tracking-widest uppercase text-emerald-400 block mb-4">{tr('OPERATOR PATH COMPLETO')}</span>
+        <h2 class="text-2xl font-bold text-white mb-3 leading-snug" set:html={tr('Completa las 3 Keys.<br/>Conviértete en Moonkey.')}></h2>
         <p class="text-slate-400 text-sm leading-relaxed mb-8 max-w-lg">
-          Un Moonkey es un operador que ha completado los tres niveles de formación y puede trabajar con IA de forma autónoma, documentada y sistemática. La base para colaborar con el ecosistema MOONKEY XN o implementar sistemas propios.
+          {tr('Un Moonkey es un operador que ha completado los tres niveles de formación y puede trabajar con IA de forma autónoma, documentada y sistemática. La base para colaborar con el ecosistema MOONKEY XN o implementar sistemas propios.')}
         </p>
 
         <div class="grid sm:grid-cols-3 gap-px bg-white/[0.06] rounded-xl overflow-hidden mb-8">
@@ -311,23 +325,23 @@ const rankDefs = [
             <div class="bg-slate-800/60 px-4 py-5">
               <p class={`font-mono text-[10px] tracking-widest font-bold mb-2 ${k.color}`}>{k.tag}</p>
               <p class="text-white text-sm font-semibold mb-1">{k.label}</p>
-              <p class="text-slate-500 text-[11px] font-mono">{k.note}</p>
+              <p class="text-slate-500 text-[11px] font-mono">{tr(k.note)}</p>
             </div>
           ))}
         </div>
 
         <div class="border-t border-white/10 pt-6 mb-6">
           <p class="text-slate-400 text-xs leading-relaxed max-w-lg">
-            Los Monkeys que completan el Operator Path están en la mejor posición para integrarse al ecosistema MOONKEY XN cuando se abran oportunidades de colaboración.
+            {tr('Los Monkeys que completan el Operator Path están en la mejor posición para integrarse al ecosistema MOONKEY XN cuando se abran oportunidades de colaboración.')}
           </p>
         </div>
 
         <div class="flex flex-wrap gap-3">
-          <a href="/modulos" class="inline-block font-mono text-sm font-medium text-slate-900 bg-emerald-400 px-6 py-3 rounded-xl hover:bg-emerald-300 transition-colors">
-            Empezar Nivel 1 →
+          <a href={lp('/modulos')} class="inline-block font-mono text-sm font-medium text-slate-900 bg-emerald-400 px-6 py-3 rounded-xl hover:bg-emerald-300 transition-colors">
+            {tr('Empezar Nivel 1 →')}
           </a>
-          <a href="/prueba-operador" class="inline-block font-mono text-sm text-slate-400 border border-slate-600 px-6 py-3 rounded-xl hover:border-slate-400 transition-colors">
-            Test de Operador
+          <a href={lp('/prueba-operador')} class="inline-block font-mono text-sm text-slate-400 border border-slate-600 px-6 py-3 rounded-xl hover:border-slate-400 transition-colors">
+            {tr('Test de Operador')}
           </a>
         </div>
       </div>
@@ -336,34 +350,34 @@ const rankDefs = [
 
   <!-- Programa piloto -->
   <section class="py-12 border-b border-slate-200">
-    <span class="label block mb-6">PROGRAMA PILOTO</span>
+    <span class="label block mb-6">{tr('PROGRAMA PILOTO')}</span>
     <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-8 mb-6">
       <div class="flex items-start justify-between mb-4">
-        <h2 class="text-xl font-bold text-slate-900">Primeros perfiles en formación.</h2>
-        <span class="font-mono text-[10px] tracking-widest bg-emerald-200 text-emerald-800 px-2.5 py-1 rounded-lg uppercase">Fase inicial</span>
+        <h2 class="text-xl font-bold text-slate-900">{tr('Primeros perfiles en formación.')}</h2>
+        <span class="font-mono text-[10px] tracking-widest bg-emerald-200 text-emerald-800 px-2.5 py-1 rounded-lg uppercase">{tr('Fase inicial')}</span>
       </div>
       <p class="text-slate-600 text-sm leading-relaxed mb-4 max-w-lg">
-        MOONKEY LAB está en fase inicial. No hay una comunidad establecida todavía: hay un programa piloto con los primeros perfiles que avanzan por el Operator Path.
+        {tr('MOONKEY LAB está en fase inicial. No hay una comunidad establecida todavía: hay un programa piloto con los primeros perfiles que avanzan por el Operator Path.')}
       </p>
       <p class="text-slate-500 text-sm leading-relaxed mb-8 max-w-lg">
-        El objetivo es simple: que los primeros Monkeys completen el recorrido, entreguen feedback real, y ayuden a afinar el sistema antes de que escale.
+        {tr('El objetivo es simple: que los primeros Monkeys completen el recorrido, entreguen feedback real, y ayuden a afinar el sistema antes de que escale.')}
       </p>
       <div class="flex flex-wrap gap-3">
-        <a href="/modulos" class="inline-block font-mono text-sm font-medium text-white bg-emerald-500 px-6 py-3 rounded-xl hover:bg-emerald-600 transition-colors">
-          Empezar Nivel 1 →
+        <a href={lp('/modulos')} class="inline-block font-mono text-sm font-medium text-white bg-emerald-500 px-6 py-3 rounded-xl hover:bg-emerald-600 transition-colors">
+          {tr('Empezar Nivel 1 →')}
         </a>
-        <a href="/prueba-operador" class="inline-block font-mono text-sm text-emerald-700 border border-emerald-300 bg-white px-6 py-3 rounded-xl hover:bg-emerald-50 transition-colors">
-          Hacer Test de Operador
+        <a href={lp('/prueba-operador')} class="inline-block font-mono text-sm text-emerald-700 border border-emerald-300 bg-white px-6 py-3 rounded-xl hover:bg-emerald-50 transition-colors">
+          {tr('Hacer Test de Operador')}
         </a>
-        <a href="/planes" class="inline-block font-mono text-sm text-slate-600 border border-slate-200 bg-white px-6 py-3 rounded-xl hover:bg-slate-50 transition-colors">
-          Ver planes
+        <a href={lp('/planes')} class="inline-block font-mono text-sm text-slate-600 border border-slate-200 bg-white px-6 py-3 rounded-xl hover:bg-slate-50 transition-colors">
+          {tr('Ver planes')}
         </a>
       </div>
     </div>
 
     <!-- Qué esperamos -->
     <div class="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
-      <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-4">QUÉ ESPERAMOS DE UN MONKEY PILOTO</p>
+      <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-4">{tr('QUÉ ESPERAMOS DE UN MONKEY PILOTO')}</p>
       <div class="grid sm:grid-cols-2 gap-3">
         {[
           'Avanzar por el Nivel 1 sin saltarse módulos',
@@ -375,7 +389,7 @@ const rankDefs = [
         ].map(item => (
           <div class="flex items-start gap-2.5">
             <span class="text-emerald-400 font-mono text-xs shrink-0 mt-0.5">—</span>
-            <p class="text-slate-600 text-xs leading-relaxed">{item}</p>
+            <p class="text-slate-600 text-xs leading-relaxed">{tr(item)}</p>
           </div>
         ))}
       </div>
@@ -384,10 +398,10 @@ const rankDefs = [
 
   <!-- Cultura del Lab -->
   <section class="py-12">
-    <span class="label block mb-6">CULTURA DEL LAB</span>
+    <span class="label block mb-6">{tr('CULTURA DEL LAB')}</span>
     <div class="grid sm:grid-cols-2 gap-6">
       <div class="bg-slate-900 rounded-2xl p-6">
-        <p class="font-mono text-[10px] tracking-widest text-emerald-400 uppercase mb-3">Lo que construimos</p>
+        <p class="font-mono text-[10px] tracking-widest text-emerald-400 uppercase mb-3">{tr('Lo que construimos')}</p>
         <ul class="space-y-2.5">
           {[
             'Sistemas documentados que funcionan sin supervisión',
@@ -398,13 +412,13 @@ const rankDefs = [
           ].map(item => (
             <li class="flex items-start gap-2.5 text-xs text-slate-400 leading-relaxed">
               <span class="text-emerald-400 shrink-0 mt-0.5">—</span>
-              {item}
+              {tr(item)}
             </li>
           ))}
         </ul>
       </div>
       <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-        <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-3">Lo que evitamos</p>
+        <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-3">{tr('Lo que evitamos')}</p>
         <ul class="space-y-2.5">
           {[
             'Usar la IA como buscador glorificado',
@@ -415,7 +429,7 @@ const rankDefs = [
           ].map(item => (
             <li class="flex items-start gap-2.5 text-xs text-slate-500 leading-relaxed">
               <span class="text-rose-400 shrink-0 mt-0.5">×</span>
-              {item}
+              {tr(item)}
             </li>
           ))}
         </ul>
@@ -425,14 +439,17 @@ const rankDefs = [
 
 </Layout>
 
+<script id="monkeys-roster-i18n" type="application/json" set:html={JSON.stringify(ROSTER_I18N)} is:inline></script>
+
 <!-- Script unconditional — Astro/Vite bundles it. Runtime guard handles unconfigured case. -->
 <script>
   import { supabase } from '../lib/supabase';
 
+  const T = JSON.parse(document.getElementById('monkeys-roster-i18n')?.textContent || '{}');
   const RANK: Record<string, { label: string; textCls: string; borderCls: string }> = {
-    monkey:  { label: 'Monkey · en formación',        textCls: 'text-slate-600',   borderCls: 'border-slate-200'  },
-    gorilla: { label: 'Gorilla · ejecuta con fuerza', textCls: 'text-violet-600',  borderCls: 'border-violet-200' },
-    eagle:   { label: 'Panda · domina su sistema',     textCls: 'text-emerald-600', borderCls: 'border-emerald-300' },
+    monkey:  { label: T.rankMonkey  || 'Monkey · en formación',        textCls: 'text-slate-600',   borderCls: 'border-slate-200'  },
+    gorilla: { label: T.rankGorilla || 'Gorilla · ejecuta con fuerza', textCls: 'text-violet-600',  borderCls: 'border-violet-200' },
+    eagle:   { label: T.rankPanda   || 'Panda · domina su sistema',     textCls: 'text-emerald-600', borderCls: 'border-emerald-300' },
   };
 
   function esc(s: string | null | undefined): string {
@@ -496,7 +513,7 @@ const rankDefs = [
       if (!listEl) return;
 
       if (total === 0) {
-        listEl.innerHTML = '<p class="text-sm text-slate-400 font-mono">Sin operadores registrados aún.</p>';
+        listEl.innerHTML = `<p class="text-sm text-slate-400 font-mono">${esc(T.empty || 'Sin operadores registrados aún.')}</p>`;
         return;
       }
 
@@ -514,14 +531,14 @@ const rankDefs = [
         const rank    = RANK[p.operator_rank ?? 'monkey'] ?? RANK['monkey'];
         const display = p.nickname
           ? esc(p.nickname)
-          : p.email ? esc(maskedEmail(p.email)) : 'Operador';
+          : p.email ? esc(maskedEmail(p.email)) : esc(T.operator || 'Operador');
 
         const goalHtml = p.operator_goal
           ? `<p class="text-xs text-slate-400 leading-relaxed mt-1">${esc(p.operator_goal)}</p>`
           : '';
 
         const founderBadge = p.founder_badge
-          ? '<span class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700">Founder · XNLAB Studio</span>'
+          ? `<span class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700">${esc(T.founder || 'Founder · XNLAB Studio')}</span>`
           : '';
 
         return `<div class="bg-white border border-slate-200 rounded-xl px-5 py-4 hover:border-slate-300 hover:shadow-sm transition-all">

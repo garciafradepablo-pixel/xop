@@ -1,5 +1,10 @@
 ---
 import Layout from '../components/Layout.astro';
+import { resolveLocale } from '../i18n/utils';
+import { frontTr } from '../data/frontdoor.i18n';
+
+const locale = resolveLocale(Astro.currentLocale, Astro.url.pathname);
+const tr = frontTr('onboarding', locale);
 
 const actitudes = [
   {
@@ -62,27 +67,27 @@ const errores = [
 ];
 ---
 
-<Layout title="Colaboración — MOONKEY XN" description="Cómo prepararte para colaborar en el ecosistema MOONKEY XN. Actitud, habilidades y entregables.">
+<Layout title={tr('Colaboración — MOONKEY XN')} description={tr('Cómo prepararte para colaborar en el ecosistema MOONKEY XN. Actitud, habilidades y entregables.')}>
 
   <div class="pb-16 border-b border-slate-200">
-    <span class="label block mb-6">ENTRADA AL ECOSISTEMA</span>
-    <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-4">Colaboración</h1>
+    <span class="label block mb-6">{tr('ENTRADA AL ECOSISTEMA')}</span>
+    <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-4">{tr('Colaboración')}</h1>
     <p class="text-slate-600 text-base leading-relaxed max-w-lg">
-      Esta sección es para personas que quieren prepararse para colaborar dentro del ecosistema MOONKEY XN. El programa no busca personas que ya lo sepan todo. Busca Monkeys capaces de aprender rápido, ejecutar sin parálisis y comunicar sin ruido.
+      {tr('Esta sección es para personas que quieren prepararse para colaborar dentro del ecosistema MOONKEY XN. El programa no busca personas que ya lo sepan todo. Busca Monkeys capaces de aprender rápido, ejecutar sin parálisis y comunicar sin ruido.')}
     </p>
   </div>
 
   <!-- Qué actitud se busca -->
   <section class="py-16 border-b border-slate-200">
-    <span class="label block mb-2">QUÉ ACTITUD SE BUSCA</span>
+    <span class="label block mb-2">{tr('QUÉ ACTITUD SE BUSCA')}</span>
     <p class="text-slate-500 text-sm mb-10">
-      El conocimiento técnico se entrena. La actitud no. Estas son las cuatro cosas que importan:
+      {tr('El conocimiento técnico se entrena. La actitud no. Estas son las cuatro cosas que importan:')}
     </p>
     <div class="grid sm:grid-cols-2 gap-4">
       {actitudes.map(item => (
         <div class={`${item.bg} border ${item.border} rounded-xl p-6`}>
-          <h3 class={`text-sm font-bold mb-2 ${item.text}`}>{item.titulo}</h3>
-          <p class="text-slate-600 text-sm leading-relaxed">{item.desc}</p>
+          <h3 class={`text-sm font-bold mb-2 ${item.text}`}>{tr(item.titulo)}</h3>
+          <p class="text-slate-600 text-sm leading-relaxed">{tr(item.desc)}</p>
         </div>
       ))}
     </div>
@@ -90,12 +95,12 @@ const errores = [
 
   <!-- Habilidades que se entrenan -->
   <section class="py-16 border-b border-slate-200">
-    <span class="label block mb-10">HABILIDADES QUE SE ENTRENAN AQUÍ</span>
+    <span class="label block mb-10">{tr('HABILIDADES QUE SE ENTRENAN AQUÍ')}</span>
     <ul class="space-y-4">
       {habilidades.map(h => (
         <li class="flex items-center gap-3">
           <span class={`w-1.5 h-1.5 rounded-full shrink-0 ${h.dot}`}></span>
-          <span class="text-slate-700 text-sm">{h.text}</span>
+          <span class="text-slate-700 text-sm">{tr(h.text)}</span>
         </li>
       ))}
     </ul>
@@ -103,15 +108,15 @@ const errores = [
 
   <!-- Ejercicios a completar -->
   <section class="py-16 border-b border-slate-200">
-    <span class="label block mb-6">EJERCICIOS A COMPLETAR</span>
+    <span class="label block mb-6">{tr('EJERCICIOS A COMPLETAR')}</span>
     <p class="text-slate-500 text-sm mb-8">
-      Estos son los entregables mínimos para demostrar que has completado el proceso de onboarding:
+      {tr('Estos son los entregables mínimos para demostrar que has completado el proceso de onboarding:')}
     </p>
     <ol class="space-y-3">
       {ejercicios.map((e, i) => (
         <li class="flex items-start gap-4 bg-white border border-slate-200 rounded-xl px-5 py-4 shadow-sm">
           <span class="font-mono text-xs text-emerald-600 font-bold shrink-0 pt-0.5">{String(i + 1).padStart(2, '0')}</span>
-          <span class="text-slate-700 text-sm leading-relaxed">{e}</span>
+          <span class="text-slate-700 text-sm leading-relaxed">{tr(e)}</span>
         </li>
       ))}
     </ol>
@@ -119,30 +124,30 @@ const errores = [
 
   <!-- Cómo demostrar progreso -->
   <section class="py-16 border-b border-slate-200">
-    <span class="label block mb-6">CÓMO DEMOSTRAR PROGRESO</span>
+    <span class="label block mb-6">{tr('CÓMO DEMOSTRAR PROGRESO')}</span>
     <p class="text-slate-600 text-sm leading-relaxed mb-4">
-      El progreso se demuestra con entregables, no con promesas ni con "estoy en ello".
+      {tr('El progreso se demuestra con entregables, no con promesas ni con "estoy en ello".')}
     </p>
     <p class="text-slate-500 text-sm leading-relaxed mb-8">
-      Cuando completes un ejercicio, documenta tres cosas: qué construiste, qué problema resolvía y una evidencia concreta (enlace, screenshot o archivo). No tiene que ser perfecto. Tiene que existir.
+      {tr('Cuando completes un ejercicio, documenta tres cosas: qué construiste, qué problema resolvía y una evidencia concreta (enlace, screenshot o archivo). No tiene que ser perfecto. Tiene que existir.')}
     </p>
     <div class="bg-slate-900 rounded-2xl p-6">
-      <p class="font-mono text-xs text-emerald-400 tracking-widest uppercase mb-4">FORMATO DE ENTREGA</p>
-      <pre class="text-slate-300 text-sm leading-relaxed font-mono whitespace-pre-wrap">Ejercicio: [nombre del ejercicio]
+      <p class="font-mono text-xs text-emerald-400 tracking-widest uppercase mb-4">{tr('FORMATO DE ENTREGA')}</p>
+      <pre class="text-slate-300 text-sm leading-relaxed font-mono whitespace-pre-wrap">{tr(`Ejercicio: [nombre del ejercicio]
 Qué construí: [descripción breve]
 Problema que resuelve: [una línea]
-Evidencia: [URL / ruta de archivo / screenshot]</pre>
+Evidencia: [URL / ruta de archivo / screenshot]`)}</pre>
     </div>
   </section>
 
   <!-- Errores a evitar -->
   <section class="py-16 border-b border-slate-200">
-    <span class="label block mb-8">ERRORES A EVITAR</span>
+    <span class="label block mb-8">{tr('ERRORES A EVITAR')}</span>
     <ul class="space-y-3">
       {errores.map(e => (
         <li class="flex items-start gap-3 bg-white border border-slate-200 rounded-xl px-5 py-4 shadow-sm">
           <span class="text-rose-500 font-mono text-sm font-bold shrink-0 mt-0.5">×</span>
-          <span class="text-slate-600 text-sm leading-relaxed">{e}</span>
+          <span class="text-slate-600 text-sm leading-relaxed">{tr(e)}</span>
         </li>
       ))}
     </ul>
@@ -150,15 +155,15 @@ Evidencia: [URL / ruta de archivo / screenshot]</pre>
 
   <!-- Qué significa ser operador IA -->
   <section class="py-16">
-    <span class="label block mb-6">QUÉ SIGNIFICA SER OPERADOR IA</span>
+    <span class="label block mb-6">{tr('QUÉ SIGNIFICA SER OPERADOR IA')}</span>
     <p class="text-slate-600 text-sm leading-relaxed mb-4">
-      Un operador IA no es un programador. No es un prompt engineer. No es alguien que usa bien ChatGPT.
+      {tr('Un operador IA no es un programador. No es un prompt engineer. No es alguien que usa bien ChatGPT.')}
     </p>
     <p class="text-slate-600 text-sm leading-relaxed mb-4">
-      Un operador IA entiende cómo funcionan los sistemas, sabe qué herramienta usar para qué tarea, documenta lo que construye para que otros puedan operar sin preguntar y entrega resultados, no reportes de esfuerzo.
+      {tr('Un operador IA entiende cómo funcionan los sistemas, sabe qué herramienta usar para qué tarea, documenta lo que construye para que otros puedan operar sin preguntar y entrega resultados, no reportes de esfuerzo.')}
     </p>
     <p class="text-slate-500 text-sm leading-relaxed">
-      Si completas la escuela y los ejercicios, ya tienes la base. Lo demás se aprende haciendo, dentro de proyectos reales.
+      {tr('Si completas la escuela y los ejercicios, ya tienes la base. Lo demás se aprende haciendo, dentro de proyectos reales.')}
     </p>
   </section>
 
