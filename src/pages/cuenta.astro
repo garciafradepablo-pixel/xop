@@ -10,6 +10,8 @@ const configured = !!(
 
 const locale = resolveLocale(Astro.currentLocale, Astro.url.pathname);
 const t = useTranslations(locale);
+// ES + EN are the priority languages; other locales get English here.
+const accEs = locale === 'es';
 ---
 
 <Layout
@@ -85,13 +87,13 @@ const t = useTranslations(locale);
         </div>
         <div id="logged-in-state" class="hidden">
           <div class="bg-emerald-50 border border-emerald-200 rounded-xl px-5 py-4 max-w-sm mb-4">
-            <p class="font-mono text-[10px] tracking-widest text-emerald-700 uppercase mb-2">SESIÓN ACTIVA</p>
+            <p class="font-mono text-[10px] tracking-widest text-emerald-700 uppercase mb-2">{accEs ? 'SESIÓN ACTIVA' : 'ACTIVE SESSION'}</p>
             <p id="user-email" class="text-sm font-medium text-slate-900 mb-3"></p>
             <button
               id="logout-btn"
               class="font-mono text-xs text-slate-500 border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-100 transition-colors"
             >
-              Cerrar sesión
+              {accEs ? 'Cerrar sesión' : 'Log out'}
             </button>
           </div>
         </div>
@@ -185,7 +187,7 @@ const t = useTranslations(locale);
             type="submit" id="pf-submit"
             class="font-mono text-xs font-medium text-white bg-emerald-500 px-5 py-2 rounded-lg hover:bg-emerald-600 transition-colors disabled:opacity-50"
           >
-            Guardar perfil →
+            {accEs ? 'Guardar perfil →' : 'Save profile →'}
           </button>
           <p id="pf-status" class="hidden text-xs font-mono text-emerald-700"></p>
         </div>
@@ -383,10 +385,10 @@ const t = useTranslations(locale);
   <!-- Cloud sync note -->
   {configured && (
     <section class="py-10 border-b border-slate-200">
-      <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-4">SINCRONIZACIÓN EN NUBE</p>
+      <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-4">{accEs ? 'SINCRONIZACIÓN EN NUBE' : 'CLOUD SYNC'}</p>
       <div class="bg-slate-50 border border-slate-200 rounded-xl px-5 py-5 max-w-md">
         <p class="text-sm text-slate-600 leading-relaxed mb-3" id="sync-message">
-          Inicia sesión para sincronizar tu progreso entre dispositivos.
+          {accEs ? 'Inicia sesión para sincronizar tu progreso entre dispositivos.' : 'Sign in to sync your progress across devices.'}
         </p>
         <button
           id="sync-btn"
@@ -620,6 +622,34 @@ const t = useTranslations(locale);
 
     loadingEl?.classList.add('hidden');
 
+    // ES + EN priority: Spanish for es, English for every other locale.
+    const accEs = (document.documentElement.lang || 'es') === 'es';
+    const M = accEs ? {
+      syncing: 'Sincronizando progreso…', syncedCloud: '✓ Progreso sincronizado en la nube.',
+      syncErrAuto: 'Hubo un error al sincronizar. Prueba de nuevo.', syncedSaved: 'Tu progreso está guardado en la nube.',
+      syncAgain: 'Sincronizar de nuevo →', syncingShort: 'Sincronizando…', synced: '✓ Progreso sincronizado.',
+      syncErrPrefix: 'Error al sincronizar: ', errPrefix: 'Error: ', rankValidated: 'Rango validado por XNLAB: ',
+      saving: 'Guardando…', saveProfile: 'Guardar perfil →', profileUpdated: 'Perfil actualizado.',
+      jNext: { monkey: 'próximo: Gorilla', gorilla: 'próximo: Panda', eagle: 'próximo: Mentor / Network' },
+      jDesc: {
+        monkey: 'Estás en formación. Cada módulo que completas es una señal para el siguiente operador.',
+        gorilla: 'Ejecutas con fuerza. Ya tienes sistemas reales funcionando.',
+        eagle: 'Dominas tu sistema. El siguiente paso es transmitir lo aprendido.',
+      },
+    } : {
+      syncing: 'Syncing progress…', syncedCloud: '✓ Progress synced to the cloud.',
+      syncErrAuto: 'Sync failed. Try again.', syncedSaved: 'Your progress is saved in the cloud.',
+      syncAgain: 'Sync again →', syncingShort: 'Syncing…', synced: '✓ Progress synced.',
+      syncErrPrefix: 'Sync error: ', errPrefix: 'Error: ', rankValidated: 'Rank validated by XNLAB: ',
+      saving: 'Saving…', saveProfile: 'Save profile →', profileUpdated: 'Profile updated.',
+      jNext: { monkey: 'next: Gorilla', gorilla: 'next: Panda', eagle: 'next: Mentor / Network' },
+      jDesc: {
+        monkey: 'You are in training. Every module you complete is a signal to the next operator.',
+        gorilla: 'You execute with force. You already have real systems running.',
+        eagle: 'You master your system. The next step is passing on what you have learned.',
+      },
+    };
+
     if (session?.user) {
       loggedInEl?.classList.remove('hidden');
       if (emailEl) emailEl.textContent = session.user.email ?? '';
@@ -733,7 +763,7 @@ const t = useTranslations(locale);
       }
 
       // Load profile + auto-sync progress in parallel
-      if (syncMsg) syncMsg.textContent = 'Sincronizando progreso…';
+      if (syncMsg) syncMsg.textContent = M.syncing;
       const [profileRes, autoError] = await Promise.all([
         supabase
           .from('profiles')
@@ -761,7 +791,7 @@ const t = useTranslations(locale);
         setCardField('pf-card-level', prof.experience_level ? (LEVEL_LABELS[prof.experience_level] ?? null) : null);
         setCardField(
           'pf-card-rank',
-          prof.operator_rank ? `Rango validado por XNLAB: ${RANK_DESC[prof.operator_rank] ?? prof.operator_rank}` : null
+          prof.operator_rank ? M.rankValidated + (RANK_DESC[prof.operator_rank] ?? prof.operator_rank) : null
         );
         if (prof.founder_badge) {
           document.getElementById('pf-card-founder')?.classList.remove('hidden');
@@ -786,16 +816,8 @@ const t = useTranslations(locale);
       // Jungle position card (operator/student concept — not for CEO)
       if (!isCeo) {
         const rank = prof?.operator_rank ?? 'monkey';
-        const JUNGLE_NEXT: Record<string, string> = {
-          monkey:  'próximo: Gorilla',
-          gorilla: 'próximo: Panda',
-          eagle:   'próximo: Mentor / Network',
-        };
-        const JUNGLE_DESC: Record<string, string> = {
-          monkey:  'Estás en formación. Cada módulo que completas es una señal para el siguiente operador.',
-          gorilla: 'Ejecutas con fuerza. Ya tienes sistemas reales funcionando.',
-          eagle:   'Dominas tu sistema. El siguiente paso es transmitir lo aprendido.',
-        };
+        const JUNGLE_NEXT: Record<string, string> = M.jNext;
+        const JUNGLE_DESC: Record<string, string> = M.jDesc;
         const JUNGLE_CLS: Record<string, string> = {
           monkey:  'text-slate-700 border-slate-300',
           gorilla: 'text-violet-700 border-violet-300',
@@ -819,29 +841,29 @@ const t = useTranslations(locale);
       // Sync result
       if (syncResult) {
         syncResult.textContent = autoError
-          ? `Error al sincronizar: ${autoError.message}`
-          : '✓ Progreso sincronizado en la nube.';
+          ? M.syncErrPrefix + autoError.message
+          : M.syncedCloud;
         syncResult.classList.remove('hidden');
       }
       if (syncMsg) syncMsg.textContent = autoError
-        ? 'Hubo un error al sincronizar. Prueba de nuevo.'
-        : 'Tu progreso está guardado en la nube.';
+        ? M.syncErrAuto
+        : M.syncedSaved;
 
       syncBtn?.classList.remove('hidden');
-      if (syncBtn) syncBtn.textContent = 'Sincronizar de nuevo →';
+      if (syncBtn) syncBtn.textContent = M.syncAgain;
 
       syncBtn?.addEventListener('click', async () => {
         if (!supabase || !session?.user) return;
         syncBtn.disabled = true;
-        syncBtn.textContent = 'Sincronizando…';
+        syncBtn.textContent = M.syncingShort;
         if (syncResult) syncResult.classList.add('hidden');
         const manualError = await doSync(session.user.id);
         syncBtn.disabled = false;
-        syncBtn.textContent = 'Sincronizar de nuevo →';
+        syncBtn.textContent = M.syncAgain;
         if (syncResult) {
           syncResult.textContent = manualError
-            ? `Error: ${manualError.message}`
-            : '✓ Progreso sincronizado.';
+            ? M.errPrefix + manualError.message
+            : M.synced;
           syncResult.classList.remove('hidden');
         }
       });
@@ -860,7 +882,7 @@ const t = useTranslations(locale);
         const operator_goal   = (profileForm.querySelector('[name="operator_goal"]')    as HTMLInputElement)?.value.trim() || null;
         const experience_level = (profileForm.querySelector('[name="experience_level"]') as HTMLSelectElement)?.value || null;
 
-        if (pfSubmit) { pfSubmit.disabled = true; pfSubmit.textContent = 'Guardando…'; }
+        if (pfSubmit) { pfSubmit.disabled = true; pfSubmit.textContent = M.saving; }
         if (pfStatus) pfStatus.classList.add('hidden');
         if (pfError)  pfError.classList.add('hidden');
 
@@ -869,13 +891,13 @@ const t = useTranslations(locale);
           .update({ nickname, operator_goal, experience_level, updated_at: new Date().toISOString() })
           .eq('id', session.user.id);
 
-        if (pfSubmit) { pfSubmit.disabled = false; pfSubmit.textContent = 'Guardar perfil →'; }
+        if (pfSubmit) { pfSubmit.disabled = false; pfSubmit.textContent = M.saveProfile; }
 
         if (error) {
-          if (pfError) { pfError.textContent = `Error: ${error.message}`; pfError.classList.remove('hidden'); }
+          if (pfError) { pfError.textContent = M.errPrefix + error.message; pfError.classList.remove('hidden'); }
           console.error('[cuenta] profile update error:', error.message);
         } else {
-          if (pfStatus) { pfStatus.textContent = 'Perfil actualizado.'; pfStatus.classList.remove('hidden'); }
+          if (pfStatus) { pfStatus.textContent = M.profileUpdated; pfStatus.classList.remove('hidden'); }
           setCardField('pf-card-nickname', nickname);
           setCardField('pf-card-goal', operator_goal ? (GOAL_LABELS[operator_goal] ?? operator_goal) : null);
           setCardField('pf-card-level', experience_level ? (LEVEL_LABELS[experience_level] ?? null) : null);

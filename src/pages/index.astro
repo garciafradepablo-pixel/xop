@@ -8,6 +8,13 @@ const locale = resolveLocale(Astro.currentLocale, Astro.url.pathname);
 const t = useTranslations(locale);
 const c = chromeT(locale);
 
+// Meta: ES + EN are the priority languages; other locales fall back to English.
+const isEs = locale === 'es';
+const metaTitle = isEs ? 'Inicio' : 'Home';
+const metaDesc = isEs
+  ? 'MOONKEY LAB by XNLAB Studio — Aprende a operar IA de forma sistemática. Sin código. Sin teoría infinita.'
+  : 'MOONKEY LAB by XNLAB Studio — Learn to operate AI systematically. No code, no endless theory.';
+
 const level1Outcomes = [
   'Terminal, VS Code y Claude Code operativos',
   'Primer repositorio en GitHub con historial limpio',
@@ -82,7 +89,7 @@ const caminos = [
 ];
 ---
 
-<Layout title="Inicio" description="MOONKEY LAB by XNLAB Studio — Aprende a operar IA de forma sistemática. Sin código. Sin teoría infinita.">
+<Layout title={metaTitle} description={metaDesc}>
 
   <!-- Hero — Light Premium / Integrated Scene -->
   <section id="mk-hero" class="relative overflow-hidden flex items-center min-h-[80vh] lg:min-h-[86vh]" style="margin-left:calc(-50vw + 50%);width:100vw;background:radial-gradient(120% 95% at 80% 28%,rgba(16,185,129,0.10) 0%,transparent 55%),linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%)">

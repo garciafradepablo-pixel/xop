@@ -21,14 +21,17 @@ const locale = resolveLocale(Astro.currentLocale, pathname);
 const c = chromeT(locale);
 const alternates = LOCALES.map((l) => ({ code: l, href: localizedPath(pathname, l) }));
 const esHref = localizedPath(pathname, 'es');
+const canonical = new URL(localizedPath(pathname, locale), Astro.site);
+const htmlLang = locale === 'ch' ? 'de-CH' : locale;
 ---
 
 <!DOCTYPE html>
-<html lang={locale}>
+<html lang={htmlLang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
     <title>{title} — MOONKEY LAB</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     {alternates.map((a) => (
