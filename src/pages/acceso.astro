@@ -1,0 +1,99 @@
+---
+import Layout from '../components/Layout.astro';
+import { resolveLocale, localizedPath } from '../i18n/utils';
+
+const locale = resolveLocale(Astro.currentLocale, Astro.url.pathname);
+const es = locale === 'es';
+const FN_URL = 'https://wuchsslgbqlhyxljsmxi.supabase.co/functions/v1/request-access';
+
+const T = es ? {
+  title: 'Solicitar acceso',
+  meta: 'Pide una invitación para entrar a MOONKEY LAB. El acceso es por invitación.',
+  label: 'ACCESO POR INVITACIÓN',
+  h1: 'Solicita tu acceso',
+  sub: 'MOONKEY LAB es por invitación. Deja tu email y, si hay sitio, te llega una invitación automática para entrar — sin esperar a nadie.',
+  placeholder: 'tu@email.com',
+  cta: 'Solicitar invitación →',
+  sending: 'Enviando…',
+  ok: 'Hecho. Si tu email es válido, recibirás la invitación en tu bandeja en breve (revisa también spam).',
+  err: 'No se pudo enviar. Revisa el email e inténtalo de nuevo.',
+  already: '¿Ya tienes cuenta?',
+  loginLink: 'Entrar →',
+} : {
+  title: 'Request access',
+  meta: 'Request an invitation to MOONKEY LAB. Access is invite-only.',
+  label: 'INVITE-ONLY ACCESS',
+  h1: 'Request your access',
+  sub: 'MOONKEY LAB is invite-only. Leave your email and, if there is room, an invitation is sent to you automatically — no waiting on anyone.',
+  placeholder: 'you@email.com',
+  cta: 'Request invitation →',
+  sending: 'Sending…',
+  ok: 'Done. If your email is eligible, an invitation will arrive in your inbox shortly (check spam too).',
+  err: 'Could not send. Check the email and try again.',
+  already: 'Already have an account?',
+  loginLink: 'Sign in →',
+};
+---
+
+<Layout title={T.title} description={T.meta}>
+  <section class="max-w-md mx-auto py-12">
+    <span class="label block mb-3">{T.label}</span>
+    <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-4">{T.h1}</h1>
+    <p class="text-slate-600 text-sm leading-relaxed mb-8">{T.sub}</p>
+
+    <form id="access-form" class="space-y-3">
+      <input
+        id="ar-email" type="email" required maxlength="120" autocomplete="email" aria-label={T.placeholder}
+        placeholder={T.placeholder}
+        class="w-full text-sm bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-400 transition-colors"
+      />
+      <button
+        id="ar-submit" type="submit"
+        class="w-full font-mono text-sm font-medium text-white bg-emerald-500 px-5 py-3 rounded-xl hover:bg-emerald-600 transition-colors disabled:opacity-50"
+      >{T.cta}</button>
+    </form>
+
+    <p id="ar-msg" class="hidden text-sm mt-4 leading-relaxed"></p>
+
+    <p class="text-xs text-slate-400 mt-10">
+      {T.already}
+      <a href={localizedPath('/login', locale)} class="text-emerald-600 hover:text-emerald-700 underline">{T.loginLink}</a>
+    </p>
+  </section>
+
+  <script define:vars={{ FN_URL, locale, T }}>
+    (function () {
+      var form = document.getElementById('access-form');
+      var input = document.getElementById('ar-email');
+      var btn = document.getElementById('ar-submit');
+      var msg = document.getElementById('ar-msg');
+      if (!form) return;
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var email = (input.value || '').trim();
+        if (!email) return;
+        var idle = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = T.sending;
+        msg.classList.add('hidden');
+        try {
+          var r = await fetch(FN_URL, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ email: email, locale: locale }),
+          });
+          var ok = r.ok;
+          msg.textContent = ok ? T.ok : T.err;
+          msg.className = 'text-sm mt-4 leading-relaxed ' + (ok ? 'text-emerald-600' : 'text-rose-600');
+          if (ok) form.classList.add('hidden');
+        } catch (err) {
+          msg.textContent = T.err;
+          msg.className = 'text-sm mt-4 leading-relaxed text-rose-600';
+        }
+        msg.classList.remove('hidden');
+        btn.disabled = false;
+        btn.textContent = idle;
+      });
+    })();
+  </script>
+</Layout>

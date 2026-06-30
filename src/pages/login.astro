@@ -87,6 +87,11 @@ const t = useTranslations(locale);
           <p class="text-center text-[11px] text-slate-400 font-mono mt-4">{t('login.form.hint')}</p>
         </div>
 
+        <p class="text-center text-xs text-slate-400 mt-5">
+          {locale === 'es' ? '¿Sin invitación? ' : 'No invite yet? '}
+          <a href={localizedPath('/acceso', locale)} class="text-emerald-600 hover:text-emerald-700 underline">{locale === 'es' ? 'Solicita acceso →' : 'Request access →'}</a>
+        </p>
+
         <div id="success-msg" class="hidden bg-emerald-50 border border-emerald-200 rounded-2xl p-8 text-center">
           <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-emerald-500 mb-4">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
