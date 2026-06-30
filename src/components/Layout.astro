@@ -34,6 +34,11 @@ const htmlLang = locale === 'ch' ? 'de-CH' : locale;
     <meta property="og:type" content="website" />
     <meta property="og:title" content={`${title} — MOONKEY LAB`} />
     <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content="MOONKEY LAB" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={`${title} — MOONKEY LAB`} />
+    <meta name="twitter:description" content={description} />
     <title>{title} — MOONKEY LAB</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <!-- Typography — Space Grotesk (display) · Inter (body) · JetBrains Mono (labels) -->
@@ -50,6 +55,7 @@ const htmlLang = locale === 'ch' ? 'de-CH' : locale;
     <link rel="alternate" hreflang="x-default" href={esHref} />
   </head>
   <body class="min-h-screen antialiased text-slate-900">
+    <a href="#main-content" class="skip-link">{locale === 'es' ? 'Saltar al contenido' : 'Skip to content'}</a>
     <!-- Abstract animated colour field behind everything -->
     <div class="mk-bg" aria-hidden="true">
       <span class="mk-blob mk-blob-1"></span>
@@ -63,7 +69,7 @@ const htmlLang = locale === 'ch' ? 'de-CH' : locale;
     </div>
 
     <Header />
-    <main class="max-w-5xl mx-auto px-6 py-12">
+    <main id="main-content" class="max-w-5xl mx-auto px-6 py-12">
       <slot />
     </main>
     <footer class="border-t border-slate-200 bg-white mt-24">

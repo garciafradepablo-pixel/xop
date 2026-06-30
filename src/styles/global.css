@@ -252,3 +252,25 @@ details[open] .accordion-body {
     animation: none;
   }
 }
+
+/* ── Accessibility: keyboard focus ring + skip-to-content link ── */
+:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+.skip-link {
+  position: absolute;
+  left: 8px;
+  top: -56px;
+  z-index: 100;
+  background: #0f172a;
+  color: #fff;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font: 500 13px/1 ui-monospace, "JetBrains Mono", monospace;
+  transition: top 0.15s ease;
+}
+.skip-link:focus {
+  top: 8px;
+}

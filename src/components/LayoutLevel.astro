@@ -40,6 +40,7 @@ const htmlLang = locale === 'ch' ? 'de-CH' : locale;
     <link rel="alternate" hreflang="x-default" href={esHref} />
   </head>
   <body class="min-h-screen antialiased bg-[#f8fafc] text-slate-900">
+    <a href="#main-content" class="skip-link">{locale === 'es' ? 'Saltar al contenido' : 'Skip to content'}</a>
     <Header />
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <div class="lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-10 xl:gap-12">
@@ -50,7 +51,7 @@ const htmlLang = locale === 'ch' ? 'de-CH' : locale;
           </div>
         </aside>
         <!-- Main content -->
-        <main class="min-w-0">
+        <main id="main-content" class="min-w-0">
           <slot />
         </main>
       </div>
