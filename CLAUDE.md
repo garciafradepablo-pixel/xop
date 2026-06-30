@@ -42,6 +42,23 @@ El progreso vive en localStorage SIEMPRE; con sesión, se sincroniza con la nube
   (debounce 700ms + flush en `pagehide`/`visibilitychange`). NO metas Supabase en scripts `is:inline`.
 - Reset (`index.astro`) limpia local + `resetCloudProgress` vía `window.__moonkeyResetCloud` si hay sesión.
 
+## Acceso por invitación (gating anti-robo)
+El **curso** (N0–N3, lecciones `constelacion/*`, Arsenal `/prompts`) va **gateado en el borde
+por Cloudflare Access** (lista de emails = un Access Group). La landing/manifiesto/planes quedan
+públicas (embudo). Sin estar en el grupo, Cloudflare bloquea la página antes de servir el HTML.
+- **Invitación automática self-serve:** `/acceso` (form ES/EN) → edge function `request-access`
+  (`supabase/functions/request-access/index.ts`, deploy con `--no-verify-jwt`). La función:
+  valida email · rate-limit 5/h por IP + dedupe 24h (tabla `access_requests`, solo service_role
+  escribe, admin lee) · `auth.admin.inviteUserByEmail` · y si están los secretos `CF_API_TOKEN`/
+  `CF_ACCOUNT_ID`/`CF_ACCESS_GROUP_ID` añade el email al Access Group (si no, `cf_skipped`).
+  Respuesta SIEMPRE genérica (sin enumeración de emails).
+- **Signups solo por invitación:** desactivar "Allow new users to sign up" en Supabase Auth
+  (la invitación de la función es admin → sigue funcionando; solo se corta el alta pública).
+- Email: el free de Supabase limita ~3-4/h → conectar SMTP (Resend) para volumen.
+- `.github/workflows/keepalive.yml` evita la pausa-por-inactividad del free (ping diario;
+  necesita el secreto `SUPABASE_ANON_KEY`). Despliegues de la función: usar la **CLI**
+  (`supabase functions deploy request-access --project-ref wuchsslgbqlhyxljsmxi --no-verify-jwt`).
+
 ## i18n — TRES patrones (ojo a la inconsistencia)
 1. `src/i18n/ui.ts` con `useTranslations(locale)` → `t('key')`. Para chrome/nav corto.
    Usado por index, cuenta, login, modulos. Fallback de key faltante → ES.

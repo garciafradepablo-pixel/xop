@@ -80,6 +80,13 @@ const configured = !!(
         </div>
         <div id="admin-intake-list" class="space-y-2 max-w-2xl"></div>
 
+        <!-- Access requests — automatic invitation funnel -->
+        <div class="flex items-center justify-between max-w-2xl mt-12 mb-4">
+          <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase">SOLICITUDES DE ACCESO · INVITACIÓN AUTOMÁTICA</p>
+          <span id="access-count" class="font-mono text-[10px] text-slate-400"></span>
+        </div>
+        <div id="admin-access-list" class="space-y-2 max-w-2xl"></div>
+
         <!-- Technical note -->
         <div class="bg-slate-50 border border-slate-200 rounded-xl px-5 py-4 max-w-2xl mt-8">
           <p class="font-mono text-[10px] tracking-widest text-slate-400 uppercase mb-2">NOTA TÉCNICA</p>
@@ -219,7 +226,7 @@ const configured = !!(
     panelEl?.classList.remove('hidden');
 
     // Load all data in parallel
-    const [profilesRes, feedbackRes, progressRes, intakeRes] = await Promise.all([
+    const [profilesRes, feedbackRes, progressRes, intakeRes, accessRes] = await Promise.all([
       supabase.from('profiles').select(
         'id, email, role, nickname, operator_goal, experience_level, operator_rank, operator_rank_notes, founder_badge, created_at'
       ),
@@ -227,6 +234,10 @@ const configured = !!(
       supabase.from('progress').select('user_id, level_1_completed'),
       supabase.from('operator_intake')
         .select('created_at, ref_code, name, email, virtues, aptitude, domains, goal, time_week, recommended, note')
+        .order('created_at', { ascending: false })
+        .limit(60),
+      supabase.from('access_requests')
+        .select('created_at, email, locale, status')
         .order('created_at', { ascending: false })
         .limit(60),
     ]);
@@ -287,6 +298,29 @@ const configured = !!(
                 </div>
                 <p class="font-mono text-[11px] text-slate-500 mb-1">${esc(virtues)}${domains ? ` &nbsp;·&nbsp; ${esc(domains)}` : ''}${r.time_week ? ` &nbsp;·&nbsp; ${esc(r.time_week)}/sem` : ''}</p>
                 ${r.note ? `<p class="text-xs text-slate-400 leading-relaxed truncate max-w-xl">${esc(r.note)}</p>` : ''}
+              </div>`;
+          }).join('');
+    }
+
+    // ── Access requests: automatic-invitation funnel ──
+    const accessReqs = (accessRes.data ?? []) as any[];
+    const accessListEl = document.getElementById('admin-access-list');
+    const accessCountEl = document.getElementById('access-count');
+    if (accessCountEl) accessCountEl.textContent = accessReqs.length ? `${accessReqs.length} solicitudes` : '';
+    if (accessListEl) {
+      accessListEl.innerHTML = accessReqs.length === 0
+        ? '<p class="text-sm text-slate-400 font-mono">Aún no hay solicitudes de acceso.</p>'
+        : accessReqs.map((r) => {
+            const when = r.created_at ? new Date(r.created_at).toLocaleString() : '';
+            const invited = String(r.status || '').startsWith('invited');
+            const cfAdded = String(r.status || '').includes('cf_added');
+            return `
+              <div class="bg-white border border-slate-200 rounded-xl px-5 py-3 flex flex-wrap items-center gap-2">
+                <span class="font-mono text-[12px] text-slate-700">${esc(r.email)}</span>
+                <span class="font-mono text-[10px] px-2 py-0.5 rounded-full ${invited ? 'bg-emerald-50 border border-emerald-200 text-emerald-700' : 'bg-slate-50 border border-slate-200 text-slate-400'}">${invited ? 'invitado' : 'ya existía'}</span>
+                ${cfAdded ? '<span class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-sky-50 border border-sky-200 text-sky-700">en Access</span>' : ''}
+                ${r.locale ? `<span class="font-mono text-[10px] text-slate-300">${esc(r.locale)}</span>` : ''}
+                <span class="font-mono text-[10px] text-slate-300 ml-auto">${esc(when)}</span>
               </div>`;
           }).join('');
     }

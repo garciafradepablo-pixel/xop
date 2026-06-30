@@ -1,0 +1,25 @@
+name: Supabase keep-alive
+
+# Free Supabase projects pause after ~7 days with no database activity. This pings
+# the REST API once a day so MOONKEY LAB's backend never sleeps. Needs one repo
+# secret: SUPABASE_ANON_KEY (Settings → Secrets and variables → Actions). The anon
+# key is public (it already ships in the site bundle), so this exposes nothing new.
+
+on:
+  schedule:
+    - cron: '17 6 * * *' # daily at ~06:17 UTC
+  workflow_dispatch: {} # allow manual run from the Actions tab
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST (counts as DB activity)
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' \
+            "https://wuchsslgbqlhyxljsmxi.supabase.co/rest/v1/profiles?select=id&limit=1" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}")
+          echo "Supabase responded: $code"
+          # 2xx = healthy query (keeps the project awake). Anything else is logged, non-fatal.
+          case "$code" in 2*) exit 0 ;; *) echo "::warning::unexpected status $code" ; exit 0 ;; esac
