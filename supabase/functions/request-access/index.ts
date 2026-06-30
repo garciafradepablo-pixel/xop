@@ -1,93 +1,237 @@
-// Automatic self-serve invitation endpoint for MOONKEY LAB.
-// A prospect POSTs { email } from the public /acceso form. We:
-//   1. validate + rate-limit (per-IP 5/h) + dedupe (per-email 24h) via access_requests
-//   2. send a Supabase invite (admin) so they get an account
-//   3. if CF_* secrets are set, add their email to the course's Cloudflare Access group
-// Always returns the SAME generic success (no email enumeration). Deploy with
-// --no-verify-jwt (public form endpoint; protection is the rate-limit, not a JWT).
-import { createClient } from 'npm:@supabase/supabase-js@2';
+// Edge Function: request-access
+// Automatic self-serve invitation + Cloudflare Access Group management.
+// Deploy: supabase functions deploy request-access --project-ref wuchsslgbqlhyxljsmxi --no-verify-jwt
 
-const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
-const SERVICE_ROLE = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const SITE_URL = Deno.env.get('SITE_URL') ?? 'https://xop-50a.pages.dev';
-const CF_API_TOKEN = Deno.env.get('CF_API_TOKEN');
-const CF_ACCOUNT_ID = Deno.env.get('CF_ACCOUNT_ID');
-const CF_ACCESS_GROUP_ID = Deno.env.get('CF_ACCESS_GROUP_ID');
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
 
-const CORS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'authorization, apikey, content-type',
-};
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const GENERIC = { ok: true, message: 'Si tu email es válido, recibirás una invitación en breve. / If eligible, you will receive an invitation shortly.' };
-const reply = (status: number, body: unknown) =>
-  new Response(JSON.stringify(body), { status, headers: { ...CORS, 'content-type': 'application/json' } });
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
-async function addToCloudflareAccess(email: string): Promise<string> {
-  if (!CF_API_TOKEN || !CF_ACCOUNT_ID || !CF_ACCESS_GROUP_ID) return 'cf_skipped';
+// Optional Cloudflare Access integration
+const CF_API_TOKEN = Deno.env.get("CF_API_TOKEN");
+const CF_ACCOUNT_ID = Deno.env.get("CF_ACCOUNT_ID");
+const CF_ACCESS_GROUP_ID = Deno.env.get("CF_ACCESS_GROUP_ID");
+
+interface RequestBody {
+  email?: string;
+  locale?: string;
+}
+
+interface CloudflareGroup {
+  id: string;
+  include: Array<{ email: string }>;
+}
+
+// Rate limit: 5 requests per IP per hour
+async function checkRateLimit(ip: string, supabase: any): Promise<boolean> {
+  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+  const { count } = await supabase
+    .from("access_requests")
+    .select("id", { count: "exact" })
+    .eq("ip", ip)
+    .gte("created_at", oneHourAgo);
+
+  return (count ?? 0) < 5;
+}
+
+// Dedupe: same email can't request twice in 24h
+async function checkDedupe(email: string, supabase: any): Promise<any | null> {
+  const twentyFourHoursAgo = new Date(
+    Date.now() - 24 * 60 * 60 * 1000
+  ).toISOString();
+  const { data } = await supabase
+    .from("access_requests")
+    .select("*")
+    .eq("email", email)
+    .gte("created_at", twentyFourHoursAgo)
+    .single();
+
+  return data ?? null;
+}
+
+// Validate email format
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email?.trim() ?? "");
+}
+
+// Add email to Cloudflare Access Group
+async function addToCFAccessGroup(email: string): Promise<string | null> {
+  if (!CF_API_TOKEN || !CF_ACCOUNT_ID || !CF_ACCESS_GROUP_ID) {
+    return "cf_skipped";
+  }
+
   try {
-    const base = `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/access/groups/${CF_ACCESS_GROUP_ID}`;
-    const headers = { Authorization: `Bearer ${CF_API_TOKEN}`, 'content-type': 'application/json' };
-    const grp = (await (await fetch(base, { headers })).json())?.result;
-    if (!grp) return 'cf_error';
-    const include: Array<Record<string, unknown>> = Array.isArray(grp.include) ? grp.include : [];
-    const has = include.some((r: any) => r?.email?.email?.toLowerCase?.() === email);
-    if (!has) {
-      include.push({ email: { email } });
-      const put = await fetch(base, {
-        method: 'PUT',
-        headers,
-        body: JSON.stringify({ name: grp.name, include, exclude: grp.exclude ?? [], require: grp.require ?? [] }),
-      });
-      if (!put.ok) return 'cf_error';
+    const baseUrl = `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/access/groups/${CF_ACCESS_GROUP_ID}`;
+
+    const getResp = await fetch(baseUrl, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${CF_API_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!getResp.ok) {
+      console.error(`CF GET failed: ${getResp.status}`);
+      return "cf_get_failed";
     }
-    return 'cf_added';
-  } catch (_e) {
-    return 'cf_error';
+
+    const { result } = (await getResp.json()) as { result: CloudflareGroup };
+    const group = result;
+
+    if (group.include?.some((i) => i.email === email)) {
+      return "cf_already_member";
+    }
+
+    const updated = {
+      include: [...(group.include ?? []), { email }],
+    };
+
+    const putResp = await fetch(baseUrl, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${CF_API_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updated),
+    });
+
+    if (!putResp.ok) {
+      console.error(`CF PUT failed: ${putResp.status}`);
+      return "cf_put_failed";
+    }
+
+    return "cf_added";
+  } catch (err) {
+    console.error("CF Access error:", err);
+    return "cf_error";
   }
 }
 
 Deno.serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
-  if (req.method !== 'POST') return reply(405, { ok: false });
+  if (req.method === "OPTIONS") {
+    return new Response(null, {
+      status: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+    });
+  }
 
-  let email = '';
-  let locale = 'es';
+  if (req.method !== "POST") {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers: { "Access-Control-Allow-Origin": "*" },
+    });
+  }
+
   try {
-    const body = await req.json();
-    email = String(body?.email ?? '').trim().toLowerCase();
-    locale = String(body?.locale ?? 'es').slice(0, 5);
-  } catch {
-    return reply(400, { ok: false, message: 'Bad request.' });
+    const body: RequestBody = await req.json();
+    const email = body.email?.trim().toLowerCase();
+    const locale = body.locale ?? "es";
+
+    if (!email || !isValidEmail(email)) {
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          message: "Si el email es válido, recibirás una invitación.",
+        }),
+        {
+          status: 200,
+          headers: { "Access-Control-Allow-Origin": "*" },
+        }
+      );
+    }
+
+    const ip = req.headers.get("CF-Connecting-IP") ?? "unknown";
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+    const passedRateLimit = await checkRateLimit(ip, supabase);
+    if (!passedRateLimit) {
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          message: "Si el email es válido, recibirás una invitación.",
+        }),
+        {
+          status: 200,
+          headers: { "Access-Control-Allow-Origin": "*" },
+        }
+      );
+    }
+
+    const existing = await checkDedupe(email, supabase);
+    if (existing) {
+      await supabase.from("access_requests").insert({
+        email,
+        ip,
+        locale,
+        status: "deduplicated",
+      });
+
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          message: "Si el email es válido, recibirás una invitación.",
+        }),
+        {
+          status: 200,
+          headers: { "Access-Control-Allow-Origin": "*" },
+        }
+      );
+    }
+
+    let invited = false;
+    try {
+      await supabase.auth.admin.inviteUserByEmail(email, {
+        redirectTo: `${Deno.env.get("SITE_URL") ?? "https://xop-50a.pages.dev"}/login`,
+      });
+      invited = true;
+    } catch (err: any) {
+      const inviteError = err.message ?? String(err);
+      if (inviteError.toLowerCase().includes("already")) {
+        invited = true;
+      }
+    }
+
+    const cfResult = await addToCFAccessGroup(email);
+    const finalStatus = [
+      invited ? "invited" : "invite_failed",
+      cfResult,
+    ]
+      .filter(Boolean)
+      .join(",");
+
+    await supabase.from("access_requests").insert({
+      email,
+      ip,
+      locale,
+      status: finalStatus,
+    });
+
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        message: "Si el email es válido, recibirás una invitación.",
+      }),
+      {
+        status: 200,
+        headers: { "Access-Control-Allow-Origin": "*" },
+      }
+    );
+  } catch (err) {
+    console.error("Unhandled error:", err);
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        message: "Si el email es válido, recibirás una invitación.",
+      }),
+      {
+        status: 200,
+        headers: { "Access-Control-Allow-Origin": "*" },
+      }
+    );
   }
-  if (!email || email.length > 254 || !EMAIL_RE.test(email)) {
-    return reply(400, { ok: false, message: 'Invalid email.' });
-  }
-
-  const ip = (req.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() || 'unknown';
-  const admin = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } });
-
-  // Per-IP rate limit (5/hour) — silently treated as success so the cap isn't revealed.
-  const hourAgo = new Date(Date.now() - 3_600_000).toISOString();
-  const { count: ipCount } = await admin
-    .from('access_requests').select('id', { count: 'exact', head: true })
-    .eq('ip', ip).gte('created_at', hourAgo);
-  if ((ipCount ?? 0) >= 5) return reply(200, GENERIC);
-
-  // Dedupe: same email within 24h -> don't re-invite (anti-spam), generic success.
-  const dayAgo = new Date(Date.now() - 86_400_000).toISOString();
-  const { data: recent } = await admin
-    .from('access_requests').select('id').eq('email', email).gte('created_at', dayAgo).limit(1);
-  if (recent && recent.length > 0) return reply(200, GENERIC);
-
-  // Send the Supabase invite. Existing user -> inviteUserByEmail errors; swallow (no enumeration).
-  let status = 'invited';
-  const { error } = await admin.auth.admin.inviteUserByEmail(email, { redirectTo: `${SITE_URL}/cuenta/` });
-  if (error) status = 'invite_skipped';
-
-  const cf = await addToCloudflareAccess(email);
-  await admin.from('access_requests').insert({ email, ip, locale, status: `${status}:${cf}` });
-
-  return reply(200, GENERIC);
 });
